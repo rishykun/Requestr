@@ -1,0 +1,74 @@
+make sure to push agenda + progress report
+afterwards, push meeting notes
+
+concepts are not concepts
+
+
+request, tag are concepts
+review is not a concept
+message concept needs to be fleshed out more
+	not a concept if just a "plain message", like sending text message
+	if we want it to have a larger meaning (call it exchange or connection),
+
+
+suggestions: division of categories
+
+insights for data model, what the problem we are modeling with our data model
+
+user design picture too small, not able to see the contents
+
+
+separate the operational principle from the concept (slide)
+app currently CRUD, not sophisticated enough, only MVP right now
+	i.e.
+
+suggestions for additional features:
+
+	authentication:
+		email verification
+		using MIT certificate to authenticate //very hard
+
+	integrating email
+	integrating text message
+	integrating facebook
+	integrating linkedin
+
+	algorithm that selects things for you for food or w/e
+	algorithm that parses linkedin skills that 
+
+
+
+	ordering algorithm *
+
+	project tasks instead of 1-1 (multiple request-takers)
+
+	admin vs regular users for the app
+
+
+
+
+
+need threat model, what types of attacks we should be expecting
+
+design challenges:
+	better format, like bullet points
+
+
+
+MVP requirements:
+	login system
+	CRUD request
+	status on requests
+
+	request tags (if time permits)
+	rating system (if time permits)
+
+
+todo:
+	divide roles
+
+
+
+indicate what parts we changed, improved for the revised design
+
+schedule meeting after
