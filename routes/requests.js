@@ -18,20 +18,6 @@ var requireAuthentication = function(req, res, next) {
   }
 };
 
-/*
-  Require ownership whenever deleting a request.
-  This means that the client accessing the resource must be logged in
-  as the user that originally created the request. Clients who are not owners 
-  of this particular resource will receive a 404.
-
-*/
-var requireOwnership = function(req, res, next) {
-  if (!(req.currentUser.username === req.request.creator)) {
-    utils.sendErrResponse(res, 404, 'Resource not found.');
-  } else {
-    next();
-  }
-};
 
 
 /*
@@ -83,7 +69,7 @@ router.get('/', function(req, res) {
   Params:
     - requestId - unique id of the request
 */
-router.post('/addCandidate',function(req,res)){
+router.post('/addCandidate',function(req,res){
   Request.addCandidate(req.request_id, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
@@ -99,7 +85,7 @@ router.post('/addCandidate',function(req,res)){
   Params:
     - request_id - unique id of the request
 */
-router.post('/acceptCandidate',function(req,res)){
+router.post('/acceptCandidate',function(req,res){
   Request.acceptCandidate(req.request_id, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
@@ -138,7 +124,7 @@ router.post('/create', function(req,res){
 */
 // Requires Ownership (middleware)
 router.delete('/:request', function(req, res) {
-  Request.removeRequest( 
+  User.removeRequest( 
     req.request_id, 
     function(err) {
       if (err) {

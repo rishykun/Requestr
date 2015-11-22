@@ -9,7 +9,7 @@ var bodyParser = require("body-parser");
 // Import route handlers
 var index = require('./routes/index');
 var users = require('./routes/users');
-var posts = require('./routes/requests');
+var requests = require('./routes/requests');
 
 //import backend database handler
 var mongoose = require("mongoose");
