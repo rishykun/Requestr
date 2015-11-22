@@ -47,6 +47,32 @@ UserSchema.statics.createNewUser = function(user, password, cb){
   });
 }
 
+UserSchema.statics.getUser = function(user, cb){
+  this.find({ username: user }, function(err, userQuery){
+    if (err) console.log(err);
+    else if (userQuery.length == 0) cb({msg: "No such user!"});
+    else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
+    else {
+      cb(null, userQuery[0]);
+    }
+  });
+}
+
+UserSchema.statics.getUserData = function(user, cb){
+  this.getUser(user, function(err, user){
+   if (err) console.log(err);
+   this.populate(user, {path: 'myRequests'}, function(err, result){
+    if (err) console.log(err);
+    else {
+      this.populate(result, {path: 'requestsTaken'}, function(err, result){
+        if (err) console.log(err);
+          else cb(null, result); //candidates and helpers not populated
+        });
+    } 
+  });
+ });
+}
+
 UserSchema.statics.getUserRequests = function(user, cb) {
   this.find({ username: user }, function(err, userQuery){
     if (err) console.log(err);
@@ -70,7 +96,7 @@ UserSchema.statics.getRequestsTaken = function(user, cb){
       this.populate(userQuery[0], {path: 'requestsTaken'}, function(err, result){
         if (err) console.log(err);
         else cb(null, result); //candidates and helpers not populated
-      })
+      });
     }
   });
 }
@@ -192,14 +218,32 @@ RequestSchema.statics.removeRequest = function(requestId, cb){
   });
 }
 
-RequestSchema.statics.addCandidate = function(requestId, candidate, cb){
-  this.getRequestById(requestId, function(err, result){
-
+RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
+  userModel.getUser(candidate, function(err, candidate){
+    if (err) console.log(err);
+    else {
+      this.getRequestById(requestId, function(err, result){
+        this.update(result, {$push: {'candidates': candidate}}, {upsert: true}, function(err){
+          if (err) console.log(err);
+          else cb(null);
+        });
+      });
+    }
   });
 }
 
 RequestSchema.statics.acceptCandidate = function(requestId, candidate, cb){
-
+  userModel.getUser(candidate, function(err, candidate){
+    if (err) console.log(err);
+    else {
+      this.getRequestById(requestId, function(err, result){
+        this.update(result, {$pull: {'candidates': candidate}, $push{'helpers': candidate}}, {upsert: true}, function(err){
+          if (err) console.log(err);
+          else cb(null);
+        });
+      });
+    }
+  });
 }
 
 exports.User = mongoose.model('User', UserSchema);
