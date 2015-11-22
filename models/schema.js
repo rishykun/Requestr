@@ -47,11 +47,6 @@ UserSchema.statics.createNewUser = function(user, password, cb){
   });
 }
 
-
-UserSchema.statics.getUserById = function(usertId, cb){
-
-}
-
 UserSchema.statics.getUserRequests = function(user, cb) {
   this.find({ username: user }, function(err, userQuery){
     if (err) console.log(err);
@@ -64,15 +59,25 @@ UserSchema.statics.getUserRequests = function(user, cb) {
       })
     }
   });
-};
+}
 
 UserSchema.statics.getRequestsTaken = function(user, cb){
-
+  this.find({ username: user }, function(err, userQuery){
+    if (err) console.log(err);
+    else if (userQuery.length == 0) cb({msg: "No such user!"});
+    else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
+    else {
+      this.populate(userQuery[0], {path: 'requestsTaken'}, function(err, result){
+        if (err) console.log(err);
+        else callback(null, result); //candidates and helpers not populated
+      })
+    }
+  });
 }
 
 UserSchema.statics.addRequest = function(user, requestId, cb){
 
-};
+}
 
 UserSchema.statics.removeRequest = function(user, requestId, cb){
 
@@ -97,11 +102,37 @@ var RequestSchema = mongoose.Schema({
 });
 
 RequestSchema.statics.getRequestById = function(requestId, cb){
-
+  this.find({ _id: requestId }, function(err, requestQuery){
+    if (err) console.log(err);
+    else {
+      this.populate(requestQuery, {path: 'candidates'}, function(err, result){
+        if (err) console.log(err);
+        else {
+          this.populate(result[0], {path: 'helpers'}, function(err, result){
+            if(err) console.log(err);
+            else callback(null, result[0]); //candidates and helpers populated
+          });
+        }
+      })
+    }
+  });
 }
 
 RequestSchema.statics.getAllRequests = function(cb){
-
+  this.find({}, function(err, requestQuery){
+    if (err) console.log(err);
+    else {
+      this.populate(requestQuery, {path: 'candidates'}, function(err, result){
+        if (err) console.log(err);
+        else {
+          this.populate(result[0], {path: 'helpers'}, function(err, result){
+            if(err) console.log(err);
+            else callback(null, result[0]); //candidates and helpers populated
+          });
+        }
+      })
+    }
+  });
 };
 
 RequestSchema.statics.addRequest = function(user, requestData, cb){
@@ -109,6 +140,14 @@ RequestSchema.statics.addRequest = function(user, requestData, cb){
 }
 
 RequestSchema.statics.removeRequest = function(requestId, cb){
+
+}
+
+RequestSchema.statics.addCandidate = function(requestId, candidate, cb){
+
+}
+
+RequestSchema.statics.acceptCandidate = function(requestId, candidate, cb){
 
 }
 
