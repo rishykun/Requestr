@@ -46,8 +46,38 @@ $(document).ready(function() {
 		});
 	});
 
+	/*
+		makes a call to the server and attempts to authenticate with the specified credentials
+		if successfully authenticated, the page will reload with the correct userprofile and data
+		and the user will be "logged in"
+		parameters:
+			username - the username to check against
+			password - the password to check against
+	*/
+	var performLoginRequest = function(username, password) {
+		//make post request to login route
+		$.post("/users/login", {
+			"username": username,
+			"password": password
+		})
+		//successful response from login request
+		.done(function(data) {
+			//if signin was successful
+			if (data.success) {
+				location.href="/"; //reload page
 
-	
+				$("#login-modal").modal("hide");
+			} else { //signup failed
+				console.error("ERROR: Login failed");
+			}
+		})
+		//failed response from login request
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	}
+
+
 	$("#request-expires").datepicker();
 
 	/*
