@@ -108,7 +108,7 @@ router.post('/create', function(req,res){
 /*
   DELETE /requests/:request
   Request parameters:
-    - request ID: the unique ID of the request within the logged in user's request collection
+    - request._id: the unique ID of the request within the logged in user's request collection
   Response:
     - success: true if the server succeeded in deleting the user's request
     - err: on failure, an error message
