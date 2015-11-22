@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public'))); //treat public as root 
 // encrypted cookied).
 app.use(function(req, res, next) {
 	if (req.session.username) {
-		User.findByUsername(req.session.username, function(err, user) {
+		User.getUserData(req.session.username, function(err, user) {
 			if (user) {
 				req.currentUser = user;
 			} else {
