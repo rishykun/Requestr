@@ -83,7 +83,7 @@ $(document).ready(function() {
 		}
 		if (eventType === "accept") {
 			//accept request
-			$.post("/request/assign", {
+			$.post("/request/addCandidate", {
 				"request_id": request_id
 			})
 			//successful response from request creation
