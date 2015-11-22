@@ -33,26 +33,24 @@ var requireOwnership = function(req, res, next) {
 };
 
 
-
 /*
-  Grab a fweet whenever one is referenced with an ID in the
-  request path (any routes defined with :fweet as a paramter).
+  For create and edit requests, require that the request body
+  contains a 'description' field. Send error code 400 if not.
 */
-router.param('request', function(req, res, next, requestId) {
-  User.getRequest(req.currentUser.username, fweetId, function(err, fweet) {
-    if (request) {
-      req.request = request;
-      next();
-    } else {
-      utils.sendErrResponse(res, 404, 'Resource not found.');
-    }
-  });
-});
+var requireDescription = function(req, res, next) {
+  if (!req.body.content) {
+    utils.sendErrResponse(res, 400, 'Description required in request.');
+  } else {
+    next();
+  }
+};
+
+
 
 // Register the middleware handlers above.
 router.all('*', requireAuthentication);
-router.delete('/:fweet', requireOwnership);
-
+//router.delete('/:request', requireOwnership);
+router.post('/create', requireDescription);
 
 /*
   GET /requests
@@ -64,7 +62,7 @@ router.delete('/:fweet', requireOwnership);
     - err: on failure, an error message
 */
 router.get('/', function(req, res) {
-  User.getFweets(req.currentUser.username, function(err, requests) {
+  User.getRequests(req.currentUser.username, function(err, requests) {
     if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -74,21 +72,37 @@ router.get('/', function(req, res) {
 });
 
 
-/*
-  GET /requests/:request
-  Request parameters:
-    - request: the unique ID of the request 
-  Response:
-    - success: true if the server succeeded in getting the specific request
-    - content: on success, the fweet object with ID equal to the fweet referenced in the URL
-    - err: on failure, an error message
-*/
-router.get('/:request', function(req, res) {
-  utils.sendSuccessResponse(res, req.request);
-});
+
 
 // Post for requests? Sign up to take an open request
+/*
+  POST /requests/addCandidate
+  Signs the current user up to take the request specified by the requestID.
+  Params:
+    - requestId - unique id of the request
+*/
+router.post('/addCandidate',function(req,res)){
 
+});
+
+/*
+  POST /requests/accept
+
+  Params:
+    - requestId - unique id of the request
+*/
+router.post('/acceptCandidate',function(req,res)){
+
+});
+
+/*
+  POST /requests/create
+  Params:
+    No params.
+*/
+router.post('/create', function(req,res){
+
+});
 
 
 /*

@@ -107,15 +107,15 @@ router.post('/', function(req, res) {
   }
 
   User.createNewUser(req.body.username, req.body.password, 
-    function(err) {
+    function(err, taken) {
       if (err) {
-        if (err.taken) {
+        if (!taken) {
           utils.sendErrResponse(res, 400, 'That username is already taken!');
         } else {
-          utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+          utils.sendSuccessResponse(res, req.body.username);111
         }
       } else {
-        utils.sendSuccessResponse(res, req.body.username);
+        utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
       }
   });
 });
@@ -137,14 +137,7 @@ router.get('/current', function(req, res) {
   }
 });
 
-// Post to make request - post to accept request taker
-router.post('/request/create', function(req,res){
 
-});
 
-// Assign
-router.post('/request/aefweaffweaf', function(req,res){
-
-});
 
 module.exports = router;
