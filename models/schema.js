@@ -216,12 +216,18 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
   requestData.status = 'Open';
   requestData.candidates = [];
   requestData.helpers = [];
-  that.create(requestData, function(err, request){
+  userModel.getUser(user, function(err, user){
     if (err) cb(err);
     else {
-      userModel.addRequest(user, request, function(err){
+      requestData.creator = user;
+      that.create(requestData, function(err, request){
         if (err) cb(err);
-        else cb(null);
+        else {
+          userModel.addRequest(user, request, function(err){
+            if (err) cb(err);
+            else cb(null);
+          });
+        }
       });
     }
   });
