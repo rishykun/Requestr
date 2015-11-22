@@ -5,6 +5,79 @@ console.log("request.js loaded"); //debug
 var handleRequest; //define handleRequest so that it can be used by the frontend
 $(document).ready(function() {
 
+	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
+
+	/*
+		instantiates login function in the login form's login button
+	*/
+	$("#login-form").submit(function(event) {
+		event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
+
+		//prepare data to be sent over to backend authentication server
+		//automatic data sanitization
+		var username = $("#login-username").val();
+		var password = $("#login-password").val();
+
+		performLoginRequest(username, password);
+	});
+
+	/*
+		instantiates signup function in the signup form's signup button
+	*/
+	$("#signup-form").submit(function(event) {
+		event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
+
+		//prepare data to be sent over to backend authentication server
+		//automatic data sanitization
+		var username = $("#signup-username").val();
+		var password = $("#signup-password").val();
+
+		$.post("/users", {
+			"username": username,
+			"password": password
+		})
+		//when done, log user in because successful signup doesn't automatically log user in
+		.done(function(data) {
+			performLoginRequest(username, password);
+		})
+		//failed response from registration request
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	});
+
+	/*
+		makes a call to the server and attempts to authenticate with the specified credentials
+		if successfully authenticated, the page will reload with the correct userprofile and data
+		and the user will be "logged in"
+		parameters:
+			username - the username to check against
+			password - the password to check against
+	*/
+	var performLoginRequest = function(username, password) {
+		//make post request to login route
+		$.post("/users/login", {
+			"username": username,
+			"password": password
+		})
+		//successful response from login request
+		.done(function(data) {
+			//if signin was successful
+			if (data.success) {
+				location.href="/"; //reload page
+
+				$("#login-modal").modal("hide");
+			} else { //signup failed
+				console.error("ERROR: Login failed");
+			}
+		})
+		//failed response from login request
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	}
+
+
 	$("#request-expires").datepicker();
 
 	/*
@@ -62,7 +135,7 @@ $(document).ready(function() {
 			var expires = $("#request-expires").val();
 
 			//make post request to request route
-			$.post("/request", {
+			$.post("/requests", {
 				"title": title,
 				"desc": desc,
 				"expires": expires,

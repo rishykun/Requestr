@@ -57,10 +57,8 @@ router.get('/', function(req, res) {
 	}
 	//if not logged in, render with no userProfile data
 	else {
-		console.log("WARNING: NOT LOGGED IN BUT NONNULL USERPROFILE"); //debug
 		res.render('index', {
-			userProfile: "USER"
-			//userProfile: undefined
+			userProfile: undefined
 		});
 	}
 });

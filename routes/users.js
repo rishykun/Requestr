@@ -93,14 +93,19 @@ router.post('/logout', function(req, res) {
     - err: on error, an error message
 */
 router.post('/', function(req, res) {
+
+  console.log("asdasdasda"); //debug
+
   if (isLoggedInOrInvalidBody(req, res)) {
     return;
   }
 
   User.createNewUser(req.body.username, req.body.password, 
     function(err, taken) {
-      if (err) {
-        if (!taken) {
+
+      console.log("asdas"); //debug
+      if (!err) {
+        if (taken) {
           utils.sendErrResponse(res, 400, 'That username is already taken!');
         } else {
           utils.sendSuccessResponse(res, req.body.username);

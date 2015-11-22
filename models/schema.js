@@ -29,18 +29,19 @@ UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
 }
 
 UserSchema.statics.createNewUser = function(user, password, cb){
-  this.find({username: user}, function(err, userQuery){
+  var that = this;
+  that.find({username: user}, function(err, userQuery){
     if (err) console.log(err);
     else if (userQuery.length == 0) {
-      this.create({
+      that.create({
         'username': user,
         'password': password,
         'myRequests': [],
         'requestsTaken': []
       },  function(err, res) {
         if (err) console.log(err);
+        else cb(null, false); //not taken
       });
-      cb(null, false); //not taken
     }
     else cb(null, true); //taken
   });
