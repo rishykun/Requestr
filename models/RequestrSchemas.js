@@ -32,9 +32,9 @@ var requestSchema = mongoose.Schema({
   },
   expirationDate: Date,
   status: String,
-  signedUpHelpers: String,
-  category: String,
-  tag: Array,
+  signedUpHelpers: [String],
+  //category: String, //not for MVP
+  //tag: [String], //not for MVP
 });
 
 // Not necessary for MVP
