@@ -14,6 +14,8 @@ router.get('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
 
+		console.log("user logged in"); //debug
+
 		res.render('index', {
 			userProfile: req.currentUser
 		});
