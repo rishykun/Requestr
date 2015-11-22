@@ -67,9 +67,10 @@ router.get('/', function(req, res) {
   POST /requests/addCandidate
   Signs the current user up to take the request specified by the requestID.
   Params:
-    - requestId - unique id of the request
+    - request_id - unique id of the request
 */
 router.post('/addCandidate',function(req,res){
+  console.log("here");
   Request.addCandidate(req.request_id, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
