@@ -3,8 +3,9 @@ var express = require('express');
 var router = express.Router();
 var utils = require('../utils/utils');
 
-var Schema= require('../models/requestrSchema');
-
+var Schema = require('../models/schema');
+var User = Schema.User;
+var Request = Schema.Request;
 /*
   Require authentication on ALL access to /requests/*
   Clients who are not logged in will receive a 403 error code.
@@ -62,7 +63,7 @@ router.post('/create', requireDescription);
     - err: on failure, an error message
 */
 router.get('/', function(req, res) {
-  User.getRequests(req.currentUser.username, function(err, requests) {
+  Request.getAllRequests(req.currentUser.username, function(err, requests) {
     if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -70,6 +71,7 @@ router.get('/', function(req, res) {
     }
   });
 });
+
 
 
 
@@ -82,17 +84,29 @@ router.get('/', function(req, res) {
     - requestId - unique id of the request
 */
 router.post('/addCandidate',function(req,res)){
-
+  Request.addCandidate(req.request_id, req.currentUser.username, function(err){
+      if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res);
+    }
+  });
 });
 
 /*
   POST /requests/accept
 
   Params:
-    - requestId - unique id of the request
+    - request_id - unique id of the request
 */
 router.post('/acceptCandidate',function(req,res)){
-
+  Request.acceptCandidate(req.request_id, req.currentUser.username, function(err){
+      if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res);
+    }
+  });
 });
 
 /*
@@ -100,23 +114,31 @@ router.post('/acceptCandidate',function(req,res)){
   Params:
     No params.
 */
+// json with title description - date created - expiration date
 router.post('/create', function(req,res){
-
+  Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'created': new Date(), 'description': desc, 'expires':req.body.expires},
+    function(err){
+       if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res);
+    }
+    });
 });
 
 
 /*
   DELETE /requests/:request
   Request parameters:
-    - request ID: the unique ID of the request within the logged in user's request collection
+    - request_id: the unique ID of the request within the logged in user's request collection
   Response:
     - success: true if the server succeeded in deleting the user's request
     - err: on failure, an error message
 */
+// Requires Ownership (middleware)
 router.delete('/:request', function(req, res) {
-  User.removeRequest(
-    req.currentUser.username, 
-    req.request._id, 
+  Request.removeRequest( 
+    req.request_id, 
     function(err) {
       if (err) {
         utils.sendErrResponse(res, 500, 'An unknown error occurred.');

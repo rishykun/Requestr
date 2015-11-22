@@ -9,8 +9,7 @@ var bodyParser = require("body-parser");
 // Import route handlers
 var index = require('./routes/index');
 var users = require('./routes/users');
-var subscriptions = require('./routes/subscriptions');
-var posts = require('./routes/posts');
+var posts = require('./routes/requests');
 
 //import backend database handler
 var mongoose = require("mongoose");
@@ -19,7 +18,9 @@ var mongoose = require("mongoose");
 mongoose.connect(process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost:27017/requestr'); // connect to our database
 
 // Import User model
-var User = require('./models/User');
+var Schema = require('./models/schema')
+var User = Schema.User;
+var Request = Schema.Request;
 
 //setup app
 var app = express();
@@ -60,7 +61,7 @@ app.use(function(req, res, next) {
 app.use('/', index);
 app.use('/', subscriptions);
 app.use('/users', users);
-app.use('/posts', posts);
+app.use('/requests', requests);
 
 
 // ERROR HANDLERS
