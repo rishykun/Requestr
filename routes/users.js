@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 var utils = require('../utils/utils');
 
-var User = require('../models/User');
+var Schema = require('../models/schema');
+var User = Schema.User;
 
 /*
   For both login and create user, we want to send an error code if the user
@@ -102,7 +103,7 @@ router.post('/', function(req, res) {
         if (!taken) {
           utils.sendErrResponse(res, 400, 'That username is already taken!');
         } else {
-          utils.sendSuccessResponse(res, req.body.username);111
+          utils.sendSuccessResponse(res, req.body.username);
         }
       } else {
         utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
