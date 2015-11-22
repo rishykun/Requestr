@@ -17,6 +17,7 @@ var mongoose = require("mongoose");
 //connect to backend database
 //mongoose.connect(process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost:27017/requestr'); // connect to our database
 
+
 // Import User model
 var Schema = require('./models/schema')
 var User = Schema.User;
@@ -59,7 +60,6 @@ app.use(function(req, res, next) {
 
 // Map paths to imported route handlers
 app.use('/', index);
-app.use('/', subscriptions);
 app.use('/users', users);
 app.use('/requests', requests);
 

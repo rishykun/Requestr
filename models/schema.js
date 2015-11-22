@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 //database model type for user collection
-var UserSchema = mongooose.Schema({
+var UserSchema = mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -25,7 +25,6 @@ UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
       if (candidatepw === userQuery[0].password) cb(null, true);
       else cb(null, false);
     }
-    else cb({ msg : 'No such user!' });
   });
 }
 
@@ -40,7 +39,7 @@ UserSchema.statics.createNewUser = function(user, password, cb){
         'requestsTaken': []
       },  function(err, res) {
         if (err) console.log(err);
-      }));
+      });
       cb(null, false); //not taken
     }
     else cb(null, true); //taken
@@ -49,9 +48,15 @@ UserSchema.statics.createNewUser = function(user, password, cb){
 
 UserSchema.statics.getUser = function(user, cb){
   this.find({ username: user }, function(err, userQuery){
-    if (err) console.log(err);
-    else if (userQuery.length == 0) cb({msg: "No such user!"});
-    else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
+    if (err) {
+      console.log(err);
+    }
+    else if (userQuery.length == 0) {
+      cb({msg: "No such user!"});
+    }
+    else if (userQuery.length > 1) {
+      cb({msg: "Multiple usernames exist!"});
+    }
     else {
       cb(null, userQuery[0]);
     }
@@ -143,7 +148,7 @@ var RequestSchema = mongoose.Schema({
     ref: 'User',
     required: true
   },
-  dateCreated: Date
+  dateCreated: Date,
   expirationDate: Date,
   status: String,
   candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
@@ -237,7 +242,7 @@ RequestSchema.statics.acceptCandidate = function(requestId, candidate, cb){
     if (err) console.log(err);
     else {
       this.getRequestById(requestId, function(err, result){
-        this.update(result, {$pull: {'candidates': candidate}, $push{'helpers': candidate}}, {upsert: true}, function(err){
+        this.update(result, {$pull: {'candidates': candidate}, $push: {'helpers': candidate}}, {upsert: true}, function(err){
           if (err) console.log(err);
           else cb(null);
         });

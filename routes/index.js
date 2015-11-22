@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var User = require('../models/User');
-var Message = require('../models/Message');
+var User = require('../models/schema');
 
 /*
 	GET home page.
@@ -14,7 +13,13 @@ var Message = require('../models/Message');
 router.get('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
+
+		res.render('index', {
+			userProfile: req.currentUser
+		});
+
 		//attempt to find and load user data from the User model store
+		/*
 		User.findByUsername(req.currentUser.username, function(err, data) {
 			var profile = {};
 			profile.username = data.username;
@@ -48,11 +53,14 @@ router.get('/', function(req, res) {
 				
 			}
 		});
+*/
 	}
 	//if not logged in, render with no userProfile data
 	else {
+		console.log("WARNING: NOT LOGGED IN BUT NONNULL USERPROFILE"); //debug
 		res.render('index', {
-			userProfile: undefined
+			userProfile: "USER"
+			//userProfile: undefined
 		});
 	}
 });

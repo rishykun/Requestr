@@ -1,17 +1,45 @@
-<div id="nav-bar" class="navBar">
-	<!-- requestr icon -->
-	<img src="requestr_icon_transparent.png" class="icon"></img>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Requestr</a>
+    </div>
 
-	<!-- display the logout, see users, and home button only if the user is logged in -->
-	<% if (userProfile) { %>
-		<button type="button" class="btn btn-primary nav-button" id="logout-button">Logout</button>
-		<button type="button" class="btn btn-primary nav-button" id="users-button">See All Users</button>
-		<button type="button" class="btn btn-primary nav-button" id="home-button">Home</button>
-		<label id="username" class="large-font">Welcome, <%= userProfile.username %></label>
-	<!-- otherwise, only display the login/signup button -->
-	<% } else { %>
-		<button type="button" class="btn btn-primary nav-button" data-toggle="modal" data-target="#login-modal">Login / Signup</button>
-	<% } %>
-</div>
-<!-- positions main page content to be below navigation bar -->
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+      	<li><a data-toggle="modal" data-target="#createRequestModal"><b>Create New Request</b></a>
+        <li><a href="#">Messages</a></li>
+        <li><a href="#">Search Helpers</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Requests <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Active</a></li>
+            <li><a href="#">In Progress</a></li>
+            <li><a href="#">Completed</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Accepted Requests <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">In Progress</a></li>
+            <li><a href="#">Completed</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-right" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search Open Requests">
+        </div>
+        <button type="submit" class="btn btn-default">Search</button>
+      </form>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 <div id="below-nav-bar"></div>
