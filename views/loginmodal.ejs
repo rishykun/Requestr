@@ -1,0 +1,42 @@
+<!-- Login/Signup Modal -->
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-modal-label">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="login-label">Login/Signup</h4>
+			</div>
+			<div class="modal-body">
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" role="tablist">
+					<li role="presentation" class="active"><a href="#login-tab" aria-controls="login" role="tab" data-toggle="tab">Login</a></li>
+					<li role="presentation"><a href="#signup-tab" aria-controls="signup" role="tab" data-toggle="tab">Signup</a></li>
+				</ul>
+
+				<!-- Tab panes -->
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane fade in active" id="login-tab">
+						<h3>Please Login</h3>
+						<form id="login-form">
+							Username:<br>
+							<input type="text" id="login-username" name="username" required><br>
+							Password:<br>
+							<input type="password" id="login-password" name="password" required><br><br>
+							<input type="submit" class="btn btn-primary" value="Login">
+						</form>
+					</div>
+					<div role="tabpanel" class="tab-pane fade" id="signup-tab">
+						<h3>Please Signup</h3>
+						<form id="signup-form">
+							Desired username:<br>
+							<input type="text" id="signup-username" name="username" required><br>
+							Desired password:<br>
+							<input type="password" id="signup-password" name="password" required><br><br>
+							<input type="submit" class="btn btn-primary" value="Signup">
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

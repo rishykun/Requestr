@@ -1,0 +1,17 @@
+<div id="nav-bar" class="navBar">
+	<!-- fritter icon -->
+	<img src="fritter_icon_transparent.png" class="icon"></img>
+
+	<!-- display the logout, see users, and home button only if the user is logged in -->
+	<% if (userProfile) { %>
+		<button type="button" class="btn btn-primary nav-button" id="logout-button">Logout</button>
+		<button type="button" class="btn btn-primary nav-button" id="users-button">See All Users</button>
+		<button type="button" class="btn btn-primary nav-button" id="home-button">Home</button>
+		<label id="username" class="large-font">Welcome, <%= userProfile.username %></label>
+	<!-- otherwise, only display the login/signup button -->
+	<% } else { %>
+		<button type="button" class="btn btn-primary nav-button" data-toggle="modal" data-target="#login-modal">Login / Signup</button>
+	<% } %>
+</div>
+<!-- positions main page content to be below navigation bar -->
+<div id="below-nav-bar"></div>

@@ -1,0 +1,34 @@
+<html>
+<head>
+		<% include header.ejs %>
+</head>
+
+<body class="gray-background">
+	<div id="background-container">
+		<% include navbar.ejs %>
+		<% if (userProfile) { %>
+			<h2 class="center-text white-text"> Users </h2>
+			<% if (users.length > 0) { %>
+				<% users.forEach(function(user) { %>
+					<!-- don't display the logged in user -->
+					<% if (user !== userProfile.username) { %>
+						<div class="center-text">
+							<h3 class="white-text subscribe-label"><%= user %></h3>
+							<!-- display the subscribe button if the user is not listed in the logged in user's subscription list -->
+							<% if (userProfile.following.indexOf(user) === -1) { %>
+								<label class="btn btn-default subscribe-button"><input type="checkbox" name="subscribe-box" onclick="subscribe('<%= user %>')">Subscribe</label>
+							<!-- otherwise, if the user is listed in the logged in user's subscription list, display the unsubscribe button -->
+							<% } else { %>
+								<label class="btn btn-success subscribe-button"><input type="checkbox" name="subscribe-box" checked="true" onclick="unsubscribe('<%= user %>')">Unsubscribe</label>
+							<% } %>
+						</div>
+					<% } %>
+				<% }); %>
+			<% } %>
+		<% } else { %>
+			<% include loginmodal %>
+			<h1 id="login-message"> Please login or signup to use this app </h1>
+		<% } %>
+	<div>
+</body>
+</html>

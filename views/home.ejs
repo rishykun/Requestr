@@ -1,0 +1,69 @@
+<input id="tweet-field" type="text" name="tweetText" class="textfield rounded-borders-lg large-font" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Press enter to fritt (submit) your message" placeholder="How are you feeling today, <%=userProfile.username%>?">
+
+<!-- filter buttons group -->
+<div id="filter-group" class="filter-group center-text" data-toggle="buttons">
+</div>
+
+<div id="tweets-container">
+	<!-- logic for how to display the message -->
+	<% if (allMessages.length > 0) { %>
+		<% allMessages.forEach(function(message) { %>
+			<!-- if the message author is the logged in user -->
+			<% if (userProfile.username === message.author) { %>
+				<!-- if the logged in user is also the sharer, display message on the left as user's own message -->
+				<% if (userProfile.username === message.sharer) { %>
+				<div class="message-box rounded-borders message-box-self message-box-left">
+					<button type="button" class="close message-box-tool" onclick="deleteMessage('<%= message.id %>')"><span aria-hidden="true">&times;</span></button>
+				<% } else { %>
+				<!-- otherwise, display on the right because it is a message the logged in user authored that has been shared by other users -->
+				<div class="message-box rounded-borders message-box-shared message-box-right
+					<% if (userProfile.following.indexOf(message.sharer) !== -1) {%>
+						subscribed
+					<% } %>
+				"> <!-- add the "subscribed" class if the message sharer is in the logged in user's subscription list -->
+				<% } %>
+			<!-- if the logged in user isn't the author, but the message author and sharer are the same, then it's a message that has been originally created by another user, display on the right -->
+			<% } else if (message.author === message.sharer) { %>
+				<div class="message-box rounded-borders message-box-others message-box-right
+					<% if (userProfile.following.indexOf(message.sharer) !== -1) {%>
+						subscribed
+					<% } %> 
+				"> <!-- add the "subscribed" class if the message sharer is in the logged in user's subscription list -->
+			<!-- otherwise, it's a shared message of some sort -->
+			<% } else { %>
+				<!-- if the logged in user is the sharer, display the shared message as one of the user's own on the left -->
+				<% if (userProfile.username === message.sharer) { %>
+					<div class="message-box rounded-borders message-box-shared message-box-left">
+				<!-- otherwise, the logged in user has nothing to do with the shared message, so display it on the right -->
+				<% } else { %>
+					<div class="message-box rounded-borders message-box-shared message-box-right
+						<% if (userProfile.following.indexOf(message.author) !== -1 || userProfile.following.indexOf(message.sharer) !== -1) {%>
+							subscribed
+						<% } %>
+					"> <!-- add the "subscribed" class if the message sharer is in the logged in user's subscription list -->
+				<% } %>
+				<!-- if the logged in user is the sharer of the message (either originally created, or sharing someone else's) then display the delete button -->
+				<% if (userProfile.username === message.sharer) { %>
+					<button type="button" class="close message-box-tool" onclick="deleteMessage('<%= message.id %>')"><span aria-hidden="true">&times;</span></button>
+				<% } %>
+			<% } %>
+			<!-- if the logged in user is neither the author nor sharer, then display the share button -->
+			<% if (userProfile.username !== message.author && userProfile.username !== message.sharer) { %>
+					<button type="button" class="close message-box-share" onclick="shareMessage('<%= message.id %>')">Share</button>
+			<% } %>
+					<div class="message-box-content">
+						<%= message.value %>
+					</div>
+					<div class="message-box-author">
+						- <%= message.author %>
+						<% if (message.author !== message.sharer) { %>
+							(shared by <%= message.sharer %>)
+						<% } %>
+						<i><%= message.timestamp.toLocaleString()%></i>
+					</div>
+				</div>
+		<% }); %>
+	<% } else { %>
+		No posts today
+	<% } %>
+</div>
