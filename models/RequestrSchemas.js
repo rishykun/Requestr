@@ -1,11 +1,35 @@
 var mongoose = require("mongoose");
 
+//database model type for user collection
+var userSchema = mongooose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  requestIds: [String],
+  requestsTaken: [String],
+  dateCreated: Date,
+  numRequestsCompleted: Number,
+});
+
 // Category field might need to be changed - can a request be in more than one category?
 var requestSchema = mongoose.Schema({
-  _id: String,
+  _id: {
+    type: String,
+    required: true,
+    unique: true
+  },
   title: String,
   description: String,
-  creator: String,
+  creator: {
+    type: String,
+    required: true
+  },
   expirationDate: Date,
   status: String,
   signedUpHelpers: String,
@@ -13,17 +37,8 @@ var requestSchema = mongoose.Schema({
   tag: Array,
 });
 
-var userSchema = mongooose.Schema({
-	username: String,
-	password: String,
-	requestIds: Array,
-	requestsTaken: Array,
-	dateCreated: Date,
-	numRequestsCompleted: Number,
-});
-
 // Not necessary for MVP
-var reviewSchema = mongoos.Schema({
+var reviewSchema = mongoose.Schema({
 
 });
 // When we 'require' this model in another file (e.g. routes),
