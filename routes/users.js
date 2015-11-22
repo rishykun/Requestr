@@ -21,17 +21,7 @@ var isLoggedInOrInvalidBody = function(req, res) {
   return false;
 };
 
-/*
-  For create and edit requests, require that the request body
-  contains a 'description' field. Send error code 400 if not.
-*/
-var requireDescription = function(req, res, next) {
-  if (!req.body.content) {
-    utils.sendErrResponse(res, 400, 'Description required in request.');
-  } else {
-    next();
-  }
-};
+
 
 /*
   This function will check to see that the provided username-password combination 
