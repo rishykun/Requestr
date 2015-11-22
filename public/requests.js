@@ -24,7 +24,7 @@ $(document).ready(function() {
 		var expires = $("#request-expires").val();
 
 		//make post request to request route
-		$.post("/request", {
+		$.post("/requests", {
 			"title": title,
 			"desc": desc,
 			"expires": expires,
@@ -83,7 +83,7 @@ $(document).ready(function() {
 		}
 		if (eventType === "accept") {
 			//accept request
-			$.post("/request/addCandidate", {
+			$.post("/requests/addCandidate", {
 				"request_id": request_id
 			})
 			//successful response from request creation
