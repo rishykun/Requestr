@@ -4,6 +4,9 @@
 console.log("request.js loaded"); //debug
 var handleRequest; //define handleRequest so that it can be used by the frontend
 $(document).ready(function() {
+
+	$("#request-expires").datepicker();
+
 	/*
 		instantiates create request function in the request form's submit button
 
@@ -18,14 +21,13 @@ $(document).ready(function() {
 		//we handle data sanitization here
 		var title = $("#request-title").val();
 		var desc = $("#request-desc").val();
-		var expirDate = null //todo: get date field
+		var expires = $("#request-expires").val();
 
 		//make post request to request route
-		$.post("/requests/", {
+		$.post("/request", {
 			"title": title,
 			"desc": desc,
-			"creator": "USER", //todo: change to loggedin user's value
-			"expirDate": expirDate,
+			"expires": expires,
 		})
 		//successful response from request creation
 		.done(function(data) {
