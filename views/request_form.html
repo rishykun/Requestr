@@ -1,0 +1,36 @@
+<html>
+<head>
+	<title>Requestr v0.1</title>
+	<!-- javascript -->
+	<!-- external -->
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<!-- <script src="ejs/ejs.js"></script> -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!-- internal -->
+	<script src="requests.js"></script>
+
+	<!-- css -->
+	<!-- external -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<!--internal -->
+</head>
+
+<body>
+	<form id="request-form">
+		New Request
+		<br>
+		<label for"requestTitle">Title:</label>
+		<input type="text" name="requestTitle" id="request-title" placeholder="Enter a title" required></input>
+		<br>
+		<label for"requestDesc">Description:</label>
+		<input type="text" name="requestDesc" id="request-desc" placeholder="Enter a description" required></input>
+		<br>
+		<label for"requestRewards">Rewards:</label>
+		<input type="text" name="requestRewards" id="request-rewards" placeholder="Enter reward(s)" required></input>
+		<br>
+		<button class="btn btn-primary">Submit</button>
+	</form>
+
+</body>
+
+</html>
