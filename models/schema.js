@@ -17,7 +17,8 @@ var UserSchema = mongoose.Schema({
 });
 
 UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
-  this.find({username: user}, function(err, userQuery){
+  var that = this;
+  that.find({username: user}, function(err, userQuery){
     if (err) console.log(err);
     else if (userQuery.length == 0) cb({msg: "No such user!"});
     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
@@ -48,7 +49,8 @@ UserSchema.statics.createNewUser = function(user, password, cb){
 }
 
 UserSchema.statics.getUser = function(user, cb){
-  this.find({ username: user }, function(err, userQuery){
+  var that = this;
+  that.find({ username: user }, function(err, userQuery){
     if (err) {
       console.log(err);
     }
@@ -65,12 +67,13 @@ UserSchema.statics.getUser = function(user, cb){
 }
 
 UserSchema.statics.getUserData = function(user, cb){
-  this.getUser(user, function(err, user){
+  var that = this;
+  that.getUser(user, function(err, user){
    if (err) console.log(err);
-   this.populate(user, {path: 'myRequests'}, function(err, result){
+   that.populate(user, {path: 'myRequests'}, function(err, result){
     if (err) console.log(err);
     else {
-      this.populate(result, {path: 'requestsTaken'}, function(err, result){
+      that.populate(result, {path: 'requestsTaken'}, function(err, result){
         if (err) console.log(err);
           else cb(null, result); //candidates and helpers not populated
         });
@@ -80,12 +83,13 @@ UserSchema.statics.getUserData = function(user, cb){
 }
 
 UserSchema.statics.getUserRequests = function(user, cb) {
-  this.find({ username: user }, function(err, userQuery){
+  var that = this;
+  that.find({ username: user }, function(err, userQuery){
     if (err) console.log(err);
     else if (userQuery.length == 0) cb({msg: "No such user!"});
     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
     else {
-      this.populate(userQuery[0], {path: 'myRequests'}, function(err, result){
+      that.populate(userQuery[0], {path: 'myRequests'}, function(err, result){
         if (err) console.log(err);
         else cb(null, result); //candidates and helpers not populated
       });
@@ -94,12 +98,13 @@ UserSchema.statics.getUserRequests = function(user, cb) {
 }
 
 UserSchema.statics.getRequestsTaken = function(user, cb){
-  this.find({ username: user }, function(err, userQuery){
+  var that = this;
+  that.find({ username: user }, function(err, userQuery){
     if (err) console.log(err);
     else if (userQuery.length == 0) cb({msg: "No such user!"});
     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
     else {
-      this.populate(userQuery[0], {path: 'requestsTaken'}, function(err, result){
+      that.populate(userQuery[0], {path: 'requestsTaken'}, function(err, result){
         if (err) console.log(err);
         else cb(null, result); //candidates and helpers not populated
       });
@@ -108,12 +113,13 @@ UserSchema.statics.getRequestsTaken = function(user, cb){
 }
 
 UserSchema.statics.addRequest = function(user, requestId, cb){
-  this.find({ username: user }, function(err, userQuery){
+  var that = this;
+  that.find({ username: user }, function(err, userQuery){
     if (err) console.log(err);
     else if (userQuery.length == 0) cb({msg: "No such user!"});
     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
     else {
-      this.update(userQuery[0],{$push: {'myRequests': requestId}},{upsert:true},function(err){
+      that.update(userQuery[0],{$push: {'myRequests': requestId}},{upsert:true},function(err){
         if(err) console.log(err);
         else cb(null);
       });
@@ -122,12 +128,13 @@ UserSchema.statics.addRequest = function(user, requestId, cb){
 }
 
 UserSchema.statics.removeRequest = function(user, requestModel, requestId, cb){
-  this.find({ username: user }, function(err, userQuery){
+  var that = this;
+  that.find({ username: user }, function(err, userQuery){
     if (err) console.log(err);
     else if (userQuery.length == 0) cb({msg: "No such user!"});
     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
     else {
-      this.update(userQuery[0],{$pull: {'myRequests': requestId}},{upsert:true},function(err){
+      that.update(userQuery[0],{$pull: {'myRequests': requestId}},{upsert:true},function(err){
         if(err) console.log(err);
         else {
           requestModel.removeRequest(requestId, function(err){
@@ -159,16 +166,17 @@ var RequestSchema = mongoose.Schema({
 });
 
 RequestSchema.statics.getRequestById = function(requestId, cb){
-  this.find({ _id: requestId }, function(err, requestQuery){
+  var that = this;
+  that.find({ _id: requestId }, function(err, requestQuery){
     if (err) console.log(err);
     else {
-      this.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
+      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
         if (err) console.log(err);
         else {
-          this.populate(requestQuery, {path: 'candidates'}, function(err, result){
+          that.populate(requestQuery, {path: 'candidates'}, function(err, result){
             if (err) console.log(err);
             else {
-              this.populate(result[0], {path: 'helpers'}, function(err, result){
+              that.populate(result[0], {path: 'helpers'}, function(err, result){
                 if(err) console.log(err);
                 else cb(null, result[0]); //candidates and helpers populated
               });
@@ -181,16 +189,17 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
 }
 
 RequestSchema.statics.getAllRequests = function(cb){
-  this.find({}, function(err, requestQuery){
+  var that = this;
+  that.find({}, function(err, requestQuery){
     if (err) console.log(err);
     else {
-      this.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
+      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
         if (err) console.log(err);
         else {
-          this.populate(requestQuery, {path: 'candidates'}, function(err, result){
+          that.populate(requestQuery, {path: 'candidates'}, function(err, result){
             if (err) console.log(err);
             else {
-              this.populate(result, {path: 'helpers'}, function(err, result){
+              that.populate(result, {path: 'helpers'}, function(err, result){
                 if(err) console.log(err);
                 else cb(null, result); //candidates and helpers populated
               });
@@ -203,10 +212,11 @@ RequestSchema.statics.getAllRequests = function(cb){
 };
 
 RequestSchema.statics.createRequest = function(userModel, user, requestData, cb){
+  var that = this;
   requestData.status = 'Open';
   requestData.candidates = [];
   requestData.helpers = [];
-  this.create(requestData, function(err, request){
+  that.create(requestData, function(err, request){
     if (err) console.log(err);
     else {
       userModel.addRequest(user, request, function(err){
@@ -218,18 +228,20 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
 }
 
 RequestSchema.statics.removeRequest = function(requestId, cb){
-  this.remove({ _id: requestId }, function(err){
+  var that = this;
+  that.remove({ _id: requestId }, function(err){
     if (err) console.log(err);
     else cb(null);
   });
 }
 
 RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
+  var that = this;
   userModel.getUser(candidate, function(err, candidate){
     if (err) console.log(err);
     else {
-      this.getRequestById(requestId, function(err, result){
-        this.update(result, {$push: {'candidates': candidate}}, {upsert: true}, function(err){
+      that.getRequestById(requestId, function(err, result){
+        that.update(result, {$push: {'candidates': candidate}}, {upsert: true}, function(err){
           if (err) console.log(err);
           else cb(null);
         });
@@ -239,11 +251,12 @@ RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, c
 }
 
 RequestSchema.statics.acceptCandidate = function(requestId, candidate, cb){
+  var that = this;
   userModel.getUser(candidate, function(err, candidate){
     if (err) console.log(err);
     else {
-      this.getRequestById(requestId, function(err, result){
-        this.update(result, {$pull: {'candidates': candidate}, $push: {'helpers': candidate}}, {upsert: true}, function(err){
+      that.getRequestById(requestId, function(err, result){
+        that.update(result, {$pull: {'candidates': candidate}, $push: {'helpers': candidate}}, {upsert: true}, function(err){
           if (err) console.log(err);
           else cb(null);
         });
