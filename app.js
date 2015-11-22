@@ -9,7 +9,7 @@ var bodyParser = require("body-parser");
 // Import route handlers
 var index = require('./routes/index');
 var users = require('./routes/users');
-var posts = require('./routes/requests');
+var requests = require('./routes/requests');
 
 //import backend database handler
 var mongoose = require("mongoose");
@@ -59,7 +59,6 @@ app.use(function(req, res, next) {
 
 // Map paths to imported route handlers
 app.use('/', index);
-app.use('/', subscriptions);
 app.use('/users', users);
 app.use('/requests', requests);
 

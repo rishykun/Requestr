@@ -83,7 +83,7 @@ router.get('/', function(req, res) {
   Params:
     - requestId - unique id of the request
 */
-router.post('/addCandidate',function(req,res)){
+router.post('/addCandidate',function(req,res){
   Request.addCandidate(req.request_id, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
@@ -99,7 +99,7 @@ router.post('/addCandidate',function(req,res)){
   Params:
     - request_id - unique id of the request
 */
-router.post('/acceptCandidate',function(req,res)){
+router.post('/acceptCandidate',function(req,res){
   Request.acceptCandidate(req.request_id, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
