@@ -5,6 +5,49 @@ console.log("request.js loaded"); //debug
 var handleRequest; //define handleRequest so that it can be used by the frontend
 $(document).ready(function() {
 
+	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
+
+	/*
+		instantiates login function in the login form's login button
+	*/
+	$("#login-form").submit(function(event) {
+		event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
+
+		//prepare data to be sent over to backend authentication server
+		//automatic data sanitization
+		var username = $("#login-username").val();
+		var password = $("#login-password").val();
+
+		performLoginRequest(username, password);
+	});
+
+	/*
+		instantiates signup function in the signup form's signup button
+	*/
+	$("#signup-form").submit(function(event) {
+		event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
+
+		//prepare data to be sent over to backend authentication server
+		//automatic data sanitization
+		var username = $("#signup-username").val();
+		var password = $("#signup-password").val();
+
+		$.post("/users", {
+			"username": username,
+			"password": password
+		})
+		//when done, log user in because successful signup doesn't automatically log user in
+		.done(function(data) {
+			performLoginRequest(username, password);
+		})
+		//failed response from registration request
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	});
+
+
+	
 	$("#request-expires").datepicker();
 
 	/*
@@ -62,7 +105,7 @@ $(document).ready(function() {
 			var expires = $("#request-expires").val();
 
 			//make post request to request route
-			$.post("/request", {
+			$.post("/requests", {
 				"title": title,
 				"desc": desc,
 				"expires": expires,
