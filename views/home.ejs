@@ -1,69 +1,40 @@
-<input id="tweet-field" type="text" name="tweetText" class="textfield rounded-borders-lg large-font" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Press enter to fritt (submit) your message" placeholder="How are you feeling today, <%=userProfile.username%>?">
+<input id="request-search" type="text" name="searchText" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by request ID, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 50px">
 
 <!-- filter buttons group -->
-<div id="filter-group" class="filter-group center-text" data-toggle="buttons">
+<div id="filter-group" data-toggle="buttons">
 </div>
 
-<div id="tweets-container">
-	<!-- logic for how to display the message -->
-	<% if (allMessages.length > 0) { %>
-		<% allMessages.forEach(function(message) { %>
-			<!-- if the message author is the logged in user -->
-			<% if (userProfile.username === message.author) { %>
-				<!-- if the logged in user is also the sharer, display message on the left as user's own message -->
-				<% if (userProfile.username === message.sharer) { %>
-				<div class="message-box rounded-borders message-box-self message-box-left">
-					<button type="button" class="close message-box-tool" onclick="deleteMessage('<%= message.id %>')"><span aria-hidden="true">&times;</span></button>
-				<% } else { %>
-				<!-- otherwise, display on the right because it is a message the logged in user authored that has been shared by other users -->
-				<div class="message-box rounded-borders message-box-shared message-box-right
-					<% if (userProfile.following.indexOf(message.sharer) !== -1) {%>
-						subscribed
-					<% } %>
-				"> <!-- add the "subscribed" class if the message sharer is in the logged in user's subscription list -->
-				<% } %>
-			<!-- if the logged in user isn't the author, but the message author and sharer are the same, then it's a message that has been originally created by another user, display on the right -->
-			<% } else if (message.author === message.sharer) { %>
-				<div class="message-box rounded-borders message-box-others message-box-right
-					<% if (userProfile.following.indexOf(message.sharer) !== -1) {%>
-						subscribed
-					<% } %> 
-				"> <!-- add the "subscribed" class if the message sharer is in the logged in user's subscription list -->
-			<!-- otherwise, it's a shared message of some sort -->
-			<% } else { %>
-				<!-- if the logged in user is the sharer, display the shared message as one of the user's own on the left -->
-				<% if (userProfile.username === message.sharer) { %>
-					<div class="message-box rounded-borders message-box-shared message-box-left">
-				<!-- otherwise, the logged in user has nothing to do with the shared message, so display it on the right -->
-				<% } else { %>
-					<div class="message-box rounded-borders message-box-shared message-box-right
-						<% if (userProfile.following.indexOf(message.author) !== -1 || userProfile.following.indexOf(message.sharer) !== -1) {%>
-							subscribed
-						<% } %>
-					"> <!-- add the "subscribed" class if the message sharer is in the logged in user's subscription list -->
-				<% } %>
-				<!-- if the logged in user is the sharer of the message (either originally created, or sharing someone else's) then display the delete button -->
-				<% if (userProfile.username === message.sharer) { %>
-					<button type="button" class="close message-box-tool" onclick="deleteMessage('<%= message.id %>')"><span aria-hidden="true">&times;</span></button>
-				<% } %>
-			<% } %>
-			<!-- if the logged in user is neither the author nor sharer, then display the share button -->
-			<% if (userProfile.username !== message.author && userProfile.username !== message.sharer) { %>
-					<button type="button" class="close message-box-share" onclick="shareMessage('<%= message.id %>')">Share</button>
-			<% } %>
-					<div class="message-box-content">
-						<%= message.value %>
-					</div>
-					<div class="message-box-author">
-						- <%= message.author %>
-						<% if (message.author !== message.sharer) { %>
-							(shared by <%= message.sharer %>)
-						<% } %>
-						<i><%= message.timestamp.toLocaleString()%></i>
-					</div>
-				</div>
-		<% }); %>
-	<% } else { %>
-		No posts today
-	<% } %>
+<div id="requests-container" style="margin-top:20px">
+
+	<div id="request-box" style="background-color:rgb(224,224,224); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
+		<div id="request-header" style="background-color:rgb(200,200,200); padding: 10px">
+			<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
+				<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
+				Open
+			</div>
+			<div id="request-title-bar" style="display: inline-block; margin-left: 5px">
+				Title: HELP ME
+			</div>
+			<div id="request-expdate-bar" style="float:right; display: inline-block">
+				Expires: 2015-12-06 07:20 pm EST
+			</div>
+			<div id="request-creator-bar" style="margin-top:5px">
+				Requester: BOB BITDIDDLE
+			</div>
+		</div>
+		<div id="request-body" style="padding:10px">
+			<div id="request-desc-bar">
+				Description: I NEED HELP I'M USELESS. I DON'T KNOW WHAT I'M DOING. THIS IS A REQUEST
+			</div>
+			<div id="request-rewards-bar" style="margin-top:5px">
+				Rewards: 1 cookie
+			</div>
+		</div>
+		<div id="request-footer">
+			<!-- if creator != logged in user -->
+			<button class="btn btn-primary" onclick="handleRequest(0, 'accept')">Accept</button>
+			<!-- else -->
+			<button class="btn btn-default" onclick="handleRequest(0, 'cancel')">Cancel</button>
+		</div>
+	</div>
 </div>
