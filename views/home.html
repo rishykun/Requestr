@@ -1,0 +1,63 @@
+<html>
+<head>
+	<title>Requestr v0.1</title>
+	<!-- javascript -->
+	<!-- external -->
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<!-- <script src="ejs/ejs.js"></script> -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!-- internal -->
+	<script src="requests.js"></script>
+
+	<!-- css -->
+	<!-- external -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<!--internal -->
+</head>
+
+<body>
+
+<input id="request-search" type="text" name="searchText" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by request ID, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 50px">
+
+<!-- filter buttons group -->
+<div id="filter-group" data-toggle="buttons">
+</div>
+
+<div id="requests-container" style="margin-top:20px">
+
+	<div id="request-box" style="background-color:rgb(224,224,224); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
+		<div id="request-header" style="background-color:rgb(200,200,200); padding: 10px">
+			<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
+				<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
+				Open
+			</div>
+			<div id="request-title-bar" style="display: inline-block; margin-left: 5px">
+				Title: HELP ME
+			</div>
+			<div id="request-expdate-bar" style="float:right; display: inline-block">
+				Expires: 2015-12-06 07:20 pm EST
+			</div>
+			<div id="request-creator-bar" style="margin-top:5px">
+				Requester: BOB BITDIDDLE
+			</div>
+		</div>
+		<div id="request-body" style="padding:10px">
+			<div id="request-desc-bar">
+				Description: I NEED HELP I'M USELESS. I DON'T KNOW WHAT I'M DOING. THIS IS A REQUEST
+			</div>
+			<div id="request-rewards-bar" style="margin-top:5px">
+				Rewards: 1 cookie
+			</div>
+		</div>
+		<div id="request-footer">
+			<!-- if creator != logged in user -->
+			<button class="btn btn-primary" onclick="handleRequest(0, 'accept')">Accept</button>
+			<!-- else -->
+			<button class="btn btn-default" onclick="handleRequest(0, 'cancel')">Cancel</button>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>
