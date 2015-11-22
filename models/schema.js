@@ -47,18 +47,34 @@ UserSchema.statics.createNewUser = function(user, password, cb){
   });
 }
 
+
+UserSchema.statics.getUserById = function(usertId, cb){
+
+}
+
 UserSchema.statics.getUserRequests = function(user, cb) {
   this.find({ username: user }, function(err, userQuery){
     if (err) console.log(err);
     else if (userQuery.length == 0) cb({msg: "No such user!"});
     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
     else {
-      this.populate(userQuery[0], path)
+      this.populate(userQuery[0], {path: 'myRequests'}, function(err, result){
+        if (err) console.log(err);
+        else callback(null, result); //candidates and helpers not populated
+      })
     }
   });
 };
 
 UserSchema.statics.getRequestsTaken = function(user, cb){
+
+}
+
+UserSchema.statics.addRequest = function(user, requestId, cb){
+
+};
+
+UserSchema.statics.removeRequest = function(user, requestId, cb){
 
 }
 
@@ -80,6 +96,21 @@ var RequestSchema = mongoose.Schema({
   //tag: [String], //not for MVP
 });
 
+RequestSchema.statics.getRequestById = function(requestId, cb){
+
+}
+
+RequestSchema.statics.getAllRequests = function(cb){
+
+};
+
+RequestSchema.statics.addRequest = function(user, requestData, cb){
+
+}
+
+RequestSchema.statics.removeRequest = function(requestId, cb){
+
+}
 
 exports.User = mongoose.model('User', UserSchema);
 exports.Request = mongoose.model('Request', RequestSchema);
