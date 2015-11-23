@@ -158,9 +158,30 @@ var RequestSchema = mongoose.Schema({
   tags: [String]
 });
 
+RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
+  if (err) cb({err: "Failed to query request"});
+  else {
+    var that = this;
+    that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
+      if (err) cb({err: "Failed to populate creators"});
+      else {
+        that.populate(requestQuery, {path: 'candidates'}, function(err, result){
+          if (err) cb({err: "Failed to populate candidates"});
+          else {
+            that.populate(result, {path: 'helpers'}, function(err, result){
+              if(err) cb({err: "Failed to populate helpers"});
+              else cb(null, result);
+            });
+          }
+        });
+      }
+    });
+  }
+}
+
 RequestSchema.statics.getAllRequests = function(cb){
   var that = this;
-  that.find({}, function(err, requestQuery){
+  that.find({}, /*function(err, requestQuery){
     if (err) cb({err: "Failed to query request"});
     else {
       that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
@@ -178,12 +199,14 @@ RequestSchema.statics.getAllRequests = function(cb){
         }
       });
     }
+  }*/ function(err, requestQuery){
+    that.populateRequests(err, requestQuery, cb);
   });
 };
 
 RequestSchema.statics.getRequestById = function(requestId, cb){
   var that = this;
-  that.find({ _id: requestId }, function(err, requestQuery){
+  that.find({ _id: requestId }, /*function(err, requestQuery){
     if (err) cb({err: "Failed to query request"});
     else {
       that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
@@ -194,13 +217,20 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
             else {
               that.populate(result, {path: 'helpers'}, function(err, result){
                 if(err) cb({err: "Failed to populate helpers"});
-                else cb(null, result[0]);
+                else cb(null, result);
               });
             }
           });
         }
       });
     }
+  }*/ function(err, requestQuery){
+    that.populateRequests(err, requestQuery, function(err, result){
+      if (err) cb(err);
+      else if (result.length == 0) cb({err: "No request with id"});
+      else if (result.length > 1) cb({err: "Multiple requests with id"});
+      else cb(null, result[0]);
+    });
   });
 }
 
@@ -232,31 +262,61 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
   }
 }
 
-// RequestSchema.statics.getRequestsByTags = function(tagQuery, cb){
-//   if (tagQuery.length == 0) getAllRequests(cb);
-//   else {
-//     var that = this;
-//     that.find({tags: {$in: tagQuery}}, function(err, requestQuery){
-//       if (err) cb({err: "Failed to query request"});
-//       else {
-//         that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
-//           if (err) cb({err: "Failed to populate creators"});
-//           else {
-//             that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-//               if (err) cb({err: "Failed to populate candidates"});
-//               else {
-//                 that.populate(result, {path: 'helpers'}, function(err, result){
-//                   if(err) cb({err: "Failed to populate helpers"});
-//                   else cb(null, result);
-//                 });
-//               }
-//             });
-//           }
-//         });
-//       }
-//     });
-//   }
-// }
+RequestSchema.statics.getRequestsByTags = function(tagQuery, cb){
+  if (tagQuery.length == 0) getAllRequests(cb);
+  else {
+    var that = this;
+    that.find({tags: {$in: tagQuery}}, function(err, requestQuery){
+      if (err) cb({err: "Failed to query request"});
+      else {
+        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
+          if (err) cb({err: "Failed to populate creators"});
+          else {
+            that.populate(requestQuery, {path: 'candidates'}, function(err, result){
+              if (err) cb({err: "Failed to populate candidates"});
+              else {
+                that.populate(result, {path: 'helpers'}, function(err, result){
+                  if(err) cb({err: "Failed to populate helpers"});
+                  else cb(null, result);
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+}
+
+RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
+  if (status === null) getRequestsByTags(tagQuery,cb);
+  else if (status !== "Open" || status !== "In progress" || status !== "Completed"){
+    cb({err: "Invalid status"});
+  }
+  else if (tag.length == 0) getRequestsByStatus(status, cb);
+  else {
+    var that = this;
+    that.find({"status": status. tags: {$in, tagQuery}}, function(err, requestQuery){
+      if (err) cb({err: "Failed to query request"});
+      else {
+        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
+          if (err) cb({err: "Failed to populate creators"});
+          else {
+            that.populate(requestQuery, {path: 'candidates'}, function(err, result){
+              if (err) cb({err: "Failed to populate candidates"});
+              else {
+                that.populate(result, {path: 'helpers'}, function(err, result){
+                  if(err) cb({err: "Failed to populate helpers"});
+                  else cb(null, result);
+                });
+              }
+            });
+          }
+        });
+      }
+    });    
+  }
+}
 
 RequestSchema.statics.createRequest = function(userModel, user, requestData, cb){
   var that = this;
