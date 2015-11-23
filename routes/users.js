@@ -47,6 +47,10 @@ router.post('/login', function(req, res) {
   }
 
   User.verifyPassword(req.body.username, req.body.password, function(err, match) {
+
+  	console.log("verifyPassword called, err: " + err); //debug
+  	console.log("match: " + match); //debug
+
     if (match) {
       req.session.username = req.body.username;
       utils.sendSuccessResponse(res, { user : req.body.username });
