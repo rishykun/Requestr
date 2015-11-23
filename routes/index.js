@@ -21,6 +21,18 @@ router.get('/', function(req, res) {
 		      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		    } else {
 
+		    	requests.forEach(function(request) {
+		    		request.candidates = request.candidates.map(function (ele) {
+		    			return ele.username;
+			    	});
+
+			    	request.helpers = request.helpers.map(function (ele) {
+			    		return ele.username;
+			    	});
+		    	});
+
+		    	console.log("home page receiving requests: ", requests); //debug
+
 		    	res.render('index', {
 					userProfile: req.currentUser,
 					requests: requests

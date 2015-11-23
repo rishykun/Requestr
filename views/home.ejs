@@ -30,10 +30,29 @@
 				</div>
 			</div>
 			<div id="request-footer">
-				<% if (userProfile.username !== request.creator.username) { %>
-				<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
-				<% } else if (request.status === "Open") { %>
-					<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Cancel</button>
+				<% if (request.status === "Open") { %>
+					<% if (userProfile.username !== request.creator.username) { %>
+
+						<% var candidateNames = request.candidates.map(function (ele) { %>
+						<% return ele.username; %>
+						<% }); %>
+
+						<% var helperNames = request.helpers.map(function (ele) { %>
+						<% return ele.username; %>
+						<% }); %>
+
+						Candidates: <%= candidateNames %>
+						Helpers: <%= helperNames %>
+						<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) !== -1) { %>
+							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
+						<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
+							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Cancel</button>
+						<% } else {%>
+							Your help has been accepted.
+						<% } %>
+					<% } %>
+				<% } else if (request.status === "In-Progress") { %>
+					The request is currently in progress.
 				<% } %>
 			</div>
 		</div>

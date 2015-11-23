@@ -80,7 +80,7 @@ UserSchema.statics.getUserData = function(user, cb){
           that.populate(result, {path: 'myRequests.candidates', model: 'User'}, function(err, result){
             if (err) cb({err: "Failed to populate candidates"});
             else {
-              that.populate(result, {path: 'myRquests.helpers', model: 'User'}, function(err, result){
+              that.populate(result, {path: 'myRequests.helpers', model: 'User'}, function(err, result){
                 if (err) cb({err: "Failed to populate helpers"});
                 else cb(null, result);
               });

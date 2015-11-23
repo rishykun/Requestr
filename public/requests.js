@@ -59,7 +59,14 @@ $(document).ready(function() {
 						this_request_footer.append(candidate.username);
 						this_request_footer.append('<button class="btn btn-primary" onclick="handleCandidate(\'' + request._id + '\', \'' + candidate.username + '\', \'accept\')">Accept</button>');
 					});
-				} else {
+				}
+				if (request.helpers.length > 0) {
+					request.helpers.forEach(function(helper) {
+						this_request_footer.append(helper.username);
+						this_request_footer.append('<button class="btn btn-danger" onclick="handleCandidate(\'' + request._id + '\', \'' + helper.username + '\', \'reject\')">Reject</button>');
+					});
+				}
+				if (request.candidates.length === 0 && request.helpers.length === 0) {
 					this_request_footer.append("No candidates yet.");
 				}
 			});
