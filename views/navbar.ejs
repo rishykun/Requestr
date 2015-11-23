@@ -10,21 +10,21 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Requestr</a>
+        <a class="navbar-brand" href="/">Requestr</a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-        	<li><a data-toggle="modal" data-target="#createRequestModal"><b>Create New Request</b></a>
+        	<li><a href="#" data-toggle="modal" data-target="#createRequestModal"><b>Create New Request</b></a>
           <li><a href="#">Messages</a></li>
           <li><a href="#">Search Helpers</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Requests <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a onclick="getMyRequests('active')">Active</a></li>
-              <li><a href="#">In Progress</a></li>
-              <li><a href="#">Completed</a></li>
+              <li><a href="#" onclick="getMyRequests('Open')">Active</a></li>
+              <li><a href="#" onclick="getMyRequests('In progress')">In Progress</a></li>
+              <li><a href="#" onclick="getMyRequests('Completed')">Completed</a></li>
             </ul>
           </li>
           <li class="dropdown">

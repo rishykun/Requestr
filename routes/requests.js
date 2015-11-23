@@ -105,9 +105,6 @@ router.get('/candidates', function(req, res) {
 router.get('/myRequests', function(req, res) {
 	User.getUserData(req.currentUser.username, function(err, data) {
 
-		console.log("retruned: ", data); //debug
-		console.log("user has following requests (length: " , data.myRequests.length, "): ", data.myRequests); //debug
-
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
@@ -151,8 +148,6 @@ router.get('/takenRequests', function(req, res) {
 		- request_id - unique id of the request
 */
 router.post('/addCandidate',function(req,res){
-
-	console.log("addCandidate called, req.body: ", req.body); //debug
 	
 	Request.addCandidate(req.body.request_id, User, req.currentUser.username, function(err){
 			if (err) {
@@ -171,8 +166,8 @@ router.post('/addCandidate',function(req,res){
 		- username - username of the candidate to accept
 */
 router.post('/acceptCandidate',function(req,res){
-	Request.acceptCandidate(req.body.request_id, req.username, function(err){
-			if (err) {
+	Request.acceptCandidate(req.body.request_id, User, req.body.username, function(err){
+		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 			utils.sendSuccessResponse(res);
@@ -187,7 +182,7 @@ router.post('/acceptCandidate',function(req,res){
 */
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
-	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expires':req.body.expires},
+	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires},
 		function(err){
 			 if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
@@ -195,6 +190,49 @@ router.post('/create', function(req,res){
 			utils.sendSuccessResponse(res);
 		}
 		});
+});
+
+/*
+  POST /requests/startRequest
+  Request parameters:
+    - request_id: the unique ID of the request within the logged in user's request collection
+
+  Response:
+    - success: true if the server succeeded in initializing the request
+    - err: on failure, an error message
+*/
+// Requires Ownership (middleware)
+router.post('/startRequest', function(req,res) {
+	console.log("start request called"); //debug
+  Request.startRequest(req.body.request_id,
+    function(err){
+     if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res);
+    }
+  });
+});
+
+/*
+  POST /requests/completeRequest
+  Request parameters:
+    - request_id: the unique ID of the request within the logged in user's request collection
+
+  Response:
+    - success: true if the server succeeded in completing the request
+    - err: on failure, an error message
+*/
+// Requires Ownership (middleware)
+router.post('/completeRequest', function(req,res){
+  Request.completeRequest(req.body.request_id,
+    function(err){
+     if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res);
+    }
+  });
 });
 
 
