@@ -298,6 +298,34 @@ RequestSchema.statics.removeRequest = function(requestId, cb){
   });
 }
 
+RquestSchema.statics.startRequest = function(requestId, cb){
+  var that = this;
+  that.getRequestById(requestId, function(err, request){
+    if (err) cb(err);
+    else if (request.status !== "Open") cb({err: "Request is not open!"});
+    else {
+      that.update(request, {status: 'In progress'}, {upsert: true}, function(err){
+        if (err) cb({err: "Failed to start request"});
+        else cb(null);
+      });
+    }
+  })
+}
+
+RquestSchema.statics.completeRequest = function(requestId, cb){
+  var that = this;
+  that.getRequestById(requestId, function(err, request){
+    if (err) cb(err);
+    else if (request.status !== "In progress") cb({err: "Request is not in progress!"});
+    else {
+      that.update(request, {status: 'Completed'}, {upsert: true}, function(err){
+        if (err) cb({err: "Failed to complete request"});
+        else cb(null);
+      });
+    }
+  })
+}
+
 RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
   var that = this;
 
@@ -316,7 +344,6 @@ RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, c
       });
     }
   });
-  console.log("SHOULD NEVER APPEAR"); //debug
 }
 
 RequestSchema.statics.acceptCandidate = function(requestId, candidate, cb){
