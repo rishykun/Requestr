@@ -141,30 +141,49 @@ UserSchema.statics.removeRequest = function(user, requestModel, requestId, cb){
   });
 }
 
-// Category field might need to be changed - can a request be in more than one category?
 var RequestSchema = mongoose.Schema({
-	title: String,
-	description: String,
-	creator: {
-		type: Schema.Types.ObjectId,
-		ref: 'User',
-		required: true
-	},
-	dateCreated: Date,
-	expirationDate: Date,
-	status: String,
+  title: String,
+  description: String,
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  dateCreated: Date,
+  expirationDate: Date,
+  status: String,
   reward: String,
-	candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
-	helpers: [{type: Schema.Types.ObjectId, ref:'User'}],
-	//category: String, //not for MVP
-	//tag: [String], 
+  candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
+  helpers: [{type: Schema.Types.ObjectId, ref:'User'}],
+  tags: [String]
 });
+
+RequestSchema.statics.getAllRequests = function(cb){
+  var that = this;
+  that.find({}, function(err, requestQuery){
+    if (err) cb({err: "Failed to query request"});
+    else {
+      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
+        if (err) cb({err: "Failed to populate creators"});
+        else {
+          that.populate(requestQuery, {path: 'candidates'}, function(err, result){
+            if (err) cb({err: "Failed to populate candidates"});
+            else {
+              that.populate(result, {path: 'helpers'}, function(err, result){
+                if(err) cb({err: "Failed to populate helpers"});
+                else cb(null, result);
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+};
 
 RequestSchema.statics.getRequestById = function(requestId, cb){
   var that = this;
-
   that.find({ _id: requestId }, function(err, requestQuery){
-
     if (err) cb({err: "Failed to query request"});
     else {
       that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
@@ -213,28 +232,31 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
   }
 }
 
-RequestSchema.statics.getAllRequests = function(cb){
-  var that = this;
-  that.find({}, function(err, requestQuery){
-    if (err) cb({err: "Failed to query request"});
-    else {
-      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
-        if (err) cb({err: "Failed to populate creators"});
-        else {
-          that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-            if (err) cb({err: "Failed to populate candidates"});
-            else {
-              that.populate(result, {path: 'helpers'}, function(err, result){
-                if(err) cb({err: "Failed to populate helpers"});
-                else cb(null, result);
-              });
-            }
-          });
-        }
-      });
-    }
-  });
-};
+// RequestSchema.statics.getRequestsByTags = function(tagQuery, cb){
+//   if (tagQuery.length == 0) getAllRequests(cb);
+//   else {
+//     var that = this;
+//     that.find({tags: {$in: tagQuery}}, function(err, requestQuery){
+//       if (err) cb({err: "Failed to query request"});
+//       else {
+//         that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
+//           if (err) cb({err: "Failed to populate creators"});
+//           else {
+//             that.populate(requestQuery, {path: 'candidates'}, function(err, result){
+//               if (err) cb({err: "Failed to populate candidates"});
+//               else {
+//                 that.populate(result, {path: 'helpers'}, function(err, result){
+//                   if(err) cb({err: "Failed to populate helpers"});
+//                   else cb(null, result);
+//                 });
+//               }
+//             });
+//           }
+//         });
+//       }
+//     });
+//   }
+// }
 
 RequestSchema.statics.createRequest = function(userModel, user, requestData, cb){
   var that = this;
@@ -319,24 +341,24 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
 
   userModel.getUser(candidate, function(err, userObj){
     if (err) {
-    	console.error(err);
-    	cb(err);
+      console.error(err);
+      cb(err);
     }
     else {
       that.getRequestById(requestId, function(err, result){
         if (err) {
-	    	console.error(err);
-	    	cb(err);
-	    }
+        console.error(err);
+        cb(err);
+      }
         else {
           that.update(result, {$pull: {'candidates': userObj._id}, $push: {'helpers': userObj._id}}, {upsert: true}, function(err){
             if (err) {
-            	console.error(err);
-            	cb({err: "Failed to accept candidate"});
+              console.error(err);
+              cb({err: "Failed to accept candidate"});
             }
             else {
-            	cb(null);
-          	}
+              cb(null);
+            }
           });
         }
       });
