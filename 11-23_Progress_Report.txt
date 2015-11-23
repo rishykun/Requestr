@@ -1,0 +1,13 @@
+Progress Report
+
+Note: These percentages are just estimates for the overall project - the MVP is done except for testing to make sure it is implemented correctly
+
+MVP - 98%? - Still need to test a bit more
+- Database schema -85% - All core required fields are included, but we might add some for additional featurse
+- Requests 80%
+	- Users can make requests - 100%
+	- Users can sign up to do requests - 100%
+	- Requester can accept people to do their requests - 100%
+- User login/ Authentication - 75%
+	- User can create username/password and that will be verified when they login - 100%
+	- Validation that users are MIT affiliated

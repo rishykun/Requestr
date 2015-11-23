@@ -1,0 +1,9 @@
+Agenda - November 23
+
+1. Feedback on MVP so far
+	- Do we have enough functionality for MVP?
+	- Should we have automated tests for the MVP?
+2. Additional Features
+	- Ideas
+		- Which ones should be implemented/advice on how?
+3. Questions?
