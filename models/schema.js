@@ -95,6 +95,23 @@ UserSchema.statics.getUserData = function(user, cb){
  });
 }
 
+UserSchema.statics.getRequestsByStatus = function(user, status, cb){
+  if (status !== "Open" || status !== "In progress" || status !== "Completed"){
+    cb({err: "Invalid status"});
+  }
+  else {
+    this.getUserData(user, function(err, user){
+      if (err) cb(err);
+      else {
+        filteredRquests = user.requests.filter(function(el){
+          return el.status === status;
+        });
+        cb(null, filteredRquests);
+      }
+    });
+  }
+}
+
 // UserSchema.statics.getUserRequests = function(user, cb) {
 //   var that = this;
 //   that.find({ username: user }, function(err, userQuery){
@@ -198,6 +215,34 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
       });
     }
   });
+}
+
+RequestSchema.statics.getRequestsByStatus = function(status, cb){
+  if (status !== "Open" || status !== "In progress" || status !== "Completed"){
+    cb({err: "Invalid status"});
+  }
+  else {
+    var that = this;
+    that.find({"status": status}, function(err, requestQuery){
+      if (err) cb({err: "Failed to query request"});
+      else {
+        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
+          if (err) cb({err: "Failed to populate creators"});
+          else {
+            that.populate(requestQuery, {path: 'candidates'}, function(err, result){
+              if (err) cb({err: "Failed to populate candidates"});
+              else {
+                that.populate(result, {path: 'helpers'}, function(err, result){
+                  if(err) cb({err: "Failed to populate helpers"});
+                  else cb(null, result);
+                });
+              }
+            });
+          }
+        });
+      }
+    });    
+  }
 }
 
 RequestSchema.statics.getAllRequests = function(cb){
