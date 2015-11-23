@@ -3,7 +3,19 @@ Agenda - November 23
 1. Feedback on MVP so far
 	- Do we have enough functionality for MVP?
 	- Should we have automated tests for the MVP?
-2. Additional Features
-	- Ideas
-		- Which ones should be implemented/advice on how?
-3. Questions?
+	- Overall design of project (ask TA)
+		- File organization
+		- Schema design
+2. Next Critical Features
+	- Tags/Reviews: Make concrete how they help requests
+	- Request discussion: Messaging? Comments?
+	- Skills
+	- Search
+3. Additional Features
+	- Features in between requesting, accepting, and completing
+		- Monitor request progress
+	- LinkedIn integration possible?
+4. Workload
+	- Divison of Labor for MVP
+		- Should we alter roles for future?
+5. Questions?
