@@ -177,7 +177,7 @@ $(document).ready(function() {
 			if successful, go to home page and the request data now appears in the client-side as well
 		*/
 		if (eventType === "create") {
-			event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
+			//event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
 
 			//prepare data to be sent over to backend
 			//reason why we don't simply just pass in the form values to the ajax request is because
