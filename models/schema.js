@@ -185,6 +185,7 @@ var RequestSchema = mongoose.Schema({
 	dateCreated: Date,
 	expirationDate: Date,
 	status: String,
+  reward: String,
 	candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
 	helpers: [{type: Schema.Types.ObjectId, ref:'User'}]
 	//category: String, //not for MVP
