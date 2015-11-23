@@ -1,4 +1,4 @@
-<input id="request-search" type="text" name="searchText" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by request ID, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 50px">
+<input id="request-search" type="text" name="searchText" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 50px">
 
 <div id="requests-container" style="margin-top:20px">
 
@@ -28,6 +28,11 @@
 				<div id="request-rewards-bar" style="margin-top:5px">
 					Rewards: 1 cookie
 				</div>
+			</div>
+			<div id = "request-tags">
+				Tags: <% request.tags.forEach(function(tag){ %>
+					<%= tag%>
+				<% }); %>
 			</div>
 			<div id="request-footer">
 				<% if (request.status === "Open") { %>

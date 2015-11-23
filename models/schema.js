@@ -296,7 +296,7 @@ RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
   else if (tag.length == 0) getRequestsByStatus(status, cb);
   else {
     var that = this;
-    that.find({"status": status. tags: {$in, tagQuery}}, function(err, requestQuery){
+    that.find({"status": status, tags: {$in, tagQuery}}, function(err, requestQuery){
       if (err) cb({err: "Failed to query request"});
       else {
         that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){

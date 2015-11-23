@@ -130,15 +130,43 @@ router.get('/myRequests', function(req, res) {
 		- err: on failure, an error message
 */
 router.get('/takenRequests', function(req, res) {
-	User.getUserRequests(req.currentUser.username, function(err, requests) {
+	User.getUserData(req.currentUser.username, function(err, data) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-			utils.sendSuccessResponse(res, { requests: takenRequests });
+			utils.sendSuccessResponse(res, { requests: data.takenRequests });
 		}
 	});
 });
 
+
+/*
+	GET /requests/search/tags
+	Params:
+		tags - string array of the tags to search for
+	Response:
+		- success: true if the server succeeded in getting the user's requests
+		- candidates: on success, an object with a single field 'requests', which contains a list of the
+		user's requests
+		- err: on failure, an error message
+*/
+router.get('/search/tags', function(req, res) {
+	Requests.getRequestByFilter(null, req.body.tags, function(err, data) {
+
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+
+			utils.sendSuccessResponse(res, { requests: data.myRequests });
+
+			/*
+			res.render('requests_active', {
+				userProfile: req.currentUser,
+				requests: data.myRequests
+			});*/
+		}
+	});
+});
 
 // Post for requests? Sign up to take an open request
 /*
