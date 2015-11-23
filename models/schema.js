@@ -20,7 +20,6 @@ UserSchema.statics.getUser = function(user, cb){
   var that = this;
 
   that.find({ username: user }, function(err, userQuery){
-
     if (err) {
       cb({err: "Failed to query user"});
     }
@@ -47,26 +46,26 @@ UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
 }
 
 UserSchema.statics.createNewUser = function(user, password, cb){
-  var that = this;
-  that.getUser(user, function(err, user){
-    if (err) {
-      if (err.msg && err.msg === "No such user!"){
-        cb(null, true);//taken;
-      }
-      else cb(err);
-    }
-    else {
-      that.create({
-        'username': user.username,
-        'password': password,
-        'myRequests': [],
-        'requestsTaken': []
-      },  function(err, res) {
-        if (err) cb({err: "Failed to create user"});
-        else cb(null, false); //not taken
-      });
-    }
-  });
+	var that = this;
+	that.getUser(user, function(err, userQuery){
+		if (err){
+			if (err.msg === "No such user!"){
+				that.create({
+					'username': user,
+					'password': password,
+					'myRequests': [],
+					'requestsTaken': []
+				},  function(err, res) {
+					if (err) cb({err: "Failed to create user"});
+					else cb(null, false); //not taken
+				});
+			}
+			else cb(err);
+		}
+		else {
+        	cb(null, true); //taken
+        }
+    }); 
 }
 
 UserSchema.statics.getUserData = function(user, cb){

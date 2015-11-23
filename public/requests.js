@@ -4,6 +4,8 @@
 var handleRequest; //define handleRequest so that it can be used by the frontend
 var getAllRequests;
 
+var getMyRequests;
+
 $(document).ready(function() {
 
 	getAllRequests = function() {
@@ -20,6 +22,33 @@ $(document).ready(function() {
 
 	}
 
+	getMyRequests = function(filter) {
+		$.get("/requests/myRequests", {
+		})
+		//when done, log user in because successful signup doesn't automatically log user in
+		.done(function(data) {
+
+			var requests = data.content;
+
+			console.log("frontend finished calling getMyRequests data: ", requests); //debug
+
+			$("#background-container").append("<div id='my-requests-container' style='margin-top:20px'></div>");
+
+			data.forEach(function(request) {
+				$("#my-requests-container").append('<div id="request-box" style="background-color:rgb(231,231,231); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">');
+				var request_header = $("#my-requests-container").append('<div id="request-header" style="background-color:rgb(208,208,208); padding: 10px">');
+				var request_body = $("#my-requests-container").append('<div id="request-body" style="padding:10px">');
+				
+
+
+				var request_footer = $("#my-requests-container").append('<div id="request-footer">');
+			});
+		})
+		//failed response from registration request
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	}
 
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
 
