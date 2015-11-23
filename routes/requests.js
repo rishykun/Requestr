@@ -25,13 +25,14 @@ var requireAuthentication = function(req, res, next) {
   of this particular resource will receive a 404.
 
 */
+/*
 var requireOwnership = function(req, res, next) {
   if (!(req.currentUser.username === req.request.creator)) {
     utils.sendErrResponse(res, 404, 'Resource not found.');
   } else {
     next();
   }
-};
+};*/
 
 
 /*
@@ -39,7 +40,7 @@ var requireOwnership = function(req, res, next) {
   contains a 'description' field. Send error code 400 if not.
 */
 var requireDescription = function(req, res, next) {
-  if (!req.body.content) {
+  if (!req.body.desc) {
     utils.sendErrResponse(res, 400, 'Description required in request.');
   } else {
     next();
@@ -63,7 +64,7 @@ router.post('/create', requireDescription);
     - err: on failure, an error message
 */
 router.get('/', function(req, res) {
-  Request.getAllRequests(req.currentUser.username, function(err, requests) {
+  Request.getAllRequests(function(err, requests) {
     if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -84,7 +85,8 @@ router.get('/', function(req, res) {
     - requestId - unique id of the request
 */
 router.post('/addCandidate',function(req,res){
-  Request.addCandidate(req.request_id, req.currentUser.username, function(err){
+  
+  Request.addCandidate(req.body.request_id, User, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -100,7 +102,7 @@ router.post('/addCandidate',function(req,res){
     - request_id - unique id of the request
 */
 router.post('/acceptCandidate',function(req,res){
-  Request.acceptCandidate(req.request_id, req.currentUser.username, function(err){
+  Request.acceptCandidate(req.body.request_id, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -116,8 +118,10 @@ router.post('/acceptCandidate',function(req,res){
 */
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
-  Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'created': new Date(), 'description': desc, 'expires':req.body.expires},
+  Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expires':req.body.expires},
     function(err){
+      console.log("error print");
+      console.log (err); //debug
        if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -139,7 +143,7 @@ router.post('/create', function(req,res){
 // Requires Ownership (middleware)
 router.delete('/:request', function(req, res) {
   Request.removeRequest( 
-    req.request_id, 
+    req.body.request_id, 
     function(err) {
       if (err) {
         utils.sendErrResponse(res, 500, 'An unknown error occurred.');

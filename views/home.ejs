@@ -6,35 +6,43 @@
 
 <div id="requests-container" style="margin-top:20px">
 
-	<div id="request-box" style="background-color:rgb(224,224,224); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
-		<div id="request-header" style="background-color:rgb(200,200,200); padding: 10px">
-			<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
-				<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
-				Open
+	<% if (requests.length > 0) { %>
+		<% requests.forEach(function(request) { %>
+
+		<div id="request-box" style="background-color:rgb(224,224,224); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
+			<div id="request-header" style="background-color:rgb(200,200,200); padding: 10px">
+				<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
+					<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
+					<%= request.status %>
+				</div>
+				<div id="request-title-bar" style="display: inline-block; margin-left: 5px">
+					Title: <%= request.title %>
+				</div>
+				<div id="request-expdate-bar" style="float:right; display: inline-block">
+					Expires: <%= request.expirationDate %>
+				</div>
+				<div id="request-creator-bar" style="margin-top:5px">
+					Requester: <%= request.creator.username %>
+				</div>
 			</div>
-			<div id="request-title-bar" style="display: inline-block; margin-left: 5px">
-				Title: HELP ME
+			<div id="request-body" style="padding:10px">
+				<div id="request-desc-bar">
+					Description: <%= request.description %>
+				</div>
+				<div id="request-rewards-bar" style="margin-top:5px">
+					Rewards: 1 cookie
+				</div>
 			</div>
-			<div id="request-expdate-bar" style="float:right; display: inline-block">
-				Expires: 2015-12-06 07:20 pm EST
-			</div>
-			<div id="request-creator-bar" style="margin-top:5px">
-				Requester: BOB BITDIDDLE
+			<div id="request-footer">
+				<% if (userProfile.username !== request.creator.username) { %>
+				<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
+				<% } else if (request.status === "Open") { %>
+					<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Cancel</button>
+				<% } %>
 			</div>
 		</div>
-		<div id="request-body" style="padding:10px">
-			<div id="request-desc-bar">
-				Description: I NEED HELP I'M USELESS. I DON'T KNOW WHAT I'M DOING. THIS IS A REQUEST
-			</div>
-			<div id="request-rewards-bar" style="margin-top:5px">
-				Rewards: 1 cookie
-			</div>
-		</div>
-		<div id="request-footer">
-			<!-- if creator != logged in user -->
-			<button class="btn btn-primary" onclick="handleRequest(0, 'accept')">Accept</button>
-			<!-- else -->
-			<button class="btn btn-default" onclick="handleRequest(0, 'cancel')">Cancel</button>
-		</div>
-	</div>
+
+
+		<% }); %>
+	<% } %>
 </div>

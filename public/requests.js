@@ -3,7 +3,27 @@
 */
 console.log("request.js loaded"); //debug
 var handleRequest; //define handleRequest so that it can be used by the frontend
+var getAllRequests;
+
 $(document).ready(function() {
+
+	console.log("document ready"); //debug
+
+
+	getAllRequests = function() {
+		$.get("/requests", {
+		})
+		//when done, log user in because successful signup doesn't automatically log user in
+		.done(function(data) {
+			
+		})
+		//failed response from registration request
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+
+	}
+
 
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
 
@@ -80,43 +100,6 @@ $(document).ready(function() {
 
 	$("#request-expires").datepicker();
 
-	/*
-		instantiates create request function in the request form's submit button
-
-		submits the request form by making a call to the server in attempt to create the message on the server-side
-		if successful, go to home page and the request data now appears in the client-side as well
-	*/
-	$("#request-form").submit(function(event) {
-		event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
-
-		//prepare data to be sent over to backend
-		//reason why we don't simply just pass in the form values to the ajax request is because
-		//we handle data sanitization here
-		var title = $("#request-title").val();
-		var desc = $("#request-desc").val();
-		var expires = $("#request-expires").val();
-
-		//make post request to request route
-		$.post("/requests", {
-			"title": title,
-			"desc": desc,
-			"expires": expires,
-		})
-		//successful response from request creation
-		.done(function(data) {
-			//if message creation was successful
-			if (data.success) {
-				location.href="/"; //go to home page
-			} else { //request creation failed
-				console.error("ERROR: request creation failed");
-			}
-		})
-		//failed response from request creation
-		.fail(function(error) {
-			console.error("ERROR: ", error);
-		});
-	});
-
 	handleRequest = function(request_id, eventType) {
 		console.log("handle request called. id: " + request_id + ", eventType: " + eventType); //debug
 
@@ -124,6 +107,12 @@ $(document).ready(function() {
 
 		//make post request to request route
 
+		/*
+			instantiates create request function in the request form's submit button
+
+			submits the request form by making a call to the server in attempt to create the message on the server-side
+			if successful, go to home page and the request data now appears in the client-side as well
+		*/
 		if (eventType === "create") {
 			event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
 
@@ -135,7 +124,7 @@ $(document).ready(function() {
 			var expires = $("#request-expires").val();
 
 			//make post request to request route
-			$.post("/requests", {
+			$.post("/requests/create", {
 				"title": title,
 				"desc": desc,
 				"expires": expires,
