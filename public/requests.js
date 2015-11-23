@@ -56,7 +56,7 @@ $(document).ready(function() {
 				var this_request_footer = $("#request-footer" + request._id);
 				if (request.candidates.length > 0) {
 					request.candidates.forEach(function(candidate) {
-						this_request_footer.append('<button class="btn btn-primary" onclick="handleCandidate(\'' + request._id + '\', \'' + candidate.username + '\', \'accept\')">Accept ' + candidate.username + '</button>');
+						this_request_footer.append('<button class="btn btn-success" onclick="handleCandidate(\'' + request._id + '\', \'' + candidate.username + '\', \'accept\')">Accept ' + candidate.username + '</button>');
 						this_request_footer.append('<button class="btn btn-danger" onclick="handleCandidate(\'' + request._id + '\', \'' + candidate.username + '\', \'reject\')">Reject ' + candidate.username + '</button>');
 					});
 				}
@@ -64,6 +64,7 @@ $(document).ready(function() {
 					request.helpers.forEach(function(helper) {
 						this_request_footer.append('<button class="btn btn-danger" onclick="handleCandidate(\'' + request._id + '\', \'' + helper.username + '\', \'reject\')">Reject ' + helper.username + '</button>');
 					});
+					this_request_footer.append('<br><button class="btn btn-primary" onclick="handleRequest(\'' + request._id + '\', \'start\')"');
 				}
 				if (request.candidates.length === 0 && request.helpers.length === 0) {
 					this_request_footer.append("No candidates yet.");
@@ -195,6 +196,25 @@ $(document).ready(function() {
 			});
 		}
 		if (eventType === "accept") {
+			//accept request
+			$.post("/requests/addCandidate", {
+				"request_id": request_id
+			})
+			//successful response from request creation
+			.done(function(data) {
+				//if call was successful
+				if (data.success) {
+					location.href="/"; //go to home page
+				} else { //call failed
+					console.error("ERROR: request creation failed");
+				}
+			})
+			//failed response from call
+			.fail(function(error) {
+				console.error("ERROR: ", error);
+			});
+		}
+		if (eventType === "start") {
 			//accept request
 			$.post("/requests/addCandidate", {
 				"request_id": request_id
