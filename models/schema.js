@@ -1,7 +1,6 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-//database model type for user collection
 var UserSchema = mongoose.Schema({
 	username: {
 		type: String,
@@ -65,7 +64,7 @@ UserSchema.statics.createNewUser = function(user, password, cb){
 		else {
         	cb(null, true); //taken
         }
-    }); 
+    });
 }
 
 UserSchema.statics.getUserData = function(user, cb){
@@ -111,36 +110,6 @@ UserSchema.statics.getRequestsByStatus = function(user, status, cb){
   }
 }
 
-// UserSchema.statics.getUserRequests = function(user, cb) {
-//   var that = this;
-//   that.find({ username: user }, function(err, userQuery){
-//     if (err) cb(err);
-//     else if (userQuery.length == 0) cb({msg: "No such user!"});
-//     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
-//     else {
-//       that.populate(userQuery[0], {path: 'myRequests'}, function(err, result){
-//         if (err) cb(err);
-//         else cb(null, result); //candidates and helpers not populated
-//       });
-//     }
-//   });
-// }
-
-// UserSchema.statics.getRequestsTaken = function(user, cb){
-//   var that = this;
-//   that.find({ username: user }, function(err, userQuery){
-//     if (err) cb(err);
-//     else if (userQuery.length == 0) cb({msg: "No such user!"});
-//     else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
-//     else {
-//       that.populate(userQuery[0], {path: 'requestsTaken'}, function(err, result){
-//         if (err) cb(err);
-//         else cb(null, result); //candidates and helpers not populated
-//       });
-//     }
-//   });
-// }
-
 UserSchema.statics.addRequest = function(user, requestId, cb){
   var that = this;
   that.getUser(user, function(err, user){
@@ -184,6 +153,7 @@ var RequestSchema = mongoose.Schema({
 	dateCreated: Date,
 	expirationDate: Date,
 	status: String,
+  reward: String,
 	candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
 	helpers: [{type: Schema.Types.ObjectId, ref:'User'}]
 	//category: String, //not for MVP
@@ -197,7 +167,7 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
 
     if (err) cb({err: "Failed to query request"});
     else {
-      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
+      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
         if (err) cb({err: "Failed to populate creators"});
         else {
           that.populate(requestQuery, {path: 'candidates'}, function(err, result){
@@ -225,7 +195,7 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
     that.find({"status": status}, function(err, requestQuery){
       if (err) cb({err: "Failed to query request"});
       else {
-        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
+        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
           if (err) cb({err: "Failed to populate creators"});
           else {
             that.populate(requestQuery, {path: 'candidates'}, function(err, result){
@@ -249,7 +219,7 @@ RequestSchema.statics.getAllRequests = function(cb){
   that.find({}, function(err, requestQuery){
     if (err) cb({err: "Failed to query request"});
     else {
-      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
+      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
         if (err) cb({err: "Failed to populate creators"});
         else {
           that.populate(requestQuery, {path: 'candidates'}, function(err, result){
@@ -297,6 +267,34 @@ RequestSchema.statics.removeRequest = function(requestId, cb){
   });
 }
 
+RquestSchema.statics.startRequest = function(requestId, cb){
+  var that = this;
+  that.getRequestById(requestId, function(err, request){
+    if (err) cb(err);
+    else if (request.status !== "Open") cb({err: "Request is not open!"});
+    else {
+      that.update(request, {status: 'In progress'}, {upsert: true}, function(err){
+        if (err) cb({err: "Failed to start request"});
+        else cb(null);
+      });
+    }
+  })
+}
+
+RquestSchema.statics.completeRequest = function(requestId, cb){
+  var that = this;
+  that.getRequestById(requestId, function(err, request){
+    if (err) cb(err);
+    else if (request.status !== "In progress") cb({err: "Request is not in progress!"});
+    else {
+      that.update(request, {status: 'Completed'}, {upsert: true}, function(err){
+        if (err) cb({err: "Failed to complete request"});
+        else cb(null);
+      });
+    }
+  })
+}
+
 RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
   var that = this;
 
@@ -315,7 +313,6 @@ RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, c
       });
     }
   });
-  console.log("SHOULD NEVER APPEAR"); //debug
 }
 
 RequestSchema.statics.acceptCandidate = function(requestId, candidate, cb){
