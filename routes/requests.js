@@ -141,6 +141,7 @@ router.get('/takenRequests', function(req, res) {
 */
 router.post('/addCandidate',function(req,res){
 
+  console.log("addCandidate called, req.body: ", req.body); //debug
   
   Request.addCandidate(req.body.request_id, User, req.currentUser.username, function(err){
       if (err) {
@@ -177,8 +178,6 @@ router.post('/acceptCandidate',function(req,res){
 router.post('/create', function(req,res){
   Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expires':req.body.expires},
     function(err){
-      console.log("error print");
-      console.log (err); //debug
        if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
