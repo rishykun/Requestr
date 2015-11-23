@@ -181,50 +181,14 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
 
 RequestSchema.statics.getAllRequests = function(cb){
   var that = this;
-  that.find({}, /*function(err, requestQuery){
-    if (err) cb({err: "Failed to query request"});
-    else {
-      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
-        if (err) cb({err: "Failed to populate creators"});
-        else {
-          that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-            if (err) cb({err: "Failed to populate candidates"});
-            else {
-              that.populate(result, {path: 'helpers'}, function(err, result){
-                if(err) cb({err: "Failed to populate helpers"});
-                else cb(null, result);
-              });
-            }
-          });
-        }
-      });
-    }
-  }*/ function(err, requestQuery){
+  that.find({}, function(err, requestQuery){
     that.populateRequests(err, requestQuery, cb);
   });
 };
 
 RequestSchema.statics.getRequestById = function(requestId, cb){
   var that = this;
-  that.find({ _id: requestId }, /*function(err, requestQuery){
-    if (err) cb({err: "Failed to query request"});
-    else {
-      that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
-        if (err) cb({err: "Failed to populate creators"});
-        else {
-          that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-            if (err) cb({err: "Failed to populate candidates"});
-            else {
-              that.populate(result, {path: 'helpers'}, function(err, result){
-                if(err) cb({err: "Failed to populate helpers"});
-                else cb(null, result);
-              });
-            }
-          });
-        }
-      });
-    }
-  }*/ function(err, requestQuery){
+  that.find({ _id: requestId }, function(err, requestQuery){
     that.populateRequests(err, requestQuery, function(err, result){
       if (err) cb(err);
       else if (result.length == 0) cb({err: "No request with id"});
@@ -241,23 +205,7 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
   else {
     var that = this;
     that.find({"status": status}, function(err, requestQuery){
-      if (err) cb({err: "Failed to query request"});
-      else {
-        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
-          if (err) cb({err: "Failed to populate creators"});
-          else {
-            that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-              if (err) cb({err: "Failed to populate candidates"});
-              else {
-                that.populate(result, {path: 'helpers'}, function(err, result){
-                  if(err) cb({err: "Failed to populate helpers"});
-                  else cb(null, result);
-                });
-              }
-            });
-          }
-        });
-      }
+      that.populateRequests(err, requestQuery, cb);
     });    
   }
 }
@@ -267,23 +215,7 @@ RequestSchema.statics.getRequestsByTags = function(tagQuery, cb){
   else {
     var that = this;
     that.find({tags: {$in: tagQuery}}, function(err, requestQuery){
-      if (err) cb({err: "Failed to query request"});
-      else {
-        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
-          if (err) cb({err: "Failed to populate creators"});
-          else {
-            that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-              if (err) cb({err: "Failed to populate candidates"});
-              else {
-                that.populate(result, {path: 'helpers'}, function(err, result){
-                  if(err) cb({err: "Failed to populate helpers"});
-                  else cb(null, result);
-                });
-              }
-            });
-          }
-        });
-      }
+      that.populateRequests(err, requestQuery, cb);
     });
   }
 }
@@ -296,24 +228,8 @@ RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
   else if (tag.length == 0) getRequestsByStatus(status, cb);
   else {
     var that = this;
-    that.find({"status": status. tags: {$in, tagQuery}}, function(err, requestQuery){
-      if (err) cb({err: "Failed to query request"});
-      else {
-        that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){
-          if (err) cb({err: "Failed to populate creators"});
-          else {
-            that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-              if (err) cb({err: "Failed to populate candidates"});
-              else {
-                that.populate(result, {path: 'helpers'}, function(err, result){
-                  if(err) cb({err: "Failed to populate helpers"});
-                  else cb(null, result);
-                });
-              }
-            });
-          }
-        });
-      }
+    that.find({"status": status, "tags": {$in, tagQuery}}, function(err, requestQuery){
+      that.populateRequests(err, requestQuery, cb);
     });    
   }
 }
