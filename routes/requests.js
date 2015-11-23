@@ -193,7 +193,7 @@ router.post('/create', function(req,res){
 });
 
 /*
-  POST /requests/:request/startRequest
+  POST /requests/startRequest
   Request parameters:
     - request_id: the unique ID of the request within the logged in user's request collection
 
@@ -202,7 +202,8 @@ router.post('/create', function(req,res){
     - err: on failure, an error message
 */
 // Requires Ownership (middleware)
-router.post('/:request/startRequest', function(req,res){
+router.post('/startRequest', function(req,res) {
+	console.log("start request called"); //debug
   Request.startRequest(req.body.request_id,
     function(err){
      if (err) {
@@ -214,7 +215,7 @@ router.post('/:request/startRequest', function(req,res){
 });
 
 /*
-  POST /requests/:request/completeRequest
+  POST /requests/completeRequest
   Request parameters:
     - request_id: the unique ID of the request within the logged in user's request collection
 
@@ -223,7 +224,7 @@ router.post('/:request/startRequest', function(req,res){
     - err: on failure, an error message
 */
 // Requires Ownership (middleware)
-router.post('/:request/completeRequest', function(req,res){
+router.post('/completeRequest', function(req,res){
   Request.completeRequest(req.body.request_id,
     function(err){
      if (err) {

@@ -31,8 +31,6 @@ router.get('/', function(req, res) {
 			    	});
 		    	});
 
-		    	console.log("home page receiving requests: ", requests); //debug
-
 		    	res.render('index', {
 					userProfile: req.currentUser,
 					requests: requests
