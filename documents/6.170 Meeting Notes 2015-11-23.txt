@@ -1,0 +1,9 @@
+11- 23 Meeting Notes
+Don’t need automated tests but need clean code
+MVP Too simple – Just CRUD
+-	Implement tags for MVP
+-	Implement discussion?
+Additional Features
+	-Venmo Integration for enforcing rewards
+	- Linkedin integration not ideal because skills are usually work related/ not relevant to requests
+Split workload by tasks not frontend backend
