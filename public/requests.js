@@ -56,14 +56,13 @@ $(document).ready(function() {
 				var this_request_footer = $("#request-footer" + request._id);
 				if (request.candidates.length > 0) {
 					request.candidates.forEach(function(candidate) {
-						this_request_footer.append(candidate.username);
-						this_request_footer.append('<button class="btn btn-primary" onclick="handleCandidate(\'' + request._id + '\', \'' + candidate.username + '\', \'accept\')">Accept</button>');
+						this_request_footer.append('<button class="btn btn-primary" onclick="handleCandidate(\'' + request._id + '\', \'' + candidate.username + '\', \'accept\')">Accept ' + candidate.username + '</button>');
+						this_request_footer.append('<button class="btn btn-danger" onclick="handleCandidate(\'' + request._id + '\', \'' + candidate.username + '\', \'reject\')">Reject ' + candidate.username + '</button>');
 					});
 				}
 				if (request.helpers.length > 0) {
 					request.helpers.forEach(function(helper) {
-						this_request_footer.append(helper.username);
-						this_request_footer.append('<button class="btn btn-danger" onclick="handleCandidate(\'' + request._id + '\', \'' + helper.username + '\', \'reject\')">Reject</button>');
+						this_request_footer.append('<button class="btn btn-danger" onclick="handleCandidate(\'' + request._id + '\', \'' + helper.username + '\', \'reject\')">Reject ' + helper.username + '</button>');
 					});
 				}
 				if (request.candidates.length === 0 && request.helpers.length === 0) {

@@ -41,12 +41,10 @@
 						<% return ele.username; %>
 						<% }); %>
 
-						Candidates: <%= candidateNames %>
-						Helpers: <%= helperNames %>
-						<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) !== -1) { %>
+						<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
 							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
 						<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
-							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Cancel</button>
+							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Drop Out</button>
 						<% } else {%>
 							Your help has been accepted.
 						<% } %>
