@@ -155,9 +155,9 @@ var RequestSchema = mongoose.Schema({
 	status: String,
   reward: String,
 	candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
-	helpers: [{type: Schema.Types.ObjectId, ref:'User'}]
+	helpers: [{type: Schema.Types.ObjectId, ref:'User'}],
 	//category: String, //not for MVP
-	//tag: [String], //not for MVP
+	//tag: [String], 
 });
 
 RequestSchema.statics.getRequestById = function(requestId, cb){

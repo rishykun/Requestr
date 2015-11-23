@@ -182,7 +182,7 @@ router.post('/acceptCandidate',function(req,res){
 */
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
-	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires},
+	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires, 'tags': req.body.tags },
 		function(err){
 			 if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');

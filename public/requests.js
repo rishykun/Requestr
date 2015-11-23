@@ -185,12 +185,19 @@ $(document).ready(function() {
 			var title = $("#request-title").val();
 			var desc = $("#request-desc").val();
 			var expires = $("#request-expires").val();
+			var tagsString = $("#request-tags").val();
+			var tagsArray = tagsString.split(",");
+			// Trim the beginning and end spaces off all tags in the array
+			tagsArray = tagsArray.map(function(tag){
+				return tag.trim();
+			});
 
 			//make post request to request route
 			$.post("/requests/create", {
 				"title": title,
 				"desc": desc,
 				"expires": expires,
+				"tags": tagsArray,
 			})
 			//successful response from request creation
 			.done(function(data) {
