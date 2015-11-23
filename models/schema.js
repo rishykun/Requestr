@@ -171,7 +171,6 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
         if (err) cb({err: "Failed to populate creators"});
         else {
           that.populate(requestQuery, {path: 'candidates'}, function(err, result){
-
             if (err) cb({err: "Failed to populate candidates"});
             else {
               that.populate(result, {path: 'helpers'}, function(err, result){
@@ -273,7 +272,7 @@ RequestSchema.statics.startRequest = function(requestId, cb){
     if (err) cb(err);
     else if (request.status !== "Open") cb({err: "Request is not open!"});
     else {
-      that.update(request, {status: 'In progress'}, {upsert: true}, function(err){
+      that.update(request, {status: 'In progress', $set: {'candidates': []}}, {upsert: true}, function(err){
         if (err) cb({err: "Failed to start request"});
         else cb(null);
       });

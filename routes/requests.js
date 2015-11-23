@@ -192,6 +192,48 @@ router.post('/create', function(req,res){
 		});
 });
 
+/*
+  POST /requests/:request/startRequest
+  Request parameters:
+    - request_id: the unique ID of the request within the logged in user's request collection
+
+  Response:
+    - success: true if the server succeeded in initializing the request
+    - err: on failure, an error message
+*/
+// Requires Ownership (middleware)
+router.post('/:request/startRequest', function(req,res){
+  Request.startRequest(req.body.request_id,
+    function(err){
+     if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res);
+    }
+  });
+});
+
+/*
+  POST /requests/:request/completeRequest
+  Request parameters:
+    - request_id: the unique ID of the request within the logged in user's request collection
+
+  Response:
+    - success: true if the server succeeded in completing the request
+    - err: on failure, an error message
+*/
+// Requires Ownership (middleware)
+router.post('/:request/completeRequest', function(req,res){
+  Request.completeRequest(req.body.request_id,
+    function(err){
+     if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res);
+    }
+  });
+});
+
 
 /*
 	DELETE /requests/:request
