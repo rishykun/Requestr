@@ -19,13 +19,28 @@ var requireAuthentication = function(req, res, next) {
 };
 
 
+/*
+  Require ownership whenever deleting a request.
+  This means that the client accessing the resource must be logged in
+  as the user that originally created the request. Clients who are not owners 
+  of this particular resource will receive a 404.
+
+*/
+/*
+var requireOwnership = function(req, res, next) {
+  if (!(req.currentUser.username === req.request.creator)) {
+    utils.sendErrResponse(res, 404, 'Resource not found.');
+  } else {
+    next();
+  }
+};*/
 
 /*
   For create and edit requests, require that the request body
   contains a 'description' field. Send error code 400 if not.
 */
 var requireDescription = function(req, res, next) {
-  if (!req.body.content) {
+  if (!req.body.desc) {
     utils.sendErrResponse(res, 400, 'Description required in request.');
   } else {
     next();
@@ -49,7 +64,7 @@ router.post('/create', requireDescription);
     - err: on failure, an error message
 */
 router.get('/', function(req, res) {
-  Request.getAllRequests(req.currentUser.username, function(err, requests) {
+  Request.getAllRequests(function(err, requests) {
     if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -58,8 +73,63 @@ router.get('/', function(req, res) {
   });
 });
 
+/*
+  GET /requests/candidates
+  Params:
+    - request_id: id of the request being queried
+  Response:
+    - success: true if the server succeeded in getting the request's candidates
+    - candidates: on success, an object with a single field 'candidates', which contains a list of the
+    request's candidates
+    - err: on failure, an error message
+*/
+router.get('/candidates', function(req, res) {
+  Request.getRequestById(request_id, function(err, request) {
+    if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res, { candidates: request.candidates });
+    }
+  });
+});
 
+/*
+  GET /requests/myRequests
+  No request parameters
+  Response:
+    - success: true if the server succeeded in getting the user's requests
+    - candidates: on success, an object with a single field 'requests', which contains a list of the
+    user's requests
+    - err: on failure, an error message
+*/
+router.get('/myRequests', function(req, res) {
+  User.getUserRequests(req.currentUser.username, function(err, requests) {
+    if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res, { requests: requests });
+    }
+  });
+});
 
+/*
+  GET /requests/takenRequests
+  No request parameters
+  Response:
+    - success: true if the server succeeded in getting the user's candidates
+    - candidates: on success, an object with a single field 'requests', which contains a list of the
+    user's requests
+    - err: on failure, an error message
+*/
+router.get('/takenRequests', function(req, res) {
+  User.getUserRequests(req.currentUser.username, function(err, requests) {
+    if (err) {
+      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+    } else {
+      utils.sendSuccessResponse(res, { requests: takenRequests });
+    }
+  });
+});
 
 
 // Post for requests? Sign up to take an open request
@@ -70,8 +140,9 @@ router.get('/', function(req, res) {
     - request_id - unique id of the request
 */
 router.post('/addCandidate',function(req,res){
-  console.log("here");
-  Request.addCandidate(req.request_id, req.currentUser.username, function(err){
+
+  
+  Request.addCandidate(req.body.request_id, User, req.currentUser.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -85,9 +156,10 @@ router.post('/addCandidate',function(req,res){
 
   Params:
     - request_id - unique id of the request
+    - username - username of the candidate to accept
 */
 router.post('/acceptCandidate',function(req,res){
-  Request.acceptCandidate(req.request_id, req.currentUser.username, function(err){
+  Request.acceptCandidate(req.body.request_id, req.username, function(err){
       if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -103,8 +175,10 @@ router.post('/acceptCandidate',function(req,res){
 */
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
-  Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'created': new Date(), 'description': desc, 'expires':req.body.expires},
+  Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expires':req.body.expires},
     function(err){
+      console.log("error print");
+      console.log (err); //debug
        if (err) {
       utils.sendErrResponse(res, 500, 'An unknown error occurred.');
     } else {
@@ -126,7 +200,7 @@ router.post('/create', function(req,res){
 // Requires Ownership (middleware)
 router.delete('/:request', function(req, res) {
   User.removeRequest( 
-    req.request_id, 
+    req.body.request_id, 
     function(err) {
       if (err) {
         utils.sendErrResponse(res, 500, 'An unknown error occurred.');

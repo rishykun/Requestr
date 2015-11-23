@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var User = require('../models/schema');
+var Schema = require('../models/schema');
 
 /*
 	GET home page.
@@ -16,46 +16,20 @@ router.get('/', function(req, res) {
 
 		console.log("user logged in"); //debug
 
-		res.render('index', {
-			userProfile: req.currentUser
-		});
+		Schema.Request.getAllRequests(function(err, requests) {
+		    if (err) {
+		      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		    } else {
 
-		//attempt to find and load user data from the User model store
-		/*
-		User.findByUsername(req.currentUser.username, function(err, data) {
-			var profile = {};
-			profile.username = data.username;
-			profile.messages = data.messages;
-			profile.following = data.following;
-			//exclude sensitive password information
-			if (err) {
-				console.error("couldn't find user, defaulting to undefined userProfile");
-
-				res.render('index', {
-					userProfile: undefined
+		    	res.render('index', {
+					userProfile: req.currentUser,
+					requests: requests
 				});
-			} else {
+		    }
+		 });
 
-				//get all messages
-				Message.getAllMessages(function(err, msgList) {
-					//if no messages, render with no message data
-					if (err) {
-						res.render('index', {
-							userProfile: profile,
-							allMessages: []
-						});
-					} else {
-					//if messages exist, render with said message data
-						res.render('index', {
-							userProfile: profile,
-							allMessages: msgList
-						});
-					}
-				});
-				
-			}
-		});
-*/
+		
+
 	}
 	//if not logged in, render with no userProfile data
 	else {

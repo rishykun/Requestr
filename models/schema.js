@@ -115,9 +115,16 @@ UserSchema.statics.getRequestsTaken = function(user, cb){
 UserSchema.statics.addRequest = function(user, requestId, cb){
   var that = this;
   that.find({ username: user }, function(err, userQuery){
+    console.log("raw error: ", err); //debug
     if (err) cb(err);
-    else if (userQuery.length == 0) cb({msg: "No such user!"});
-    else if (userQuery.length > 1) cb({msg: "Multiple usernames exist!"});
+    else if (userQuery.length == 0) {
+      console.error("no such user"); //debug
+      cb({msg: "No such user!"});
+    }
+    else if (userQuery.length > 1) {
+      console.error("multiple usernames exist!"); //debug
+      cb({msg: "Multiple usernames exist!"});
+    }
     else {
       that.update(userQuery[0],{$push: {'myRequests': requestId}},{upsert:true},function(err){
         if (err) cb(err);
@@ -169,6 +176,10 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
   var that = this;
   that.find({ _id: requestId }, function(err, requestQuery){
     if (err) cb(err);
+    else if (requestQuery.length == 0)
+    {
+      console.log("requestQuery length is 0");
+    }
     else {
       that.populate(requestQuery, {path: 'creator'}, function(err, requestQuery){ //creator populated
         if (err) cb(err);
@@ -217,14 +228,14 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
   requestData.candidates = [];
   requestData.helpers = [];
   userModel.getUser(user, function(err, user){
-    if (err) cb(err);
+    if (err) cb({msg: "Error getting user when creating request"});
     else {
       requestData.creator = user;
       that.create(requestData, function(err, request){
-        if (err) cb(err);
+        if (err) cb({msg: "Error creating request"});
         else {
-          userModel.addRequest(user, request, function(err){
-            if (err) cb(err);
+          userModel.addRequest(user.username, request, function(err){
+            if (err) cb({msg: "Error adding request"});
             else cb(null);
           });
         }
