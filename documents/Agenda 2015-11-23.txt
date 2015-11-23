@@ -3,9 +3,9 @@ Agenda - November 23
 1. Feedback on MVP so far
 	- Do we have enough functionality for MVP?
 	- Should we have automated tests for the MVP?
-	- Overall design of project (ask TA)
+	- Good design?
 		- File organization
-		- Schema design
+		- Schema
 2. Next Critical Features
 	- Tags/Reviews: Make concrete how they help requests
 	- Request discussion: Messaging? Comments?
