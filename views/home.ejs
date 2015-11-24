@@ -7,7 +7,7 @@
 		<% requests.forEach(function(request) { %>
 
 		<div id="request-box" style="background-color:rgb(231,231,231); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
-			<div id="request-header" style="background-color:rgb(208,208,208); padding: 10px" href="/request/<%= request._id %>">
+			<div id="request-header" style="background-color:rgb(208,208,208); padding: 10px">
 				<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
 					<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
 					<%= request.status %>
@@ -15,6 +15,8 @@
 				<div id="request-title-bar" style="display: inline-block; margin-left: 5px">
 					Title: <%= request.title %>
 				</div>
+				<button class="btn-btn-primary" id="request_view-button" onclick="viewRequest('<%= request._id %>')">View
+				</button>
 				<div id="request-expdate-bar" style="float:right; display: inline-block">
 					Expires: <%= request.expirationDate %>
 				</div>
