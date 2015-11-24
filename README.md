@@ -36,3 +36,4 @@ REQUESTR (MVP)
 	- Users can add comments to each request. In the future we will enforce that only users that made the request or are working on completing the request can comment on it.
 
 The Messages, Search Helpers buttons, and Accepted Requests on the Nav Bar do nothing at the moment as the features have not been implemented.
+Deleting requests and dropping out have not yet been implemented.
