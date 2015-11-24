@@ -231,7 +231,7 @@ RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
   }
   else if (tag.length == 0) that.getRequestsByStatus(status, cb);
   else {
-    that.find({"status": status, "tags": {$in, tagQuery}}, function(err, requestQuery){
+    that.find({"status": status, "tags": {$in: tagQuery}}, function(err, requestQuery){
       that.populateRequests(err, requestQuery, cb);
     });    
   }
