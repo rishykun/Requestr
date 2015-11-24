@@ -329,14 +329,13 @@ RequestSchema.statics.completeRequest = function(requestId, cb){
 RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
   var that = this;
 
-  userModel.getUser(candidate, function(err, candidate){
+  userModel.getUser(candidate, function(err, candidate) {
     if (err) cb(err);
     else {
       that.getRequestById(requestId, function(err, result){
         if (err) cb(err);
         else {
-
-          that.update(result, {$push: {'candidates': candidate._id}}, {upsert: true}, function(err){
+          that.update({"_id":  requestId}, {$push: {'candidates': candidate._id}}, {upsert: true}, function(err){
             if (err) cb({err: "Failed to add candidate"});
             else cb(null);
           });
