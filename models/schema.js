@@ -1,6 +1,10 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
+
+/*
+	We currently have both schemas in the same file because of their circular dependency. In the future, we will figure out how to separate the schemas into two separate files
+*/
 var UserSchema = mongoose.Schema({
 	username: {
 		type: String,
