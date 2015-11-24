@@ -163,7 +163,12 @@ var RequestSchema = mongoose.Schema({
   reward: String,
   candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
   helpers: [{type: Schema.Types.ObjectId, ref:'User'}],
-  tags: [String]
+  tags: [String],
+  comments: [{
+    user: {type: Schema.Types.ObjectId, ref:'User'},
+    comment: String,
+    dateCreated: Date
+  }]
 });
 
 //Callback on the request query after population
@@ -178,15 +183,20 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
           if (err) cb({err: "Failed to populate candidates"});
           else {
             that.populate(result, {path: 'helpers'}, function(err, result){
-              if(err) cb({err: "Failed to populate helpers"});
-              else cb(null, result);
+              if (err) cb({err: "Failed to populate helpers"});
+              else {
+                that.populate(result, {path: 'comments.user'}, function (err, result) {
+                  if (err) cb({err: "Failed to populate comment users"});
+                  else cb(null, result);
+                });
+              }
             });
           }
         });
       }
     });
   }
-}
+};
 
 //Callback on all created requests
 RequestSchema.statics.getAllRequests = function(cb){
@@ -218,7 +228,7 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
     var that = this;
     that.find({"status": status}, function(err, requestQuery){
       that.populateRequests(err, requestQuery, cb);
-    });    
+    });
   }
 }
 
@@ -254,6 +264,7 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
   requestData.status = 'Open';
   requestData.candidates = [];
   requestData.helpers = [];
+  requestData.comments = [];
   userModel.getUser(user, function(err, user){
     if (err) cb(err);
     else {
@@ -359,7 +370,37 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
       });
     }
   });
-}
+};
+
+RequestSchema.statics.addComment = function(requestId, userModel, user, commentString, cb) {
+  var that = this;
+
+  console.log(user);
+
+  userModel.getUser(user.username, function(err, userObj) {
+    if (err) {
+      console.error(err);
+      cb(err);
+    } else {
+      that.getRequestById(requestId, function (err, data) {
+        if (err) {
+          console.error(err);
+          cb(err);
+        } else {
+          var currentDate = new Date();
+          that.update({"_id": requestId}, {$push: {'comments': {user: userObj._id, comment: commentString, dateCreated: currentDate}}}, {upsert: true}, function (err) {
+            if (err) {
+              console.error(err);
+              cb({err: "Failed to add comment"});
+            } else {
+              cb(null);
+            }
+          });
+        }
+      });
+    }
+  });
+};
 
 exports.User = mongoose.model('User', UserSchema);
 exports.Request = mongoose.model('Request', RequestSchema);
