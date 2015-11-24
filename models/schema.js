@@ -329,14 +329,13 @@ RequestSchema.statics.completeRequest = function(requestId, cb){
 RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
   var that = this;
 
-  userModel.getUser(candidate, function(err, candidate){
+  userModel.getUser(candidate, function(err, candidate) {
     if (err) cb(err);
     else {
       that.getRequestById(requestId, function(err, result){
         if (err) cb(err);
         else {
-
-          that.update(result, {$push: {'candidates': candidate._id}}, {upsert: true}, function(err){
+          that.update({"_id":  requestId}, {$push: {'candidates': candidate._id}}, {upsert: true}, function(err){
             if (err) cb({err: "Failed to add candidate"});
             else cb(null);
           });
@@ -357,13 +356,11 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
     else {
       that.getRequestById(requestId, function(err, result){
         if (err) {
-        console.error(err);
         cb(err);
       }
         else {
           that.update(result, {$pull: {'candidates': userObj._id}, $push: {'helpers': userObj._id}}, {upsert: true}, function(err){
             if (err) {
-              console.error(err);
               cb({err: "Failed to accept candidate"});
             }
             else {
@@ -379,22 +376,17 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
 RequestSchema.statics.addComment = function(requestId, userModel, user, commentString, cb) {
   var that = this;
 
-  console.log(user);
-
   userModel.getUser(user.username, function(err, userObj) {
     if (err) {
-      console.error(err);
       cb(err);
     } else {
       that.getRequestById(requestId, function (err, data) {
         if (err) {
-          console.error(err);
           cb(err);
         } else {
           var currentDate = new Date();
           that.update({"_id": requestId}, {$push: {'comments': {user: userObj._id, comment: commentString, dateCreated: currentDate}}}, {upsert: true}, function (err) {
             if (err) {
-              console.error(err);
               cb({err: "Failed to add comment"});
             } else {
               cb(null);

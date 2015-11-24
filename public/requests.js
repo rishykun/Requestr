@@ -46,8 +46,6 @@ $(document).ready(function() {
 			})
 			.done(function(result) {
 				var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-				//var resultBodyH = $.parseHTML(resultBody);
-				console.log(resultBody);
 				$("body").html(resultBody); //debug
 			});
 		})
@@ -84,6 +82,7 @@ $(document).ready(function() {
 					var this_request_header = $("#request-header" + request._id);
 					this_request_header.append('<div id="request-status" style="display: inline-block; font-weight: bold; color: ' + colorLookup[filter] + '; text-shadow: 1px 1px 1px rgb(32,32,32); background-color: rgb(244,244,244); padding:2px">' + request.status + '</div>')
 					this_request_header.append('<div id="request-title-bar" style="display: inline-block; margin-left: 5px">Title: ' + request.title + '</div>');
+					this_request_header.append('<button class="btn-btn-primary" id="request_view-button" onclick="viewRequest(\'' + request._id + '\')">View</button>');
 					this_request_header.append('<div id="request-expdate-bar" style="float:right; display: inline-block">Expires: ' + request.expirationDate + '</div>');
 					this_request_header.append('<div id="request-creator-bar" style="margin-top:5px">Requester: ' + request.creator+ '</div>');
 
@@ -133,7 +132,6 @@ $(document).ready(function() {
 	}
 
 	addComment = function(request_id) {
-		console.log('adding comment');
 		var comment = $("#newCommentText").val();
 		$.post('/requests/' + request_id + '/addComment', {
 			"comment": comment
@@ -235,7 +233,6 @@ $(document).ready(function() {
 	$("#request-expires").datepicker();
 
 	handleRequest = function(request_id, eventType) {
-		console.log("handle request called. id: " + request_id + ", eventType: " + eventType); //debug
 
 		//prepare data to be sent over to backend
 
