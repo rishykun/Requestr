@@ -163,7 +163,7 @@ var RequestSchema = mongoose.Schema({
   }]
 });
 
-RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
+RequestSchema.statics.populateRequests = function(err, requestQuery, cb) {
   if (err) cb({err: "Failed to query request"});
   else {
     var that = this;
@@ -175,14 +175,19 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
           else {
             that.populate(result, {path: 'helpers'}, function(err, result){
               if (err) cb({err: "Failed to populate helpers"});
-              else cb(null, result);
+              else {
+                that.populate(result, {path: 'comments.user'}, function (err, result) {
+                  if (err) cb({err: "Failed to populate comment users"});
+                  else cb(null, result);
+                });
+              }
             });
           }
         });
       }
     });
   }
-}
+};
 
 RequestSchema.statics.getAllRequests = function(cb){
   var that = this;
@@ -211,7 +216,7 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
     var that = this;
     that.find({"status": status}, function(err, requestQuery){
       that.populateRequests(err, requestQuery, cb);
-    });    
+    });
   }
 }
 
@@ -365,7 +370,7 @@ RequestSchema.statics.addComment = function(requestId, username, commentString, 
           cb(err);
         } else {
           var currentDate = new Date();
-          that.update(result, {$push: {'comments': {userObj._id}, comment: commentString}, dateCreated: currentDate}, {upsert: true}, function (err) {
+          that.update(result, {$push: {'comments': {user: userObj._id, comment: commentString, dateCreated: currentDate}}}, {upsert: true}, function (err) {
             if (err) {
               console.error(err);
               cb({err: "Failed to add comment"});
@@ -387,7 +392,7 @@ RequestSchema.statics.getRequestCommentsById = function(requestId, cb) {
       console.error(err);
       cb(err);
     } else {
-      data.populate(data, {path: 'comments'}, function (err, result) {
+      data.populate(data, {path: 'comments.user'}, function (err, result) {
         if (err) {
           cb({err: "Failed to populate comments"});
         } else {
@@ -396,7 +401,7 @@ RequestSchema.statics.getRequestCommentsById = function(requestId, cb) {
       })
     }
   });
-}
+};
 
 exports.User = mongoose.model('User', UserSchema);
 exports.Request = mongoose.model('Request', RequestSchema);
