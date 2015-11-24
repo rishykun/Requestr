@@ -1,6 +1,8 @@
 wgwong_rrrahman_davidwu_jroot_final
 ===================================
 
+deployed at http://requestr-6170.herokuapp.com/
+
 REQUESTR (MVP)
 
 1. Signup/Login
