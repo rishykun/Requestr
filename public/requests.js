@@ -6,6 +6,11 @@ var getAllRequests;
 
 var getMyRequests;
 
+var viewRequest;
+var addComment;
+
+var goHome;
+
 $(document).ready(function() {
 
 	getAllRequests = function() {
@@ -119,7 +124,42 @@ $(document).ready(function() {
 		});
 	}
 
+	viewRequest = function(request_id) {
+		location.href="/requests/" + request_id;
+	}
+
+	goHome = function() {
+		location.href="/";
+	}
+
+	addComment = function(request_id) {
+		console.log('adding comment');
+		var comment = $("#newCommentText").val();
+		$.post('/requests/' + request_id + '/addComment', {
+			"comment": comment
+		}).done(function (data) {
+			location.href = "/requests/" + request_id;
+		}).fail(function (error) {
+			console.log("ERROR: ", error);
+		});
+	};
+
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
+
+	/*
+		makes a call to the server in attempt to "log out" the user from being "logged in" on the server
+		if successful status received, the page will reload and the client will no longer have user credentials
+	*/
+	$("#logout-button").click(function() {
+		$.post("/users/logout")
+		.done(function(data) {
+			//if logout was successful
+			location.href="/"; //reload page
+		})
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	});
 
 	/*
 		instantiates login function in the login form's login button

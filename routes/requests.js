@@ -139,6 +139,29 @@ router.get('/takenRequests', function(req, res) {
 	});
 });
 
+/*
+	GET /requests/:request
+	Gets a specific request
+	Response:
+		- success: true if the server succeeded in getting the request
+		- request: on success, an object representing this request
+		- err: on failure, an error message
+*/
+router.get('/:request', function (req, res) {
+	Request.getRequestById(req.params.request, function (err, data) {
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+			console.log("REQUEST REQUESTED:\n", data);
+
+			res.render('request', {
+				userProfile: req.currentUser,
+				request: data
+			});
+		}
+	});
+});
+
 
 /*
 	GET /requests/search/tags
@@ -261,6 +284,16 @@ router.post('/completeRequest', function(req,res){
       utils.sendSuccessResponse(res);
     }
   });
+});
+
+router.post('/:request/addComment', function (req, res) {
+	Request.addComment(req.params.request, User, req.currentUser, req.body.comment, function(err) {
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+			utils.sendSuccessResponse(res);
+		}
+	});
 });
 
 
