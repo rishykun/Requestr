@@ -151,13 +151,14 @@ router.get('/takenRequests', function(req, res) {
 		- err: on failure, an error message
 */
 router.get('/search/tags', function(req, res) {
+	console.log('In route');
 	Requests.getRequestByFilter(null, req.body.tags, function(err, data) {
 
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 
-			utils.sendSuccessResponse(res, { requests: data.myRequests });
+			utils.sendSuccessResponse(res, { requests: data});
 
 			/*
 			res.render('requests_active', {
