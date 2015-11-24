@@ -337,7 +337,6 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
 
   userModel.getUser(candidate, function(err, userObj){
     if (err) {
-      console.error(err);
       cb(err);
     }
     else {

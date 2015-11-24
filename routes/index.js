@@ -53,16 +53,11 @@ router.post('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
 
-		console.log("passed in body", req.body);
-
-		console.log("passed in data", req.body.passedData);
 
 		res.render('index', {
 			userProfile: req.currentUser,
 			requests: req.body.passedData
 		}, function (err, html) {
-			console.log("error rendering? ", err);
-			console.log("here's the html: ", html);
 			res.send(html);
 		});
 

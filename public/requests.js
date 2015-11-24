@@ -31,20 +31,19 @@ $(document).ready(function() {
 			tagsArray = tagsArray.map(function(tag){
 				return tag.trim();
 			});
-			console.log(tagsArray);
 		$.post("/requests/search/tags", {
 			"tags": tagsArray,
 		})
 		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(results) {
-			console.log("front end getSearchRequests returns ", results.content.requests); //debug
 			$.post("/", {
 				"passedData": results.content.requests
 			})
 			.done(function(result) {
-				console.log("done?");
-				console.log("result: ", result); 
-				$("body").replaceWith(result); //debug
+				var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
+				//var resultBodyH = $.parseHTML(resultBody);
+				console.log(resultBody);
+				$("body").html(resultBody); //debug
 			});
 		})
 		//failed response from registration request
