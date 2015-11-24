@@ -148,16 +148,18 @@ router.get('/takenRequests', function(req, res) {
 		- err: on failure, an error message
 */
 router.get('/:request', function (req, res) {
-	Request.getRequestById(request, function (err, data) {
+	console.log("proper route "); //debug
+	Request.getRequestById(req.params.request, function (err, data) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-			Request.getRequestCommentsById();
+
+			console.log("DATA STRING:\n", data);
+
 			res.render('request', {
 				userProfile: req.currentUser,
 				request: data
 			});
-			console.log("DATA STRING:\n", data);
 		}
 	});
 });

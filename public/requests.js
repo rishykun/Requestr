@@ -6,6 +6,8 @@ var getAllRequests;
 
 var getMyRequests;
 
+var viewRequest;
+
 $(document).ready(function() {
 
 	getAllRequests = function() {
@@ -109,6 +111,10 @@ $(document).ready(function() {
 		.fail(function(error) {
 			console.error("ERROR: ", error);
 		});
+	}
+
+	viewRequest = function(request_id) {
+		location.href="/requests/" + request_id;
 	}
 
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
