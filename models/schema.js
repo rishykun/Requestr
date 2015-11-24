@@ -211,23 +211,26 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
 }
 
 RequestSchema.statics.getRequestsByTags = function(tagQuery, cb){
-  if (tagQuery.length == 0) getAllRequests(cb);
-  else {
+  console.log('In request by tags');
     var that = this;
+  if (tagQuery.length == 0) that.getAllRequests(cb);
+  else {
     that.find({tags: {$in: tagQuery}}, function(err, requestQuery){
+      console.log(requestQuery);
       that.populateRequests(err, requestQuery, cb);
     });
   }
 }
 
 RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
-  if (status === null) getRequestsByTags(tagQuery,cb);
+  console.log('In filter');
+  var that = this;
+  if (status === null) that.getRequestsByTags(tagQuery,cb);
   else if (status !== "Open" || status !== "In progress" || status !== "Completed"){
     cb({err: "Invalid status"});
   }
-  else if (tag.length == 0) getRequestsByStatus(status, cb);
+  else if (tag.length == 0) that.getRequestsByStatus(status, cb);
   else {
-    var that = this;
     that.find({"status": status, "tags": {$in, tagQuery}}, function(err, requestQuery){
       that.populateRequests(err, requestQuery, cb);
     });    

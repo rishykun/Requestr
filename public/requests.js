@@ -22,27 +22,27 @@ $(document).ready(function() {
 
 	}
 
-	getSearchRequests = function() {
-		console.log("in Search");
-		/*var tagsString = $("#request-search").val();
+
+	getSearchRequests = function(e) {
+		if(e.keyCode == 13){
+		var tagsString = $("#request-search").val();
 			var tagsArray = tagsString.split(",");
 			// Trim the beginning and end spaces off all tags in the array
 			tagsArray = tagsArray.map(function(tag){
 				return tag.trim();
 			});
 			console.log(tagsArray);
-		$.get("/requests", {
+		$.post("/requests/search/tags", {
 			"tags": tagsArray,
 		})
 		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(data) {
-			
 		})
 		//failed response from registration request
 		.fail(function(error) {
 			console.error("ERROR: ", error);
-		});*/
-
+		});
+	}
 	}
 
 	getMyRequests = function(filter) {

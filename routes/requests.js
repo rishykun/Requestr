@@ -150,9 +150,10 @@ router.get('/takenRequests', function(req, res) {
 		user's requests
 		- err: on failure, an error message
 */
-router.get('/search/tags', function(req, res) {
+router.post('/search/tags', function(req, res) {
 	console.log('In route');
-	Requests.getRequestByFilter(null, req.body.tags, function(err, data) {
+	console.log(req.body.tags);
+	Request.getRequestByFilter(null, req.body.tags, function(err, data) {
 
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
