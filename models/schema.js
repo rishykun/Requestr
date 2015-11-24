@@ -384,24 +384,5 @@ RequestSchema.statics.addComment = function(requestId, username, commentString, 
   });
 };
 
-RequestSchema.statics.getRequestCommentsById = function(requestId, cb) {
-  var that = this;
-
-  that.getRequestById(requestId, function (err, data) {
-    if (err) {
-      console.error(err);
-      cb(err);
-    } else {
-      data.populate(data, {path: 'comments.user'}, function (err, result) {
-        if (err) {
-          cb({err: "Failed to populate comments"});
-        } else {
-          cb(null, result);
-        }
-      })
-    }
-  });
-};
-
 exports.User = mongoose.model('User', UserSchema);
 exports.Request = mongoose.model('Request', RequestSchema);
