@@ -16,8 +16,7 @@ var mongoose = require("mongoose");
 
 //connect to backend database
 
-mongoose.connect(process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost:27017/requestr'); // connect to our database
-
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/requestr'); // connect to our database
 
 
 // Import User model
