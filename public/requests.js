@@ -1,9 +1,9 @@
 /*
 	handles client-sided app-logic for requests (creating, taking, filtering, etc.)
 */
-var handleRequest; //define handleRequest so that it can be used by the frontend
-var getAllRequests;
-
+//define the following functions so that they can be used by the frontend
+var handleRequest;
+var getSearchRequests;
 var getMyRequests;
 
 var viewRequest;
@@ -12,21 +12,6 @@ var addComment;
 var goHome;
 
 $(document).ready(function() {
-
-	getAllRequests = function() {
-		$.get("/requests", {
-		})
-		//when done, log user in because successful signup doesn't automatically log user in
-		.done(function(data) {
-
-		})
-		//failed response from registration request
-		.fail(function(error) {
-			console.error("ERROR: ", error);
-		});
-
-	}
-
 
 	getSearchRequests = function(e) {
 		if(e.keyCode == 13){
@@ -45,8 +30,13 @@ $(document).ready(function() {
 				"passedData": results.content.requests
 			})
 			.done(function(result) {
-				var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-				$("body").html(resultBody); //debug
+				try {
+					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
+					$("body").html(resultBody);
+				}
+				catch (err) {
+					alert("No results found.");
+				}
 			});
 		})
 		//failed response from registration request
@@ -195,6 +185,7 @@ $(document).ready(function() {
 		//failed response from registration request
 		.fail(function(error) {
 			console.error("ERROR: ", error);
+			alert("Failed registration. Username probably already taken.");
 		});
 	});
 
@@ -226,6 +217,7 @@ $(document).ready(function() {
 		//failed response from login request
 		.fail(function(error) {
 			console.error("ERROR: ", error);
+			alert("Failed authentication. Is your username/password combination correct?");
 		});
 	}
 
