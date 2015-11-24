@@ -15,6 +15,7 @@ var UserSchema = mongoose.Schema({
 	requestsTaken: [{type: Schema.Types.ObjectId, ref:'Request'}]
 });
 
+//Callback on query entry for a username
 UserSchema.statics.getUser = function(user, cb){
   var that = this;
 
@@ -34,6 +35,7 @@ UserSchema.statics.getUser = function(user, cb){
   });
 }
 
+//callback on true if candidatepw matches user pw else false
 UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
   var that = this;
 
@@ -44,6 +46,8 @@ UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
   });
 }
 
+//creates a user in the model if username doesn't already exists (callbacks on false)
+//else callbacks on true if the username is taken
 UserSchema.statics.createNewUser = function(user, password, cb){
 	var that = this;
 	that.getUser(user, function(err, userQuery){
@@ -67,6 +71,7 @@ UserSchema.statics.createNewUser = function(user, password, cb){
     });
 }
 
+//Callback on query entry for a user after population
 UserSchema.statics.getUserData = function(user, cb){
   var that = this;
   that.getUser(user, function(err, user){
@@ -93,6 +98,7 @@ UserSchema.statics.getUserData = function(user, cb){
  });
 }
 
+//Callback on requests by a user with the corresponding status
 UserSchema.statics.getRequestsByStatus = function(user, status, cb){
   if (status !== "Open" || status !== "In progress" || status !== "Completed"){
     cb({err: "Invalid status"});
@@ -110,6 +116,7 @@ UserSchema.statics.getRequestsByStatus = function(user, status, cb){
   }
 }
 
+//Adds a request with the corresponding requestId to the user
 UserSchema.statics.addRequest = function(user, requestId, cb){
   var that = this;
   that.getUser(user, function(err, user){
@@ -123,6 +130,7 @@ UserSchema.statics.addRequest = function(user, requestId, cb){
   });
 }
 
+//Removes a request with the corresponding requestId to the user
 UserSchema.statics.removeRequest = function(user, requestModel, requestId, cb){
   var that = this;
   that.getUser(user, function(err, user){
@@ -158,6 +166,7 @@ var RequestSchema = mongoose.Schema({
   tags: [String]
 });
 
+//Callback on the request query after population
 RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
   if (err) cb({err: "Failed to query request"});
   else {
@@ -179,6 +188,7 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
   }
 }
 
+//Callback on all created requests
 RequestSchema.statics.getAllRequests = function(cb){
   var that = this;
   that.find({}, function(err, requestQuery){
@@ -186,6 +196,7 @@ RequestSchema.statics.getAllRequests = function(cb){
   });
 };
 
+//Callback on request with corresponding requestId
 RequestSchema.statics.getRequestById = function(requestId, cb){
   var that = this;
   that.find({ _id: requestId }, function(err, requestQuery){
@@ -198,6 +209,7 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
   });
 }
 
+//Callback on all requests with corresponding status
 RequestSchema.statics.getRequestsByStatus = function(status, cb){
   if (status !== "Open" || status !== "In progress" || status !== "Completed"){
     cb({err: "Invalid status"});
@@ -210,20 +222,19 @@ RequestSchema.statics.getRequestsByStatus = function(status, cb){
   }
 }
 
+//Callback on all requests which have at least one tag in tagQuery
 RequestSchema.statics.getRequestsByTags = function(tagQuery, cb){
-  console.log('In request by tags');
-    var that = this;
+  var that = this;
   if (tagQuery.length == 0) that.getAllRequests(cb);
   else {
     that.find({tags: {$in: tagQuery}}, function(err, requestQuery){
-      console.log(requestQuery);
       that.populateRequests(err, requestQuery, cb);
     });
   }
 }
 
+//Callback on requests with corresponding status and at least one tag in tagQuery
 RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
-  console.log('In filter');
   var that = this;
   if (status === null) that.getRequestsByTags(tagQuery,cb);
   else if (status !== "Open" || status !== "In progress" || status !== "Completed"){
@@ -237,6 +248,7 @@ RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
   }
 }
 
+//Creates a new request and adds it to the corresponding user in userModel
 RequestSchema.statics.createRequest = function(userModel, user, requestData, cb){
   var that = this;
   requestData.status = 'Open';
@@ -259,6 +271,7 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
   });
 }
 
+//Removes a request
 RequestSchema.statics.removeRequest = function(requestId, cb){
   var that = this;
   that.remove({ _id: requestId }, function(err){
@@ -267,6 +280,7 @@ RequestSchema.statics.removeRequest = function(requestId, cb){
   });
 }
 
+//Changes the request from Open to In porgress
 RequestSchema.statics.startRequest = function(requestId, cb){
   var that = this;
   that.getRequestById(requestId, function(err, request){
@@ -281,6 +295,7 @@ RequestSchema.statics.startRequest = function(requestId, cb){
   })
 }
 
+//Changes the request from In progress to completed
 RequestSchema.statics.completeRequest = function(requestId, cb){
   var that = this;
   that.getRequestById(requestId, function(err, request){
@@ -295,6 +310,7 @@ RequestSchema.statics.completeRequest = function(requestId, cb){
   })
 }
 
+//Adds a candidate to a request
 RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
   var that = this;
 
@@ -315,6 +331,7 @@ RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, c
   });
 }
 
+//Accepts a candidate, changing them to a helper
 RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate, cb){
   var that = this;
 
