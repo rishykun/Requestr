@@ -356,10 +356,12 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
   });
 };
 
-RequestSchema.statics.addComment = function(requestId, username, commentString, cb) {
+RequestSchema.statics.addComment = function(requestId, userModel, user, commentString, cb) {
   var that = this;
 
-  userModel.getUser(username, function(err, userObj) {
+  console.log(user);
+
+  userModel.getUser(user.username, function(err, userObj) {
     if (err) {
       console.error(err);
       cb(err);
@@ -370,7 +372,7 @@ RequestSchema.statics.addComment = function(requestId, username, commentString, 
           cb(err);
         } else {
           var currentDate = new Date();
-          that.update(result, {$push: {'comments': {user: userObj._id, comment: commentString, dateCreated: currentDate}}}, {upsert: true}, function (err) {
+          that.update({"_id": requestId}, {$push: {'comments': {user: userObj._id, comment: commentString, dateCreated: currentDate}}}, {upsert: true}, function (err) {
             if (err) {
               console.error(err);
               cb({err: "Failed to add comment"});

@@ -7,6 +7,9 @@ var getAllRequests;
 var getMyRequests;
 
 var viewRequest;
+var addComment;
+
+var goHome;
 
 $(document).ready(function() {
 
@@ -116,6 +119,22 @@ $(document).ready(function() {
 	viewRequest = function(request_id) {
 		location.href="/requests/" + request_id;
 	}
+
+	goHome = function() {
+		location.href="/";
+	}
+
+	addComment = function(request_id) {
+		console.log('adding comment');
+		var comment = $("#newCommentText").val();
+		$.post('/requests/' + request_id + '/addComment', {
+			"comment": comment
+		}).done(function (data) {
+			location.href = "/requests/" + request_id;
+		}).fail(function (error) {
+			console.log("ERROR: ", error);
+		});
+	};
 
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
 
