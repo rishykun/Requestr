@@ -155,7 +155,12 @@ var RequestSchema = mongoose.Schema({
   reward: String,
   candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
   helpers: [{type: Schema.Types.ObjectId, ref:'User'}],
-  tags: [String]
+  tags: [String],
+  comments: [{
+    user: {type: Schema.Types.ObjectId, ref:'User'},
+    comment: String,
+    dateCreated: Date
+  }]
 });
 
 RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
@@ -169,7 +174,7 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
           if (err) cb({err: "Failed to populate candidates"});
           else {
             that.populate(result, {path: 'helpers'}, function(err, result){
-              if(err) cb({err: "Failed to populate helpers"});
+              if (err) cb({err: "Failed to populate helpers"});
               else cb(null, result);
             });
           }
@@ -341,6 +346,52 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
           });
         }
       });
+    }
+  });
+};
+
+RequestSchema.statics.addComment = function(requestId, username, commentString, cb) {
+  var that = this;
+
+  userModel.getUser(username, function(err, userObj) {
+    if (err) {
+      console.error(err);
+      cb(err);
+    } else {
+      that.getRequestById(requestId, function (err, data) {
+        if (err) {
+          console.error(err);
+          cb(err);
+        } else {
+          that.update(result, {$push: {'comments': {userObj._id}, comment: commentString}}, {upsert: true}, function (err) {
+            if (err) {
+              console.error(err);
+              cb({err: "Failed to add comment"});
+            } else {
+              cb(null);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+RequestSchema.statics.getRequestCommentsById = function(requestId, cb) {
+  var that = this;
+
+  that.getRequestById(requestId, function (err, data) {
+    if (err) {
+      console.error(err);
+      cb(err);
+    } else {
+      data.populate(data, {path: 'comments'}, function (err, result) {
+        if (err) {
+          cb({err: "Failed to populate comments"});
+        } else {
+          cb(null, result);
+        }
+      })
     }
   });
 }
