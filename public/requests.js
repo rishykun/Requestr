@@ -13,7 +13,7 @@ $(document).ready(function() {
 		})
 		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(data) {
-			
+
 		})
 		//failed response from registration request
 		.fail(function(error) {
@@ -36,7 +36,16 @@ $(document).ready(function() {
 			"tags": tagsArray,
 		})
 		//when done, log user in because successful signup doesn't automatically log user in
-		.done(function(data) {
+		.done(function(results) {
+			console.log("front end getSearchRequests returns ", results.content.requests); //debug
+			$.post("/", {
+				"passedData": results.content.requests
+			})
+			.done(function(result) {
+				console.log("done?");
+				console.log("result: ", result); 
+				$("body").replaceWith(result); //debug
+			});
 		})
 		//failed response from registration request
 		.fail(function(error) {
