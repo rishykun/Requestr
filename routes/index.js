@@ -14,8 +14,6 @@ router.get('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
 
-		console.log("user logged in"); //debug
-
 		Schema.Request.getAllRequests(function(err, requests) {
 		    if (err) {
 		      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
