@@ -144,6 +144,21 @@ $(document).ready(function() {
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
 
 	/*
+		makes a call to the server in attempt to "log out" the user from being "logged in" on the server
+		if successful status received, the page will reload and the client will no longer have user credentials
+	*/
+	$("#logout-button").click(function() {
+		$.post("/users/logout")
+		.done(function(data) {
+			//if logout was successful
+			location.href="/"; //reload page
+		})
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	});
+
+	/*
 		instantiates login function in the login form's login button
 	*/
 	$("#login-form").submit(function(event) {
