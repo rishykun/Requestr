@@ -247,6 +247,7 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
   requestData.status = 'Open';
   requestData.candidates = [];
   requestData.helpers = [];
+  requestData.comments = [];
   userModel.getUser(user, function(err, user){
     if (err) cb(err);
     else {
@@ -363,7 +364,8 @@ RequestSchema.statics.addComment = function(requestId, username, commentString, 
           console.error(err);
           cb(err);
         } else {
-          that.update(result, {$push: {'comments': {userObj._id}, comment: commentString}}, {upsert: true}, function (err) {
+          var currentDate = new Date();
+          that.update(result, {$push: {'comments': {userObj._id}, comment: commentString}, dateCreated: currentDate}, {upsert: true}, function (err) {
             if (err) {
               console.error(err);
               cb({err: "Failed to add comment"});
