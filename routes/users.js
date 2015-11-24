@@ -45,11 +45,7 @@ router.post('/login', function(req, res) {
   if (isLoggedInOrInvalidBody(req, res)) {
     return;
   }
-  console.log("about to call verify password");//debug
   User.verifyPassword(req.body.username, req.body.password, function(err, match) {
-
-  	console.log("verifyPassword called, err: " + err); //debug
-  	console.log("match: " + match); //debug
 
     if (match) {
       req.session.username = req.body.username;
@@ -98,8 +94,6 @@ router.post('/logout', function(req, res) {
 */
 router.post('/', function(req, res) {
 
-	console.log("asdasdasda"); //debug
-
 	if (isLoggedInOrInvalidBody(req, res)) {
 		return;
 	}
@@ -107,7 +101,6 @@ router.post('/', function(req, res) {
 	User.createNewUser(req.body.username, req.body.password, 
 		function(err, taken) {
 
-			console.log("asdas"); //debug
 			if (!err) {
 				if (taken) {
 					utils.sendErrResponse(res, 400, 'That username is already taken!');

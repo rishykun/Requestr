@@ -46,8 +46,6 @@ $(document).ready(function() {
 			})
 			.done(function(result) {
 				var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-				//var resultBodyH = $.parseHTML(resultBody);
-				console.log(resultBody);
 				$("body").html(resultBody); //debug
 			});
 		})
@@ -133,7 +131,6 @@ $(document).ready(function() {
 	}
 
 	addComment = function(request_id) {
-		console.log('adding comment');
 		var comment = $("#newCommentText").val();
 		$.post('/requests/' + request_id + '/addComment', {
 			"comment": comment
@@ -220,7 +217,6 @@ $(document).ready(function() {
 	$("#request-expires").datepicker();
 
 	handleRequest = function(request_id, eventType) {
-		console.log("handle request called. id: " + request_id + ", eventType: " + eventType); //debug
 
 		//prepare data to be sent over to backend
 
