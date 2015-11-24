@@ -302,7 +302,7 @@ RequestSchema.statics.startRequest = function(requestId, cb){
     if (err) cb(err);
     else if (request.status !== "Open") cb({err: "Request is not open!"});
     else {
-      that.update(request, {status: 'In progress', $set: {'candidates': []}}, {upsert: true}, function(err){
+      that.update({"_id":  requestId}, {status: 'In progress', $set: {'candidates': []}}, {upsert: true}, function(err){
         if (err) cb({err: "Failed to start request"});
         else cb(null);
       });
@@ -317,7 +317,7 @@ RequestSchema.statics.completeRequest = function(requestId, cb){
     if (err) cb(err);
     else if (request.status !== "In progress") cb({err: "Request is not in progress!"});
     else {
-      that.update(request, {status: 'Completed'}, {upsert: true}, function(err){
+      that.update({"_id":  requestId}, {status: 'Completed'}, {upsert: true}, function(err){
         if (err) cb({err: "Failed to complete request"});
         else cb(null);
       });
@@ -359,7 +359,7 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
         cb(err);
       }
         else {
-          that.update(result, {$pull: {'candidates': userObj._id}, $push: {'helpers': userObj._id}}, {upsert: true}, function(err){
+          that.update({"_id":  requestId}, {$pull: {'candidates': userObj._id}, $push: {'helpers': userObj._id}}, {upsert: true}, function(err){
             if (err) {
               cb({err: "Failed to accept candidate"});
             }
