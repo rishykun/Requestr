@@ -1,0 +1,4 @@
+discuss MVP feedback grade
+	esp. concerning "unimplemented" mvp features
+	average MVP project grade
+ask how to best re-render display without reloading (i.e data binding) without resorting to external frameworks

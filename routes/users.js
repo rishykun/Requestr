@@ -5,6 +5,8 @@ var utils = require('../utils/utils');
 var Schema = require('../models/schema');
 var User = Schema.User;
 
+//var SamlStrategy = require('../passport-saml').Strategy;
+
 /*
 	For both login and create user, we want to send an error code if the user
 	is logged in, or if the client did not provide a username and password
@@ -22,7 +24,15 @@ var isLoggedInOrInvalidBody = function(req, res) {
 	return false;
 };
 
-
+/*
+router.get('/login', passport.authenticate('saml', {
+	failureRedirect: '/',
+	failureFlash: true
+}), function (req, res) {
+	res.redirect('/');
+}
+);
+*/
 
 /*
 	This function will check to see that the provided username-password combination 

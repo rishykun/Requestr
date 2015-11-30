@@ -13,6 +13,8 @@ var goHome;
 
 $(document).ready(function() {
 
+	$("#request-expires").datepicker();
+
 	getSearchRequests = function(e) {
 		if(e)
 		{
@@ -158,17 +160,6 @@ $(document).ready(function() {
 		location.href="/";
 	}
 
-	addComment = function(request_id) {
-		var comment = $("#newCommentText").val();
-		$.post('/requests/' + request_id + '/addComment', {
-			"comment": comment
-		}).done(function (data) {
-			location.href = "/requests/" + request_id;
-		}).fail(function (error) {
-			console.log("ERROR: ", error);
-		});
-	};
-
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
 
 	/*
@@ -258,9 +249,6 @@ $(document).ready(function() {
 		});
 	}
 
-
-	$("#request-expires").datepicker();
-
 	handleRequest = function(request_id, eventType) {
 
 		//prepare data to be sent over to backend
@@ -273,6 +261,7 @@ $(document).ready(function() {
 			submits the request form by making a call to the server in attempt to create the message on the server-side
 			if successful, go to home page and the request data now appears in the client-side as well
 		*/
+		//CREATE REQUEST
 		if (eventType === "create") {
 			//event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
 
@@ -310,12 +299,12 @@ $(document).ready(function() {
 				console.error("ERROR: ", error);
 			});
 		}
+		//ADD CANDIDATE
 		if (eventType === "accept") {
 			//accept request
-			$.post("/requests/addCandidate", {
-				"request_id": request_id
+			$.post("/requests/" + request_id + "/candidates", {
 			})
-			//successful response from request creation
+			//successful response from accepting request
 			.done(function(data) {
 				//if call was successful
 				if (data.success) {
@@ -329,42 +318,48 @@ $(document).ready(function() {
 				console.error("ERROR: ", error);
 			});
 		}
+		//START REQUEST
 		if (eventType === "start") {
-			//accept request
-			$.post("/requests/startRequest", {
-				"request_id": request_id
-			})
-			//successful response from request creation
-			.done(function(data) {
-				//if call was successful
-				if (data.success) {
-					location.href="/"; //go to home page
-				} else { //call failed
-					console.error("ERROR: request start failed");
+			console.log("START REQUEST"); //debug
+			$.ajax({
+				url: "/requests/" + request_id,
+				method: "PUT",
+				data: {
+					"updateType": eventType
+				},
+				success: function(data) {
+					//if call was successful
+					if (data.success) {
+						location.href="/"; //go to home page
+					} else { //call failed
+						console.error("ERROR: request start failed");
+					}
+				},
+				error: function(error) {
+					console.error("ERROR: ", error);
 				}
-			})
-			//failed response from call
-			.fail(function(error) {
-				console.error("ERROR: ", error);
 			});
 		}
+		//COMPLETE REQUEST
 		if (eventType === "complete") {
-			//accept request
-			$.post("/requests/completeRequest", {
-				"request_id": request_id
-			})
-			//successful response from request creation
-			.done(function(data) {
-				//if call was successful
-				if (data.success) {
-					location.href="/"; //go to home page
-				} else { //call failed
-					console.error("ERROR: request complete failed");
+
+			$.ajax({
+				url: "/requests/" + request_id,
+				method: "PUT",
+				data: {
+					"updateType": eventType
+				},
+				success: function(data) {
+					//if call was successful
+					if (data.success) {
+						location.href="/"; //go to home page
+					} else { //call failed
+						console.error("ERROR: request complete failed");
+					}
+				},
+				error: function(error) {
+					console.error("ERROR: ", error);
 				}
-			})
-			//failed response from call
-			.fail(function(error) {
-				console.error("ERROR: ", error);
 			});
 		}
 	}
@@ -381,6 +376,7 @@ $(document).ready(function() {
 			submits the request form by making a call to the server in attempt to create the message on the server-side
 			if successful, go to home page and the request data now appears in the client-side as well
 		*/
+		//ACCEPT CANDIDATE
 		if (eventType === "accept") {
 			event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
 
@@ -389,25 +385,24 @@ $(document).ready(function() {
 			//we handle data sanitization here
 			var title = $("#request-title").val();
 
-			//make post request to request route
-			$.post("/requests/acceptCandidate", {
-				"request_id": request_id,
-				"username": username
-			})
-			//successful response from request creation
-			.done(function(data) {
-				//if message creation was successful
-				if (data.success) {
-					location.href="/"; //go to home page
-				} else { //request creation failed
-					console.error("ERROR: request creation failed");
+			$.ajax({
+				url: "/requests/" + request_id + "/candidates/" + username,
+				method: "PUT",
+				success: function(data) {
+					//if call was successful
+					if (data.success) {
+						location.href="/"; //go to home page
+					} else { //call failed
+						console.error("ERROR: accept candidate failed");
+					}
+				},
+				error: function(error) {
+					console.error("ERROR: ", error);
 				}
-			})
-			//failed response from request creation
-			.fail(function(error) {
-				console.error("ERROR: ", error);
 			});
 		}
+		//TODO
+		//REJECT CANDIDATE
 		if (eventType === "reject") {
 			/*
 			//accept request
@@ -430,4 +425,16 @@ $(document).ready(function() {
 			*/
 		}
 	}
+
+	//ADD COMMENT
+	addComment = function(request_id) {
+		var comment = $("#newCommentText").val();
+		$.post('/requests/' + request_id + '/comments', {
+			"comment": comment
+		}).done(function (data) {
+			location.href = "/requests/" + request_id;
+		}).fail(function (error) {
+			console.log("ERROR: ", error);
+		});
+	};
 });
