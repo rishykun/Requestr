@@ -1,0 +1,29 @@
+<div class="modal fade" id="createAdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="createRequestLabel">
+  	<div class="modal-dialog">
+   		<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title">Advanced Search</h4>
+      		</div>
+      		<div class="modal-body">
+        <form id="advanced-search-form">
+					<label for"request-search-keyword">Enter Keyword:</label>
+					<input id="request-search-keyword" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Enter a keyword." style="width:50%">
+					<br>
+					<label for"request-search-tags">Enter Tags Separated By Commas:</label>
+					<input id ="request-search-tags" type="text" name="tags" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Enter tags." style="width:50%">
+					<br>
+					<label for"request-search-expire-start">Search for Requests That Expire After:</label>
+					<input id ="request-search-expire-start" type="text" name="expireStart" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by expiration date" placeholder="Search for requests that expire after this date." style="width:50%">
+					<br>
+					<label for"request-search-expire-end">Search for Requests That Expire Before:</label>
+				<input id ="request-search-expire-end" type="text" name="expireEnd" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by expiration date" placeholder="Search for requests that expire before this date." style="width:50%">
+				</form>
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        		<button type="button" class="btn btn-primary" onclick="getSearchRequests(null)">Search</button>
+      		</div>
+    	</div><!-- /.modal-content -->
+  	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
