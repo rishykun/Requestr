@@ -1,4 +1,13 @@
-discuss MVP feedback grade
-	esp. concerning "unimplemented" mvp features
-	average MVP project grade
-ask how to best re-render display without reloading (i.e data binding) without resorting to external frameworks
+1. discuss MVP feedback
+	- discuss MVP grading
+		(esp. concerning "Missing MVP feature")
+		ask about average MVP project grade and how we stand in the class currently
+2. what we did over thanksgiving
+	- mostly planning the timeline for the rest of the project
+	- started developing features mentioned in the above meeting
+	- fixed some of the mistakes noted in the feedback (notably the RESTful routing scheme)
+3. ask how to best re-render display without reloading (i.e data binding) without resorting to external frameworks
+	- we currently have two different ways of handling this
+4. accumulated backlog: how to best handle this
+	- how do we tackle the work we were supposed to do by today
+	- and the remaining work that we have? (replan)
