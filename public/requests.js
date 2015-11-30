@@ -14,35 +14,72 @@ var goHome;
 $(document).ready(function() {
 
 	getSearchRequests = function(e) {
-		if(e.keyCode == 13){
-		var tagsString = $("#request-search").val();
-			var tagsArray = tagsString.split(",");
-			// Trim the beginning and end spaces off all tags in the array
-			tagsArray = tagsArray.map(function(tag){
-				return tag.trim();
-			});
-		$.post("/requests/search/tags", {
-			"tags": tagsArray,
-		})
-		//when done, log user in because successful signup doesn't automatically log user in
-		.done(function(results) {
-			$.post("/", {
-				"passedData": results.content.requests
+		if(e)
+		{
+			if(e.keyCode == 13){
+				// keyword
+			var keyword = $("#request-search").val();
+			$.post("/requests/search", {
+				"keyword": keyword,
 			})
-			.done(function(result) {
-				try {
-					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-					$("body").html(resultBody);
-				}
-				catch (err) {
-					alert("No results found.");
-				}
+			//when done, log user in because successful signup doesn't automatically log user in
+			.done(function(results) {
+				$.post("/", {
+					"passedData": results.content.requests
+				})
+				.done(function(result) {
+					try {
+						var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
+						$("body").html(resultBody);
+					}
+					catch (err) {
+						alert("No results found.");
+					}
+				});
+			})
+			//failed response from registration request
+			.fail(function(error) {
+				console.error("ERROR: ", error);
 			});
-		})
-		//failed response from registration request
-		.fail(function(error) {
-			console.error("ERROR: ", error);
-		});
+		}
+	}
+	else {
+			// tags
+			var tagsString = $("#request-search-tags").val();
+				var tagsArray = tagsString.split(",");
+				// Trim the beginning and end spaces off all tags in the array
+				tagsArray = tagsArray.map(function(tag){
+					return tag.trim();
+				});
+				// keyword
+			var keyword = $("#request-search").val();
+			var startDate = $("#request-search-expire-start").val();
+			var endDate = $("#request-search-expire-end").val();
+			$.post("/requests/search", {
+				"tags": tagsArray,
+				"keyword": keyword,
+				"startDate": startDate,
+				"endDate": endDate,
+			})
+			//when done, log user in because successful signup doesn't automatically log user in
+			.done(function(results) {
+				$.post("/", {
+					"passedData": results.content.requests
+				})
+				.done(function(result) {
+					try {
+						var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
+						$("body").html(resultBody);
+					}
+					catch (err) {
+						alert("No results found.");
+					}
+				});
+			})
+			//failed response from registration request
+			.fail(function(error) {
+				console.error("ERROR: ", error);
+			});
 	}
 	}
 

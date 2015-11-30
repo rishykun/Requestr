@@ -173,7 +173,7 @@ router.get('/:request', function (req, res) {
 		user's requests
 		- err: on failure, an error message
 */
-router.post('/search/tags', function(req, res) {
+router.post('/search', function(req, res) {
 
 	Request.getRequestByFilter(null, req.body.tags, function(err, data) {
 
