@@ -1,5 +1,5 @@
 <!--  Search Only Implemented For Tags. Tags can be typed into the search bar and delimited by commas. -->
-<input id="request-search" onKeyPress = "getSearchRequests(event)" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 50px">
+<input class="form-control" id="request-search" onKeyPress = "getSearchRequests(event)" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 50px">
 
 
 <div id="requests-container" style="margin-top:20px">
@@ -34,9 +34,14 @@
 				</div>
 			</div>
 			<div id = "request-tags">
-				Tags: <% request.tags.forEach(function(tag){ %>
-					<%= tag%>
-				<% }); %>
+				Tags:
+					<% if (request.tags.length > 0) { %>
+						<% request.tags.forEach(function(tag){ %>
+							<%= tag%>
+						<% }); %>
+					<% } else { %>
+						<i>n/a</i>
+					<% } %>
 			</div>
 			<div id="request-footer">
 				<% if (request.status === "Open") { %>
