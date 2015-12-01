@@ -67,7 +67,6 @@ app.use('/users', users);
 app.use('/requests', requests);
 app.use('/profile', profile);
 
-
 // ERROR HANDLERS
 // Note: The methods below are called
 // only if none of the above routes 

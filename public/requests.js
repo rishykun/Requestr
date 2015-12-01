@@ -218,6 +218,33 @@ $(document).ready(function() {
 	});
 
 	/*
+		Instantiates review submission function
+	*/
+	$("#review-form").submit(function (event) {
+		event.preventDefault();
+
+		var writerUsername = userProfile.username;
+		var victimUsername = $("#review-victim").val();
+		var rating = Number($("#review-rating").val());
+		var text = $("#review-text").val();
+		var requestId = request._id;
+
+		$.post("/users/" + victimUsername + "/reviews", {
+			"writerUsername": writerUsername,
+			"victimUsername": victimUsername,
+			"reviewText": text,
+			"rating": rating,
+			"requestId": requestId
+		}).done(function (data) {
+			$("#review-error").html("Your review has been submitted!");
+			$("#review-form :input").prop("readonly", true);
+		}).fail(function (error) {
+			console.error("ERROR: ", error);
+			$("#review-error").html("Your review could not be submitted.");
+		});
+	});
+
+	/*
 		makes a call to the server and attempts to authenticate with the specified credentials
 		if successfully authenticated, the page will reload with the correct userprofile and data
 		and the user will be "logged in"

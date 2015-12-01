@@ -3,9 +3,8 @@ var express = require('express');
 var router = express.Router();
 var utils = require('../utils/utils');
 
-var Schema = require('../models/schema');
-var User = Schema.User;
-var Request = Schema.Request;
+var User = require('../models/schema').User;
+var Request = require('../models/schema').Request;
 /*
 	Require authentication on ALL access to /requests/*
 	Clients who are not logged in will receive a 403 error code.
@@ -179,8 +178,6 @@ router.get('/:request', function (req, res) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-			console.log("REQUEST REQUESTED:\n", data);
-
 			res.render('request', {
 				userProfile: req.currentUser,
 				request: data

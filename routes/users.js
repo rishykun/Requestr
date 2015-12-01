@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var utils = require('../utils/utils');
 
-var Schema = require('../models/schema');
-var User = Schema.User;
-var Review = Schema.Review;
+var User = require('../models/schema').User;
+var Request = require('../models/schema').Request;
+var Review = require('../models/ReviewSchema');
 
 //var SamlStrategy = require('../passport-saml').Strategy;
 
@@ -141,34 +141,39 @@ router.post('/', function(req, res) {
 		- err: on error, an error message
 */
 router.post('/:userID/reviews', function (req, res) {
-	if (req.body.victimUsername != req.params.userID) {
-		utils.sendErrResponse(res, 400, 'Malformed review creation request.');
-	}
-
-	Review.reviewExistsForRequestAndWriter(req.body.requestId, req.body.writerUsername, Request, User, function (err, reviewExists) {
-		if (err) {
-			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+	if (req.currentUser) {
+		if (req.currentUser != req.body.writerUsername || 
+			req.body.victimUsername != req.params.userID) {
+			utils.sendErrResponse(res, 400, 'Malformed review creation request.');
 		} else {
-			if (reviewExists) {
-				utils.sendErrResponse(res, 403, 'You have already submitted a review for this request.');
-			} else {
-				Review.addReview(
-					req.body.writerUsername, 
-					req.body.victimUsername, 
-					req.body.reviewText, 
-					req.body.rating, 
-					req.body.requestId, 
-					User, Request, function (err, response) {
-						if (err) {
-							utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
-						} else {
-							utils.sendSuccessResponse(res);
-						}
+			Review.reviewIsValid(req.body.requestId, req.body.writerUsername, function (err, reviewValid) {
+				if (err) {
+					utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+				} else {
+					if (reviewValid) {
+						utils.sendErrResponse(res, 403, 'You may not submit a review.');
+					} else {
+						Review.addReview(
+							req.body.writerUsername, 
+							req.body.victimUsername, 
+							req.body.reviewText, 
+							req.body.rating, 
+							req.body.requestId, 
+							function (err, response) {
+								if (err) {
+									utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+								} else {
+									utils.sendSuccessResponse(res);
+								}
+							}
+						);
 					}
-				);
-			}
+				}
+			});
 		}
-	});
+	} else {
+		utils.sendErrResponse(res, 403, 'Must be logged in to use this feature.');
+	}
 });
 
 /*
@@ -198,23 +203,27 @@ router.get('/current', function(req, res) {
 		- err: on failure, an error message
 */
 router.get('/:userID', function (req, res) {
-	User.getUser(req.params.userID, function (err, userObj) {
-		if (err) {
-			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-		} else {
-			Review.getReviewsByVictimId(user.username function (err, reviewObj) {
-				if (err) {
-					utils.sendErrResponse(res, 500, 'An unknown error occurred.');	
-				} else {
-					res.render('user', {
-						userProfile: req.currentUser,
-						user: userObj,
-						reviews: reviewObj
-					});
-				}
-			});
-		}
-	});
+	if (req.currentUser) {
+		User.getUserData(req.params.userID, function (err, userObj) {
+			if (err) {
+				utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+			} else {
+				Review.getReviewsByVictimId(userObj.username, function (err, reviewObj) {
+					if (err) {
+						utils.sendErrResponse(res, 500, 'An unknown error occurred.');	
+					} else {
+						res.render('profile', {
+							userProfile: req.currentUser,
+							user: userObj,
+							reviews: reviewObj
+						});
+					}
+				});
+			}
+		});
+	} else {
+		utils.sendErrResponse(res, 403, 'Must be logged in to use this feature.');
+	}
 });
 
 module.exports = router;
