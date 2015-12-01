@@ -71,12 +71,14 @@
                     </h4>
                 </div>
                 <div id="user-reviews" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
-                    <% if (user.requestsTaken.length > 0) { %>
+                    <% if (reviews.length > 0) { %>
                         <ul class="list-group">
                             <% reviews.forEach(function (review) { %>
-                                <h4><li class="list-group-item"><a href="/requests/<%= review.request._id %>"><%= review.request.title %></a></li></h4>
-                                <h4>by <a href="/users/<%= review.writer.username %>"><%= review.writer.username %></a> - <%= review.rating %>/5</h4>
-                                <%= review.text %>
+                                <li class="list-group-item">
+                                    <div><h4><a href="/requests/<%= review.request._id %>"><%= review.request.title %></a></h4>
+                                    by <a href="/users/<%= review.writer.username %>"><%= review.writer.username %></a> - <%= review.rating %>/5</div>
+                                    <div><%= review.text %></div>
+                                </li>
                             <% }); %>
                         </ul>
                     <% } else { %>

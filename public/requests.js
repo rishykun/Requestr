@@ -223,14 +223,13 @@ $(document).ready(function() {
 	$("#review-form").submit(function (event) {
 		event.preventDefault();
 
-		var writerUsername = userProfile.username;
 		var victimUsername = $("#review-victim").val();
 		var rating = Number($("#review-rating").val());
 		var text = $("#review-text").val();
-		var requestId = request._id;
+		var currentURL = window.location.href;
+		var requestId = currentURL.substr(currentURL.lastIndexOf('/') + 1);
 
 		$.post("/users/" + victimUsername + "/reviews", {
-			"writerUsername": writerUsername,
 			"victimUsername": victimUsername,
 			"reviewText": text,
 			"rating": rating,

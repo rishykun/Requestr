@@ -131,7 +131,6 @@ router.post('/', function(req, res) {
 
 	POST /users/:userID/reviews
 	Request body:
-		- writerUsername
 		- victimUsername
 		- reviewText
 		- rating
@@ -142,11 +141,10 @@ router.post('/', function(req, res) {
 */
 router.post('/:userID/reviews', function (req, res) {
 	if (req.currentUser) {
-		if (req.currentUser != req.body.writerUsername || 
-			req.body.victimUsername != req.params.userID) {
+		if (req.body.victimUsername != req.params.userID) {
 			utils.sendErrResponse(res, 400, 'Malformed review creation request.');
 		} else {
-			Review.reviewIsValid(req.body.requestId, req.body.writerUsername, function (err, reviewValid) {
+			Review.validReview(req.body.requestId, req.currentUser.username, function (err, reviewValid) {
 				if (err) {
 					utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
 				} else {
@@ -154,7 +152,7 @@ router.post('/:userID/reviews', function (req, res) {
 						utils.sendErrResponse(res, 403, 'You may not submit a review.');
 					} else {
 						Review.addReview(
-							req.body.writerUsername, 
+							req.currentUser.username, 
 							req.body.victimUsername, 
 							req.body.reviewText, 
 							req.body.rating, 

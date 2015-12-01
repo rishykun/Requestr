@@ -37,7 +37,7 @@ ReviewSchema.statics.addReview = function (writerUsername, victimUsername, text,
     if (err) {
       cb(err);
     } else {
-      User.getUser(victimUsername, function (err, writerObj) {
+      User.getUser(victimUsername, function (err, victimObj) {
         if (err) {
           cb(err);
         } else {
@@ -73,7 +73,7 @@ ReviewSchema.statics.getReviewsByVictimId = function (victimUsername, cb) {
     if (err) {
       cb(err);
     } else {
-      that.find({"victim": victimObj._id}).populate("writer").populate("victim").populate("request").exec(function (err, reviewQuery) {
+      that.find({"victim": victimObj}).populate("writer").populate("victim").populate("request").exec(function (err, reviewQuery) {
         if (err) {
           cb(err);
         } else {
