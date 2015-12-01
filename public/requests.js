@@ -54,7 +54,7 @@ $(document).ready(function() {
 					return tag.trim();
 				});
 				// keyword
-			var keyword = $("#request-search").val();
+			var keyword = $("#request-search-keyword").val();
 			var startDate = $("#request-search-expire-start").val();
 			var endDate = $("#request-search-expire-end").val();
 			$.post("/requests/search", {

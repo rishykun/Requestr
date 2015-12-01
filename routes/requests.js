@@ -148,6 +148,7 @@ router.post('/create', function(req,res){
 		- err: on failure, an error message
 */
 router.post('/search', function(req, res) {
+	console.log(req.body);
 
 	Request.getRequestByFilter(null, req.body.tags, function(err, data) {
 
