@@ -75,8 +75,13 @@
 				<div class="form-group">
 					<label for="review-victim">Select a Participant:</label>
 					<select class="form-control" id="review-victim">
+						<!-- TODO: Remove when accepting helpers/completing requests is done. -->
 						<% var participantNames = request.candidates.map(function (ele) { %>
 						<% return ele.username %>
+						<% }); %>
+
+						<% request.helpers.map(function (ele) { %>
+						<% participantNames.push(ele.username); %>
 						<% }); %>
 
 						<% participantNames.push(request.creator.username) %>
