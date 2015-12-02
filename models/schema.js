@@ -267,30 +267,29 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
 RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, cb){
   var that = this;
   var filter = {};
-  if (keywords.length !== 0){
-    var regex = "";
-    keywords.forEach(function(el){
-      regex += (el+"|") 
-    });
-    keywords.forEach(function(el){
-      regex += (el+"|");
-    });
-    regex = regex.substring(regex.length-1);
-    filter = {$or: [{title: {$regex: regex}}, {description: {$regex: regex}}]}
-  }
+
+  var regex = "";
+  keywords.forEach(function(el){
+    regex += (el+"|") 
+  });
+  keywords.forEach(function(el){
+    regex += (el+"|");
+  });
+  regex = regex.substring(regex.length-1)
+
   if (status !== null) filter.status = status;
 
-  if (tagQuery === null) tagQuery = [];
+  if (tagQuery.length === 0) tagQuery = [];
   var tagQuery = tagQuery.concat(keywords.filter(function(el){
     return tagQuery.indexOf(el) < 0;
   }));
-  filter.tags = {$in: tagQuery};
+  filter['$or'] = [{title: {$regex: regex}}, {description: {$regex: regex}}, {tags: {$in: tagQuery}}];
+  
   that.find(filter, function(err, result){
     if (err) {
-      console.log(err);
       cb({msg: "Failed to filter requests", err: err});
     }
-    else cb(result);
+    else cb(null, result);
   })
 }
 
