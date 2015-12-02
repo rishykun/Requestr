@@ -279,15 +279,12 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
     filter = {$or: [{title: {$regex: regex}}, {description: {$regex: regex}}]}
   }
   if (status !== null) filter.status = status;
-  if (tagQuery !== null) {
-    console.log(tagQuery);
-    var tagQuery = tagQuery.concat(keywords.filter(function(el){
-      return tagQuery.indexOf(el) < 0;
-    }));
-    console.log(tagQuery);
-    filter.tags = {$in: tagQuery};
-  }
-  console.log(filter);
+
+  if (tagQuery === null) tagQuery = [];
+  var tagQuery = tagQuery.concat(keywords.filter(function(el){
+    return tagQuery.indexOf(el) < 0;
+  }));
+  filter.tags = {$in: tagQuery};
   that.find(filter, function(err, result){
     if (err) {
       console.log(err);
