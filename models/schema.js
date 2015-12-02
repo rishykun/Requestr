@@ -265,9 +265,6 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
 
 //Callback on requests with corresponding status and at least one tag in tagQuery
 RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, cb){
-  var tagQuery = tagQuery.concat(keywords.filter(function(el){
-    return tagQuery.indexOf(el) < 0;
-  }));
   var that = this;
   var filter = {};
   if (keywords.length !== 0){
@@ -278,11 +275,16 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
     keywords.forEach(function(el){
       regex += (el+"|");
     });
-    regex = regex.substring(regex.length()-1);
+    regex = regex.substring(regex.length-1);
     filter = {$or: [{title: {$regex: regex}}, {description: {$regex: regex}}]}
   }
   if (status !== null) filter.status = status;
-  if (tagQuery.length !== 0) filter.tags = {$in: tagQuery};
+  if (tagQuery !== null) {
+    var tagQuery = tagQuery.concat(keywords.filter(function(el){
+      return tagQuery.indexOf(el) < 0;
+    }));
+    filter.tags = {$in: tagQuery};
+  }
   that.find(filter, function(err, result){
     if (err) cb({msg: "Failed to filter requests", err: err});
     else cb(result);
