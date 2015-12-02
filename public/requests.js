@@ -28,6 +28,9 @@ $(document).ready(function() {
 				});
 			$.post("/requests/search", {
 				"keywords": keyArray,
+				"tags": null,
+				"startDate": null,
+				"endDate": null
 			})
 		
 			//when done, log user in because successful signup doesn't automatically log user in

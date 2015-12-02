@@ -280,13 +280,19 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
   }
   if (status !== null) filter.status = status;
   if (tagQuery !== null) {
+    console.log(tagQuery);
     var tagQuery = tagQuery.concat(keywords.filter(function(el){
       return tagQuery.indexOf(el) < 0;
     }));
+    console.log(tagQuery);
     filter.tags = {$in: tagQuery};
   }
+  console.log(filter);
   that.find(filter, function(err, result){
-    if (err) cb({msg: "Failed to filter requests", err: err});
+    if (err) {
+      console.log(err);
+      cb({msg: "Failed to filter requests", err: err});
+    }
     else cb(result);
   })
 }
