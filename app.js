@@ -18,9 +18,6 @@ var mongoose = require("mongoose");
 //connect to backend database
 mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/requestr'); // connect to our database
 
-//import passport
-//var SamlStrategy = require("passport-saml").Strategy;
-
 // Import User model
 var Schema = require('./models/schema')
 var User = Schema.User;
