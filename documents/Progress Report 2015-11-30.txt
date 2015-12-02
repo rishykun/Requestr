@@ -1,0 +1,128 @@
+Mostly discussion
+
+
+Features To Implement:
+Major
+    Refactor code
+        shitty frontend, shitty css, no comments
+        done by monday - will
+    Search
+Keyword search, tag search, date range for both expiration and date created
+        Done by Monday - david & rishad
+
+    Update Get Requests for Home page-
+        Only show open requests on home page
+        Do not show expired requests or completed requests
+        (falls under backend for filtering)
+
+    Messaging
+        (not real time)
+
+    Ordering
+        Expiration date
+        Most Recent/ Date created
+        Alphabetical by title
+        we’ll think more when we actually implement
+        done by (to be determined)
+
+    User profile page
+        for monday, only have the structure where you can visit a url that represents each person’s profile and have that display reviews
+        Done by Monday becuz it ties in to reviews
+        Whole user profile (complete) done by Tuesday
+    Reviews
+        like Ebay, tied to a user’s profile (maybe a section for reviews)
+but each review should have a link to the request
+        Done by Monday - john
+
+    Handle Expiration of Requests
+server has an interval checker that automatically purges expired requests after a certain time
+if before expired requests are deleted from server, have a button to renew it with the same details except a new expiration date (same as create new request except all details are already filled); have this button for the expired request when the user views their expired requests
+Done by Tuesday
+Rewards - Venmo Integration - David - will probably do the bulk of it on Wednesday, mostly research today
+        *rewards are decidedly only monetary (at least for now)
+        Done by Thursday
+
+        
+Minor
+    ACL (ensure not everyone can see every request)
+        Done by ???
+    Skill Sets
+        Done by Wednesday
+Delete Requests
+    Done by Tuesday    
+
+Recommended Requests (right side-panel) (algorithm)
+        Mostly Done by Thursday
+
+    tests
+    specifications, comments
+
+What to do if we backlog:
+    Don’t implement the following in order of most willing to least willing to remove:
+        Recommended Requests
+ACLs
+        Skillsets
+    *not venmo integration because we need app complexity
+
+
+Search Specification
+    Find by keyword
+    Find by tags
+Search Schema
+getRequestsByFilter
+Params
+List of tags
+List of keywords
+getRequestsByKeyword
+Params
+List(strings) - Keywords
+Search Routes
+requests/search
+returns json object with 1 field ‘requests’ list of request jsons
+
+Search Frontend
+same deal - display results
+
+Review Specification
+    
+Review Schema
+    Stars: Number
+    RequestURL: String (url to request page)
+Description (optional): String
+User: reference to User
+
+getReviewsByUserId
+params
+user id
+returns
+array of review objects
+writeReview
+params
+star (integer)
+requestID
+description
+user
+returns
+success or false
+Review Routes
+localhost/reviews/ -> getReviewsByUserId
+localhost/reviews/create -> writeReview
+
+Review Frontend
+    -User Profile Page
+        -Average review
+        -Individual Reviews
+    
+
+Reviews
+there’s a button on your completed request if you haven’t already written a review
+(reference Ebay)
+Kinda like requests
+User field for person making review
+Field for person being reviewed
+Description
+Rating (1-5 stars?)
+Date
+Request - Link
+each user profile should have a reviews section containing all of their reviews
+

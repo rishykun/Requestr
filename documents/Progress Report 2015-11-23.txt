@@ -1,9 +1,0 @@
-Progress Report
-
-
-User Profile Page - Done
-
-Search - 50%
-Frontend mostly done
-
-Reviews - done but not tested
