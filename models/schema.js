@@ -270,8 +270,6 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
   }));
   var that = this;
   var filter = {};
-  if (status !== null) filter.status = status;
-  if (tagQuery.length !== 0) filter.tags = {$in: tagQuery};
   if (keywords.length !== 0){
     var regex = "";
     keywords.forEach(function(el){
@@ -281,9 +279,10 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
       regex += (el+"|");
     });
     regex = regex.substring(regex.length()-1);
-    filter.title = {$regex: regex};
-    filter.description = {$regex: regex}:
+    filter = {$or: [{title: {$regex: regex}}, {description: {$regex: regex}}]}
   }
+  if (status !== null) filter.status = status;
+  if (tagQuery.length !== 0) filter.tags = {$in: tagQuery};
   that.find(filter, function(err, result){
     if (err) cb({msg: "Failed to filter requests", err: err});
     else cb(result);
