@@ -223,43 +223,28 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
   });
 }
 
-//Callback on all requests with corresponding status
-RequestSchema.statics.getRequestsByStatus = function(status, cb){
-  if (status !== "Open" || status !== "In progress" || status !== "Completed"){
-    cb({err: "Invalid status"});
-  }
-  else {
-    var that = this;
-    that.find({"status": status}, function(err, requestQuery){
-      that.populateRequests(err, requestQuery, cb);
-    });
-  }
-}
-
-//Callback on all requests which have at least one tag in tagQuery
-RequestSchema.statics.getRequestsByTags = function(tagQuery, cb){
+//Callback on requests with the corresponding status and have title, description, or tags in keywords or at least one tag in tagQuery
+RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, cb){
   var that = this;
-  if (tagQuery.length == 0) that.getAllRequests(cb);
-  else {
-    that.find({tags: {$in: tagQuery}}, function(err, requestQuery){
-      that.populateRequests(err, requestQuery, cb);
-    });
-  }
-}
+  var filter = {};
 
-//Callback on requests with corresponding status and at least one tag in tagQuery
-RequestSchema.statics.getRequestByFilter = function(status, tagQuery, cb){
-  var that = this;
-  if (status === null) that.getRequestsByTags(tagQuery,cb);
-  else if (status !== "Open" || status !== "In progress" || status !== "Completed"){
-    cb({err: "Invalid status"});
-  }
-  else if (tag.length == 0) that.getRequestsByStatus(status, cb);
-  else {
-    that.find({"status": status, "tags": {$in: tagQuery}}, function(err, requestQuery){
-      that.populateRequests(err, requestQuery, cb);
-    });    
-  }
+  if(keywords.length == 0) keywords = [];
+
+  var regex = "";
+  keywords.forEach(function(el){
+    regex = "|"+regex+el; 
+  });
+
+  regex = regex.substring(1);
+
+  if (status !== null) filter.status = status;
+
+  if(tagQuery.length === 0) tagQuery = [];
+
+  filter['$or'] = [{title: {$regex: regex}}, {description: {$regex: regex}}, {tags: {$in: tagQuery}}, {tags: {$in: keywords}}];
+  that.find(filter, function(err, requestQuery){
+    that.populateRequests(err, requestQuery, cb);
+  })
 }
 
 //Creates a new request and adds it to the corresponding user in userModel

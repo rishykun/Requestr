@@ -12,8 +12,11 @@ var addComment;
 var goHome;
 
 $(document).ready(function() {
+	//var date = new Date();
+	//var date_string = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()
 
 	$("#request-expires").datepicker();
+	//$("#request-expires").attr("min", date_string); //ensure we cannot pick a date in the past
 
 	getSearchRequests = function(e) {
 		if(e)
@@ -21,9 +24,18 @@ $(document).ready(function() {
 			if(e.keyCode == 13){
 				// keyword
 			var keyword = $("#request-search").val();
+				var keyArray = keyword.split(",");
+				// Trim the beginning and end spaces off all tags in the array
+				keyArray = keyArray.map(function(key){
+					return key.trim();
+				});
 			$.post("/requests/search", {
-				"keyword": keyword,
+				"keywords": keyArray,
+				"tags": null,
+				"startDate": null,
+				"endDate": null
 			})
+		
 			//when done, log user in because successful signup doesn't automatically log user in
 			.done(function(results) {
 				$.post("/", {
@@ -55,11 +67,16 @@ $(document).ready(function() {
 				});
 				// keyword
 			var keyword = $("#request-search-keyword").val();
+			var keyArray = keyword.split(",");
+				// Trim the beginning and end spaces off all tags in the array
+				keyArray = keyArray.map(function(key){
+					return key.trim();
+				});
 			var startDate = $("#request-search-expire-start").val();
 			var endDate = $("#request-search-expire-end").val();
 			$.post("/requests/search", {
 				"tags": tagsArray,
-				"keyword": keyword,
+				"keywords": keyArray,
 				"startDate": startDate,
 				"endDate": endDate,
 			})

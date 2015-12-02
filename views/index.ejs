@@ -6,10 +6,11 @@
 <body class="gray-background">
 	<div id="background-container">
 		<% include navbar.ejs %>
-		<% include request_form.ejs %>
-		<%  include advanced_search_form.ejs  %>
 		<% if (userProfile) { %>
 			<% include home.ejs %>
+			<% include request_form.ejs %>
+			<% include advanced_search_form.ejs %>
+			<% include messagemodal.ejs %>
 		<% } else { %>
 			<% include loginmodal %>
 			<h1 id="login-message" style="text-align:center"> Please login or signup to use this app </h1>

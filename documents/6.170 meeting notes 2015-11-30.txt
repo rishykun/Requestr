@@ -1,0 +1,5 @@
+work on formatting tags !
+also fix create requests to POST /requests/
+venmo + 1 other feature (messaging?)
+messaging (doesn't need to be real time)
+	look into sockets (i.e. socketio)

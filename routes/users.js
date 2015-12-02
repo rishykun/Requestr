@@ -6,8 +6,6 @@ var User = require('../models/schema').User;
 var Request = require('../models/schema').Request;
 var Review = require('../models/ReviewSchema');
 
-//var SamlStrategy = require('../passport-saml').Strategy;
-
 /*
 	For both login and create user, we want to send an error code if the user
 	is logged in, or if the client did not provide a username and password

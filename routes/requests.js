@@ -149,7 +149,7 @@ router.post('/create', function(req,res){
 router.post('/search', function(req, res) {
 	console.log(req.body);
 
-	Request.getRequestByFilter(null, req.body.tags, function(err, data) {
+	Request.getRequestByFilter(null, req.body.keywords, req.body.tags, function(err, data) {
 
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
