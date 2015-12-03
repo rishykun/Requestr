@@ -13,6 +13,8 @@ var configureReviewModal;
 
 var goHome;
 
+var makePayment;
+
 $(document).ready(function() {
 	//var date = new Date();
 	//var date_string = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()
@@ -291,6 +293,16 @@ $(document).ready(function() {
 		});
 	}
 
+
+	makePayment = function(){
+		$.post('/requests/pay',{
+				// NEED REQUEST ID , AND VENMO EMAIL
+		}).done(function(data){
+			console.log(data);
+		}).fail(function(error){
+			console.log("error");
+		});
+	}
 	handleRequest = function(request_id, eventType) {
 
 		//prepare data to be sent over to backend

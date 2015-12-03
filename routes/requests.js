@@ -49,7 +49,7 @@ var requireDescription = function(req, res, next) {
 
 
 // Register the middleware handlers above.
-router.all('*', requireAuthentication);
+//router.all('*', requireAuthentication);
 //router.delete('/:request', requireOwnership);
 router.post('/create', requireDescription);
 
@@ -135,6 +135,59 @@ router.get('/takenRequests', function(req, res) {
 		}
 	});
 });
+
+
+// TODO: Declare at top - Clean up this code
+// TODO: Attach oauth_token to req
+var oauth_token = null;
+var url = require('url');
+var querystring = require('querystring');
+var http = require('http');
+router.get('/pay', function(req, res) {
+	console.log("In authentication route.");
+	var url_parts = url.parse(req.url, true);
+	var query = url_parts.query;
+	oauth_token = query.access_token;
+	res.redirect('/');
+});
+
+var request = require('request');
+// TODO: if logged out clear authentication token
+// /:request
+router.post('/pay', function(req,res){
+	console.log(oauth_token);
+	Request.getRequestById(req.params.request, function(err, request){
+	var post_data = {
+      'access_token' : oauth_token,
+      'email': req.venmoEmail,
+      'note': 'Requestr payment.',
+       'amount' : request.reward
+  	};
+
+  /*	var post_data = {
+      'access_token' : oauth_token,
+      'email': 'soulenski5@gmail.com',
+      'note': 'Requestr payment.',
+       'amount': 3
+  	};*/
+	 request.post('https://api.venmo.com/v1/payments', {form: post_data}, function(e, r, venmo_receipt){
+        // parsing the returned JSON string into an object
+        var venmo_receipt = JSON.parse(venmo_receipt);
+        onsole.log(venmo_receipt);
+        if(venmo_receipt.error)
+        {
+        	utils.sendErrResponse(428, venmo_receipt.error.message)
+        }
+        else
+        {
+        	utils.sendSuccessResponse('Request has been paid.');
+        }
+
+    });
+
+	});
+});
+
 
 /*
 	POST /requests/create
