@@ -4,15 +4,28 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="message-label">Message</h4>
+				<h4 class="modal-title" id="message-label">Messages</h4>
 			</div>
-			<div class="modal-body">
-				<ul id="messages"></ul>
-				<form id="message-form" style="text-align: center">
-					<input id="message-content" autocomplete="off"/>
-					<button id="message-send">Send</button>
-					<button id="message-clear">Clear</button>
-				</form>
+			<div class="modal-body" style="min-height:70%">
+				<div class=" col-md-4" id="users-chatlist" style="min-height: 50%; background-color: whitesmoke; border-radius: 5px; padding:0px; text-align: center">
+					<a class="btn btn-success" role="button" data-toggle="collapse" href="#online" aria-expanded="false" aria-controls="online" style="width:100%">
+						Currently Online <span id="online-badges" class="badge"></span>
+					</a>
+					<ul class="nav nav-pills nav-stacked collapse" id="online" style="padding:5px"></ul>
+					<a class="btn btn-danger" role="button" data-toggle="collapse" href="#offline" aria-expanded="false" aria-controls="offline" style="width:100%; margin-top:5px">
+						Currently Offline <span id="offline-badges" class="badge"></span>
+					</a>
+					<ul class="nav nav-pills nav-stacked collapse" id="offline" style="padding:5px"></ul>
+				</div>
+				<div class="col-md-8">
+					<ul id="messages" style="min-height:50%; background-color:whitesmoke; padding: 5px; border-radius: 5px; max-height:50%; overflow-y: auto"></ul>
+					<form id="message-form" style="text-align: center">
+						<input class="form-control" id="message-content" autocomplete="off" style="width: inherit; display: inline"/>
+						<button class="btn btn-primary" id="message-send">Send</button>
+						<button class="btn btn-danger" id="message-clear">Clear</button>
+					</form>
+				</div>
+				<div></div>
 			</div>
 		</div>
 	</div>

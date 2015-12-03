@@ -1,23 +1,22 @@
+<div style="text-align:center; font-weight: bold; font-size: 24px; color: #555">Home</div>
+
 <!--  Search Only Implemented For Tags. Tags can be typed into the search bar and delimited by commas. -->
-<input class="form-control" id="request-search" onKeyPress = "getSearchRequests(event)" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 50px">
+<input class="form-control" id="request-search" onKeyPress = "getSearchRequests(event)" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 20px">
 
-
-<div id="requests-container" style="margin-top:20px">
+<div id="requests-container" style="margin-top:20px; margin-bottom:20px">
 
 	<% if (requests.length > 0) { %>
 		<% requests.forEach(function(request) { %>
 
-		<div id="request-box" style="background-color:rgb(231,231,231); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
-			<div id="request-header" style="background-color:rgb(208,208,208); padding: 10px">
-				<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
+		<div id="request-box" style="background-color:whitesmoke; width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid <%= colors[request.status] %>; padding: 10px">
+			<div id="request-header" data-toggle="tooltip" data-placement="right" title="Click to view details" onclick="viewRequest('<%= request._id %>')" style="background-color:<%= colors[request.status] %>; color: white; padding: 10px; cursor: pointer">
+				<div id="request-status" style="display: inline-block; font-weight: bold; color: <%= colors[request.status] %>; background-color: whitesmoke; padding:2px">
 					<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
 					<%= request.status %>
 				</div>
 				<div id="request-title-bar" style="display: inline-block; margin-left: 5px">
 					Title: <%= request.title %>
 				</div>
-				<button class="btn-btn-primary" id="request_view-button" onclick="viewRequest('<%= request._id %>')">View
-				</button>
 				<div id="request-expdate-bar" style="float:right; display: inline-block">
 					Expires: <%= request.expirationDate %>
 				</div>
@@ -39,17 +38,17 @@
 					Rewards: 1 cookie
 				</div>
 			</div>
-			<div id = "request-tags">
+			<div id = "request-tags" style="font-size:16px">
 				Tags:
-					<% if (request.tags.length > 0) { %>
-						<% request.tags.forEach(function(tag){ %>
-							<%= tag%>
-						<% }); %>
-					<% } else { %>
-						<i>n/a</i>
-					<% } %>
+				<% if (request.tags.length > 0) { %>
+					<% request.tags.forEach(function(tag){ %>
+						<%= tag%>
+					<% }); %>
+				<% } else { %>
+					<i>n/a</i>
+				<% } %>
 			</div>
-			<div id="request-footer">
+			<div id="request-footer" style="margin-top:5px">
 				<% var getUsernames = function(userArr){ %>
 					<% return userArr.map(function(ele){ %>
 						<% return ele.username; %>
@@ -89,7 +88,24 @@
 						Helpers: <%= helperString %>
 						<br><button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'complete')">Complete Request</button>
 					<% } %>
+				<!-- <% } else if (request.status === "In progress") { %>
+					The request is currently in progress.
+					<h4>Current Helpers:</h4>
+					<ul class="list-group">
+					 	<% request.helpers.forEach(function (helper) { %>
+					 		<li class="list-group-item">
+					 			<a href="/users/<%= helper.username %>"><%= helper.username %></a>
+					 		</li>
+					 	<% }); %>
+					 	<% if (request.helpers.length > 0 && userProfile.username === request.creator.username) { %>
+					 		<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'complete')">Completed!</button>
+					 	<% } %> 
+					 	</ul> -->
 				<% } else if (request.status === "Completed") { %>
+					<% var participantNames = request.helpers.map(function (e) {return e.username;}); %>
+
+					<% participantNames.push(request.creator.username); %>
+					
 					<% if (userProfile.username === request.creator.username) { %>
 						<% helperNames.forEach(function(user){ %>
 							<% if (unpaidUsers.indexOf(user) > -1){ %>
@@ -99,11 +115,15 @@
 							<% } %>
 						<% }); %>
 					<% } %>
+
+					<br>
+					<% if (participantNames.indexOf(userProfile.username) > -1) { %>
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#review-modal" onclick="configureReviewModal('<%= request._id %>');">Submit a Review</button>
+					<% } %>
+					
 				<% } %>
 			</div>
 		</div>
-
-
 		<% }); %>
 	<% } %>
 </div>

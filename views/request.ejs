@@ -18,9 +18,9 @@
 <% if (userProfile) { %>
 	<button class="btn btn-primary" onclick="goHome()">Go Back</button>
 
-	<div id="request-box" style="background-color:rgb(231,231,231); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
-		<div id="request-header" style="background-color:rgb(208,208,208); padding: 10px">
-			<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
+	<div id="request-box" style="background-color:whitesmoke; width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid <%= colors[request.status] %>; padding: 10px">
+		<div id="request-header" style="background-color:<%= colors[request.status] %>; padding: 10px; color:white">
+			<div id="request-status" style="display: inline-block; font-weight: bold; color: <%= colors[request.status] %>; background-color: whitesmoke; padding:2px">
 				<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
 				<%= request.status %>
 			</div>
@@ -43,29 +43,41 @@
 			</div>
 		</div>
 		<div id = "request-tags">
-			Tags: <% request.tags.forEach(function(tag){ %>
-				<%= tag%>
-			<% }); %>
+			<h4>
+				Tags: <% request.tags.forEach(function(tag){ %>
+					<%= tag%>
+				<% }); %>
+			</h4>
 		</div>
 		<div id="request-footer">
 			<% if (request.status === "Open") { %>
+				
+				<% var candidateNames = request.candidates.map(function (ele) { %>
+				<% return ele.username; %>
+				<% }); %>
+
+				<% var helperNames = request.helpers.map(function (ele) { %>
+				<% return ele.username; %>
+				<% }); %>
+
 				<% if (userProfile.username !== request.creator.username) { %>
-
-					<% var candidateNames = request.candidates.map(function (ele) { %>
-					<% return ele.username; %>
-					<% }); %>
-
-					<% var helperNames = request.helpers.map(function (ele) { %>
-					<% return ele.username; %>
-					<% }); %>
-
 					<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
-						<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
+						<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Offer Help</button>
 					<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
-						<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Drop Out</button>
+						<button class="btn btn-default" disabled>Offer Help</button>
 					<% } else {%>
-						Your help has been accepted.
+						Your help has been accepted! Wait for the requester to mark the request as In Progress.
 					<% } %>
+				<% } else { %>
+					<h4>Current Candidates:</h4>
+					<ul class="list-group">
+					 	<% candidateNames.forEach(function (candidate) { %>
+					 		<li class="list-group-item">
+					 			<a href="/users/<%= candidate %>"><%= candidate %></a>
+					 			<button class="btn btn-default accept-candidate" onclick=>Accept Help</button>
+					 		</li>
+					 	<% }); %>
+					</div>
 				<% } %>
 			<% } else if (request.status === "In-Progress") { %>
 				The request is currently in progress.

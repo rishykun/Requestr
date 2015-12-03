@@ -8,16 +8,17 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">Requestr</a>
+        <a class="navbar-brand" href="/" data-toggle="tooltip" data-placement="bottom" title="Go to homepage">Requestr</a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav" style="float: right">
           <% if (userProfile) { %>
+          <li><a href="https://api.venmo.com/v1/oauth/authorize?client_id=3233&scope=make_payments&response_type=token"><b>Venmo Authenticate</b></a>
+
           	<li><a href="#" data-toggle="modal" data-target="#createRequestModal"><b>Create New Request</b></a>
-            <li><a href="#" data-toggle="modal" data-target="#message-modal">Messages</a></li>
-            <li><a href="#">Search Helpers</a></li>
+            <li><a href="#" data-toggle="modal" onclick="openMessageModal()">Messages <span id="message-badges" class="badge"></span></a></li>
             <li><a href="#" data-toggle="modal" data-target="#createAdvancedSearchModal">Advanced Search</a>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Created Requests <span class="caret"></span></a>
@@ -34,7 +35,7 @@
                 <li><a href="#">Completed</a></li>
               </ul>
             </li>
-            <li><a href="/profile/<%= userProfile.username %>"><b>View <b id="username"><%= userProfile.username %></b>'s Profile</b></a></li>
+            <li><a href="/users/<%= userProfile.username %>"><b>View <b id="username"><%= userProfile.username %></b>'s Profile</b></a></li>
             <li><a href="#" id="logout-button"><b>Logout</b></a></li>
           <% } else { %>
             <li><a href="#" data-toggle="modal" data-target="#login-modal"><b>Login / Signup</b></a></li>
