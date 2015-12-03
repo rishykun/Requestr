@@ -23,7 +23,13 @@
 				</div>
 				<div id="request-creator-bar" style="margin-top:5px">
 					Requester: <%= request.creator.username %>
+					<% if (request.status === "Completed" && userProfile.username === request.creator.username) { %>
+						<div style="display:inline-block; float:right">
+							<%= request.paid ? "Paid" : "Unpaid" %>
+						</div>
+					<% } %>
 				</div>
+
 			</div>
 			<div id="request-body" style="padding:10px">
 				<div id="request-desc-bar">
@@ -74,6 +80,15 @@
 
 					<% if (participantNames.indexOf(userProfile.username) > -1) { %>
 						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#review-modal" onclick="configureReviewModal('<%= request._id %>');">Submit a Review</button>
+					<% } %>
+					
+					<% if (userProfile.username === request.creator.username) { %>
+						<% if (request.paid) { %>
+							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Paid</button>
+
+						<% } else { %>
+							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Pay</button>
+						<% } %>
 					<% } %>
 				<% } %>
 			</div>

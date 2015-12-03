@@ -84,14 +84,19 @@ UserSchema.statics.getUserData = function(user, cb){
     if (err) cb({err: "Failed to populate user requests"});
     else {
       that.populate(result, {path: 'requestsTaken'}, function(err, result){
-        if (err) cb({err: "Failed to populate requests"});
+        if (err) cb({err: "Failed to populate requests taken"});
         else {
-          that.populate(result, {path: 'myRequests.candidates', model: 'User'}, function(err, result){
-            if (err) cb({err: "Failed to populate candidates"});
+          that.populate(result, {path: 'myRequests.creator', model: 'User'}, function(err, result){
+            if (err) cb({err: "Failed to populate creator"});
             else {
-              that.populate(result, {path: 'myRequests.helpers', model: 'User'}, function(err, result){
-                if (err) cb({err: "Failed to populate helpers"});
-                else cb(null, result);
+              that.populate(result, {path: 'myRequests.candidates', model: 'User'}, function(err, result){
+                if (err) cb({err: "Failed to populate candidates"});
+                else {
+                  that.populate(result, {path: 'myRequests.helpers', model: 'User'}, function(err, result){
+                    if (err) cb({err: "Failed to populate helpers"});
+                    else cb(null, result);
+                  });
+                }
               });
             }
           });
@@ -104,14 +109,14 @@ UserSchema.statics.getUserData = function(user, cb){
 
 //Callback on requests by a user with the corresponding status
 UserSchema.statics.getRequestsByStatus = function(user, status, cb){
-  if (status !== "Open" || status !== "In progress" || status !== "Completed"){
+  if (status !== "Open" && status !== "In progress" && status !== "Completed"){
     cb({err: "Invalid status"});
   }
   else {
     this.getUserData(user, function(err, user){
       if (err) cb(err);
       else {
-        filteredRquests = user.requests.filter(function(el){
+        filteredRquests = user.myRequests.filter(function(el){
           return el.status === status;
         });
         cb(null, filteredRquests);
@@ -164,7 +169,8 @@ var RequestSchema = mongoose.Schema({
   dateCreated: Date,
   expirationDate: Date,
   status: String,
-  reward: String,
+  reward: Number,
+  paid: Boolean,
   candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
   helpers: [{type: Schema.Types.ObjectId, ref:'User'}],
   tags: [String],
@@ -254,6 +260,7 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
   requestData.candidates = [];
   requestData.helpers = [];
   requestData.comments = [];
+  requestData.paid = false;
   userModel.getUser(user, function(err, user){
     if (err) cb(err);
     else {

@@ -100,6 +100,23 @@ router.get('/myRequests', function(req, res) {
 	});
 });
 
+router.get('/myRequests/:filter', function(req, res) {
+	User.getRequestsByStatus(req.currentUser.username, req.params.filter, function(err, data) {
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+
+			utils.sendSuccessResponse(res, { requests: data });
+
+			/*
+			res.render('requests_active', {
+				userProfile: req.currentUser,
+				requests: data.myRequests
+			});*/
+		}
+	});
+});
+
 /*
 	GET /requests/takenRequests
 	No request parameters
