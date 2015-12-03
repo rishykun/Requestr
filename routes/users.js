@@ -40,6 +40,19 @@ router.get("/session", function (req, res) {
 });
 
 /*
+	get messages for logged in user
+*/
+router.get("/messages", function (req, res) {
+	if (req.currentUser) {
+		console.log("/users/messages route reached"); //debug
+		utils.sendSuccessResponse(res, msgbase.getMessagesByUsername(req.currentUser.username));
+	} else {
+		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
+	}
+});
+
+
+/*
 	This function will check to see that the provided username-password combination 
 	is valid. For empty username or password, or if the combination is not correct, 
 	an error will be returned.
