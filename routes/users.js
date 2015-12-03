@@ -26,14 +26,18 @@ var isLoggedInOrInvalidBody = function(req, res) {
 };
 
 /*
-router.get('/login', passport.authenticate('saml', {
-	failureRedirect: '/',
-	failureFlash: true
-}), function (req, res) {
-	res.redirect('/');
-}
-);
+	checks to see if the user is logged in
+	if so, return user name
 */
+router.get("/session", function (req, res) {
+	if (req.currentUser) {
+		console.log("logged in: " + req.currentUser.username); //debug
+		utils.sendSuccessResponse(res, req.currentUser.username);
+	} else {
+		console.log("not logged in"); //debug
+		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
+	}
+});
 
 /*
 	This function will check to see that the provided username-password combination 
@@ -83,6 +87,14 @@ router.post('/logout', function(req, res) {
 		req.session.destroy();
 		console.log("LOGOUT: logged In users: ", msgbase.getActiveUsers()); //debug 
 		utils.sendSuccessResponse(res);
+	} else {
+		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
+	}
+});
+
+router.get("/", function (req, res) {
+	if (req.currentUser) {
+		utils.sendSuccessResponse(res, msgbase.getActiveUsers());
 	} else {
 		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
 	}
