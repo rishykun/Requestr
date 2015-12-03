@@ -28,14 +28,16 @@ $(document).ready(function() {
 		.done(function (data) {
 			var userList = data.content;
 			var userKeys = Object.keys(userList);
-			$("#online-badges").html(userKeys.length - 1); //account for self
+			$("#online-badges").html("0"); //account for self
 			userKeys.forEach(function(username) {
-				if (username !== loggedInUser) {
-					$("#online").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" style="border-radius: 0px;">' + username + '</a></li>');
+				if (userList[username] && username !== loggedInUser) {
+					$("#online-badges").html(parseInt($("#online-badges").html()) + 1);
+					$("#online").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')"  style="border-radius: 0px; border-width: 0px 0px 1px 0px; border-style: solid; border-color: gray">' + username + ' <i id="' + username + '_newlabel" style="font-size:10px; color: red"></i></a></li>');
 				}
-			})
+			});
 			
 			getAllMessages();
+			getOfflineUsers();
 		})
 		.fail(function (error) {
 			console.error("ERROR: ", error);
@@ -57,6 +59,22 @@ $(document).ready(function() {
 		});
 	}
 
+	var getOfflineUsers = function() {
+		$.get("/users/offline", {
+		})
+		.done(function (data) {
+			console.log("frontend: getOfflineUsers result: ", data); //debug
+			var userList = data.content;
+			$("#offline-badges").html(userList.length);
+			userList.forEach(function(username) {
+				$("#offline").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')"  style="border-radius: 0px; border-width: 0px 0px 1px 0px; border-style: solid; border-color: gray">' + username + '</a></li>');
+			});
+		})
+		.fail(function (error) {
+			console.error("ERROR: ", error);
+		});
+	}
+
 	openMessageModal = function() {
 		$("#message-badges").html(""); //clear badges
 		$('#message-modal').modal('show'); //then show modal
@@ -68,6 +86,7 @@ $(document).ready(function() {
 			$("#" + target + "_label").addClass("active");
 			target_user = target;
 
+			$("#" + target + "_newlabel").html(""); //remove "new" tag
 			$("#messages").empty();
 
 			console.log("previous message? ", messages); //debug
@@ -114,19 +133,27 @@ $(document).ready(function() {
 
 	//if a user logged in since we logged in, populate user list
 	socket.on("login user", function(username) {
+		$("#" + username + "_label").remove(); //remove from offline
+
 		console.log("new user logged in: " + username); //debug
-		if ($("#online-badges").html() == "") {
-			$("#online-badges").html("1");
-		} else {
-			$("#online-badges").html(parseInt($("#online-badges").html()) + 1);
+		$("#online-badges").html(parseInt($("#online-badges").html()) + 1);
+		$("#online").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" style="border-radius: 0px; border-width: 0px 0px 1px 0px; border-style: solid; border-color: gray">' + username + ' <i id="' + username + '_newlabel" style="font-size:10px; color: red"></i></a></li>');
+	
+		if (target_user === username) {
+			$("#" + target_user + "_label").addClass("active");
 		}
-		$("#online").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" style="border-radius: 0px;">' + username + '</a></li>');
+
+		if ($("#offline-badges").html() == "1" || $("#offline-badges").html() == "0") {
+			$("#offline-badges").html("0");
+		} else {
+			$("#offline-badges").html(parseInt($("#offline-badges").html()) - 1);
+		}
 	});
 
 	//if a user logged out since we logged in, remove that user from the user list
 	socket.on("logout user", function(username) {
 		console.log("user logged out: " + username); //debug
-		if ($("#online-badges").html() == "1" || $("#online-badges").html() == "") {
+		if ($("#online-badges").html() == "1" || $("#online-badges").html() == "0") {
 			$("#online-badges").html("0");
 		} else {
 			$("#online-badges").html(parseInt($("#online-badges").html()) - 1);
@@ -134,7 +161,11 @@ $(document).ready(function() {
 		$("#" + username + "_label").remove();
 		if (target_user === username) {
 			target_user = "";
+			$("#messages").empty();
 		}
+
+		$("#offline-badges").html(parseInt($("#offline-badges").html()) + 1);
+		$("#offline").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')"  style="border-radius: 0px; border-width: 0px 0px 1px 0px; border-style: solid; border-color: gray">' + username + '</a></li>');
 	});
 
 	socket.on("chat message", function(msg, src, dest, date) {
@@ -146,7 +177,10 @@ $(document).ready(function() {
 				} else {
 					$("#message-badges").html(parseInt($("#message-badges").html()) + 1);
 				}
+			} else if (target_user !== src) {
+				$("#" + src + "_newlabel").html("new");
 			}
+
 			if (Object.keys(messages).indexOf(src) === -1) {
 				messages[src] = [];
 			}

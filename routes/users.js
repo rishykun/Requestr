@@ -40,6 +40,25 @@ router.get("/session", function (req, res) {
 });
 
 /*
+	Determine whether there is a current user logged in
+
+	GET /users/current
+	No request parameters
+	Response:
+		- success.loggedIn: true if there is a user logged in; false otherwise
+		- success.user: if success.loggedIn, the currently logged in user
+*/
+router.get('/current', function(req, res) {
+	if (req.currentUser) {
+		utils.sendSuccessResponse(res, { loggedIn : true, user : req.currentUser.username });
+	} else {
+		utils.sendSuccessResponse(res, { loggedIn : false });
+	}
+});
+
+//TODO ELIMINATE EITHER /SESSION OR /CURRENT BECAUSE THEY'RE THE SAME
+
+/*
 	get messages for logged in user
 */
 router.get("/messages", function (req, res) {
@@ -105,9 +124,25 @@ router.post('/logout', function(req, res) {
 	}
 });
 
+//get online users list
 router.get("/", function (req, res) {
 	if (req.currentUser) {
 		utils.sendSuccessResponse(res, msgbase.getActiveUsers());
+	} else {
+		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
+	}
+});
+
+//get offline users list
+router.get("/offline", function (req, res) {
+	if (req.currentUser) {
+		msgbase.getOfflineUsers(function (err, result) {
+			if (err) {
+				utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+			}
+			console.log("returning the following: ", result); //debug
+			utils.sendSuccessResponse(res, result);
+		});
 	} else {
 		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
 	}
@@ -200,23 +235,6 @@ router.post('/:userID/reviews', function (req, res) {
 		}
 	} else {
 		utils.sendErrResponse(res, 403, 'Must be logged in to use this feature.');
-	}
-});
-
-/*
-	Determine whether there is a current user logged in
-
-	GET /users/current
-	No request parameters
-	Response:
-		- success.loggedIn: true if there is a user logged in; false otherwise
-		- success.user: if success.loggedIn, the currently logged in user
-*/
-router.get('/current', function(req, res) {
-	if (req.currentUser) {
-		utils.sendSuccessResponse(res, { loggedIn : true, user : req.currentUser.username });
-	} else {
-		utils.sendSuccessResponse(res, { loggedIn : false });
 	}
 });
 

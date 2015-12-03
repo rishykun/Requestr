@@ -1,3 +1,5 @@
+var User = require('./models/schema').User;
+
 var loggedInUsers = {};
 
 var messages = {}; //key = target_user, value = dictionary where key = src, value = array of message tuples (msg, date, self?) including self, msg
@@ -58,6 +60,28 @@ var Messagebase = (function Messagebase() {
 
 	that.getActiveUsers = function() {
 		return loggedInUsers;
+	}
+
+	that.getOfflineUsers = function(cb) {
+		User.getAllUsers(function(err, result) {
+			if (err) {
+				console.error(err);
+				cb(err);
+			} else {
+				var userList = result.reduce(function(prev, cur, i, arr) {
+					if (i == 1) {
+						return [prev.username, cur.username]
+					} else {
+						return prev.concat(cur.username);
+					}
+				});
+				var offlineUsers = userList.filter(function(user) {
+					return Object.keys(loggedInUsers).indexOf(user) === -1 || !loggedInUsers[user];
+				});
+				console.log("offlineUsers: ", offlineUsers); //debug
+				cb(null, offlineUsers);
+			}
+		});
 	}
 
 	//get all messages associated with the specified user

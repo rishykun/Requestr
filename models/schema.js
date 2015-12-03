@@ -39,6 +39,20 @@ UserSchema.statics.getUser = function(user, cb){
   });
 }
 
+//Callback on query entry for a username
+UserSchema.statics.getAllUsers = function(cb){
+  var that = this;
+
+  that.find({}, function(err, userQuery){
+    if (err) {
+      cb({err: "Failed to query user"});
+    }
+    else {
+      cb(null, userQuery);
+    }
+  });
+}
+
 //callback on true if candidatepw matches user pw else false
 UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
   var that = this;
