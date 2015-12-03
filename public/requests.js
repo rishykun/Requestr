@@ -8,6 +8,7 @@ var getMyRequests;
 
 var viewRequest;
 var addComment;
+var configureReviewModal;
 
 var goHome;
 
@@ -244,7 +245,7 @@ $(document).ready(function() {
 		var rating = Number($("#review-rating").val());
 		var text = $("#review-text").val();
 		var currentURL = window.location.href;
-		var requestId = currentURL.substr(currentURL.lastIndexOf('/') + 1);
+		var requestId = $(this).attr("id");
 
 		$.post("/users/" + victimUsername + "/reviews", {
 			"victimUsername": victimUsername,
@@ -252,12 +253,46 @@ $(document).ready(function() {
 			"rating": rating,
 			"requestId": requestId
 		}).done(function (data) {
-			$("#review-error").html("Your review has been submitted!");
+			$("#review-success").html("Your review has been submitted!");
+			$("#review-error").html("");
 			$("#review-form :input").prop("readonly", true);
 		}).fail(function (error) {
 			console.error("ERROR: ", error);
 			$("#review-error").html("Your review could not be submitted.");
 		});
+	});
+
+	configureReviewModal = function(requestId) {
+		$.get(/requests/ + requestId, {"refuseRender": true}).done(function (data) {
+			var request = data.content.request;
+			var userProfile = data.content.userProfile;
+
+			var participantNames = request.helpers.map(function (ele) {
+				return ele.username;
+			});
+
+			participantNames.push(request.creator.username);
+
+			participantNames.forEach(function (username) {
+				if (username != userProfile.username) {
+					$("#review-victim").append("<option>" + username + "</option>");
+				}
+			});
+
+			$("#review-form").attr('id', request._id);
+		});
+	}
+
+	/*
+		Clear the review modal when it closes.
+	*/
+	$('#review-modal').on('hidden.bs.modal', function () {
+	    $("#review-form").attr('id', "");
+	    $("#review-victim").html("");
+	    $("#review-text").val("");
+	    $("#review-success").html("");
+	    $("#review-error").html("");
+	    $("#review-rating-default").attr("selected", "selected");
 	});
 
 	/*

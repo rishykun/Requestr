@@ -89,7 +89,7 @@ router.get('/myRequests', function(req, res) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 
-			utils.sendSuccessResponse(res, { requests: data.myRequests });
+			utils.sendSuccessResponse(res, { currentUser: req.currentUser.username, requests: data.myRequests });
 
 			/*
 			res.render('requests_active', {
@@ -174,14 +174,23 @@ router.post('/search', function(req, res) {
 		- err: on failure, an error message
 */
 router.get('/:request', function (req, res) {
+	var refuseRender = req.param('refuseRender');
+
 	Request.getRequestById(req.params.request, function (err, data) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-			res.render('request', {
-				userProfile: req.currentUser,
-				request: data
-			});
+			if (refuseRender == 'true') {
+				utils.sendSuccessResponse(res, {
+					userProfile: req.currentUser, 
+					request: data
+				});
+			} else {
+				res.render('request', {
+					userProfile: req.currentUser,
+					request: data
+				});
+			}
 		}
 	});
 });

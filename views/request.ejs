@@ -82,47 +82,6 @@
 			<% } else if (request.status === "In-Progress") { %>
 				The request is currently in progress.
 			<% } %>
-			<h4>Submit a Review</h4>
-			<form id="review-form">
-				<div class="form-group">
-					<label for="review-victim">Select a Participant:</label>
-					<select class="form-control" id="review-victim">
-						<!-- TODO: Remove when accepting helpers/completing requests is done. -->
-						<% var participantNames = request.candidates.map(function (ele) { %>
-						<% return ele.username %>
-						<% }); %>
-
-						<% request.helpers.map(function (ele) { %>
-						<% participantNames.push(ele.username); %>
-						<% }); %>
-
-						<% participantNames.push(request.creator.username) %>
-
-						<% participantNames.forEach(function (username) { %>
-							<% if (username != userProfile.username) { %>
-							<option><%= username %></option>
-							<% } %>
-						<% }); %>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="review-rating">Rate the Participant out of 5:</label>
-					<select class="form-control" id="review-rating">
-						<option>1</option>
-					    <option>2</option>
-					    <option selected="selected">3</option>
-					    <option>4</option>
-					    <option>5</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="review-text">Further Comments:</label>
-					<textarea class="form-control" rows="5" id="review-text"></textarea>
-				</div>
-				<button type="submit" class="btn btn-default">Submit Review</button>
-				<div id="review-success"></div>
-				<div style="color: red" id="review-error"></div>
-			</form>
 		</div>
 		<% request.comments.forEach(function(comment) { %>
 			<div id="comment-box">
