@@ -5,6 +5,8 @@ var utils = require('../utils/utils');
 var Schema = require('../models/schema');
 var User = Schema.User;
 
+var msgbase = require("../messagebase");
+
 /*
 	For both login and create user, we want to send an error code if the user
 	is logged in, or if the client did not provide a username and password
@@ -57,6 +59,8 @@ router.post('/login', function(req, res) {
 
     if (match) {
       req.session.username = req.body.username;
+      msgbase.login(req.body.username);
+      console.log("LOGIN: logged In users: ", msgbase.getActiveUsers()); //debug
       utils.sendSuccessResponse(res, { user : req.body.username });
     } else {
       utils.sendErrResponse(res, 403, 'Username or password invalid.');
@@ -74,7 +78,9 @@ router.post('/login', function(req, res) {
 */
 router.post('/logout', function(req, res) {
 	if (req.currentUser) {
+		msgbase.logout(req.currentUser.username)
 		req.session.destroy();
+		console.log("LOGOUT: logged In users: ", msgbase.getActiveUsers()); //debug 
 		utils.sendSuccessResponse(res);
 	} else {
 		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');

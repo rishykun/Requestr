@@ -18,6 +18,16 @@ $(document).ready(function() {
 		$("#messages").empty();
 	});
 
+	socket.on("login user", function(username) {
+		console.log("new user logged in: " + username); //debug
+		$("#users-chatlist").append("<button id= '" + username + "_button'>" + username + "</button>");
+	});
+
+	socket.on("logout user", function(username) {
+		console.log("user logged out: " + username); //debug
+		$("#" + username + "_button").remove();
+	});
+
 	socket.on("chat message", function(msg, src, dest, date) {
 		var username = $("#username").text();
 		if (dest === username) {
