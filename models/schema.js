@@ -234,23 +234,27 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
   var that = this;
   var filter = {};
 
-  if(keywords.length == 0) keywords = [];
+  if (keywords === undefined || keywords === null || keywords.length === 0) keywords = [];
+  if (tagQuery === undefined || tagQuery === null || tagQuery.length === 0) tagQuery = [];
 
-  var regex = "";
-  keywords.forEach(function(el){
-    regex = "|"+regex+el; 
-  });
+  filter['$or'] = [{tags: {$in: tagQuery}}, {tags: {$in: keywords}}];
 
-  regex = regex.substring(1);
+  if(keywords.length != 0){
+    var regex = "";
+    keywords.forEach(function(el){
+      regex = "|"+regex+el; 
+    });
+
+    regex = regex.substring(1);
+    filter['$or'].push({title: {$regex: regex}});
+    filter['$or'].push({description: {$regex: regex}});
+  }
 
   if (status !== null) filter.status = status;
 
-  if(tagQuery.length === 0) tagQuery = [];
-
-  filter['$or'] = [{title: {$regex: regex}}, {description: {$regex: regex}}, {tags: {$in: tagQuery}}, {tags: {$in: keywords}}];
-  that.find(filter, function(err, requestQuery){
+  that.find(filter, function(err, requestQuery){;
     that.populateRequests(err, requestQuery, cb);
-  })
+  });
 }
 
 //Creates a new request and adds it to the corresponding user in userModel

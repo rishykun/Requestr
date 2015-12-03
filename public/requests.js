@@ -26,11 +26,11 @@ $(document).ready(function() {
 			if(e.keyCode == 13){
 				// keyword
 			var keyword = $("#request-search").val();
-				var keyArray = keyword.split(",");
-				// Trim the beginning and end spaces off all tags in the array
-				keyArray = keyArray.map(function(key){
-					return key.trim();
-				});
+			var keyArray = (keyword === "") ? [] : keyword.split(",");
+			// Trim the beginning and end spaces off all tags in the array
+			keyArray = keyArray.map(function(key){
+				return key.trim();
+			});
 			$.post("/requests/search", {
 				"keywords": keyArray,
 				"tags": null,
@@ -60,20 +60,21 @@ $(document).ready(function() {
 		}
 	}
 	else {
+			console.log("request sent");
 			// tags
 			var tagsString = $("#request-search-tags").val();
-				var tagsArray = tagsString.split(",");
+				var tagsArray = tagsString === "" ? [] : tagsString.split(",");
 				// Trim the beginning and end spaces off all tags in the array
 				tagsArray = tagsArray.map(function(tag){
 					return tag.trim();
 				});
 				// keyword
 			var keyword = $("#request-search-keyword").val();
-			var keyArray = keyword.split(",");
+			var keyArray = keyword === "" ? [] : keyword.split(",");
 				// Trim the beginning and end spaces off all tags in the array
-				keyArray = keyArray.map(function(key){
-					return key.trim();
-				});
+			keyArray = keyArray.map(function(key){
+				return key.trim();
+			});
 			var startDate = $("#request-search-expire-start").val();
 			var endDate = $("#request-search-expire-end").val();
 			$.post("/requests/search", {
