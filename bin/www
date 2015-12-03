@@ -4,26 +4,27 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var main = require('../app');
 var debug = require('debug')('wgwong_rrrahman_davidwu_jroot_final:server');
 var http = require('http');
-
 
 /**
  * Get port from environment and store in Express.
  */
 
 var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+main.setPort(port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = http.createServer(main.getApp());
 
 //import socket.io for socket connections (used for messaging)
-var io = require("socket.io")(server);
+io = require("socket.io")(server);
+
+main.setIO(io); //pass in the server to our app
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -92,17 +93,3 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-
-//io connection
-io.on('connection', function(socket){
-  console.log('a user connected');
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
-
-  socket.on('chat message', function(msg, from, to, date) {
-    console.log('message: ' + msg + " from " + from + " to " + to + " on " + date);
-    io.emit("chat message", msg, from, to, date);
-  });
-});
