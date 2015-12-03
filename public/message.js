@@ -1,6 +1,7 @@
 var socket = io();
 
 var setActiveChat;
+var openMessageModal;
 var loggedInUser = "";
 
 $(document).ready(function() {
@@ -26,9 +27,10 @@ $(document).ready(function() {
 		.done(function (data) {
 			var userList = data.content;
 			var userKeys = Object.keys(userList);
+			$("#online-badges").html(userKeys.length - 1); //account for self
 			userKeys.forEach(function(username) {
 				if (username !== loggedInUser) {
-					$("#users-chatlist").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" >' + username + '</a></li>');
+					$("#online").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" style="border-radius: 0px;">' + username + '</a></li>');
 				}
 			})
 			console.log("received userList: ", data); //debug
@@ -36,6 +38,11 @@ $(document).ready(function() {
 		.fail(function (error) {
 			console.error("ERROR: ", error);
 		});
+	}
+
+	openMessageModal = function() {
+		$("#message-badges").html(""); //clear badges
+		$('#message-modal').modal('show'); //then show modal
 	}
 
 	setActiveChat = function(target) {
@@ -51,7 +58,9 @@ $(document).ready(function() {
 			alert("No user selected!"); //TODO replace alert with better alert system
 		} else if ($("#message-content").val() !== "") {
 			var date = new Date();
-			socket.emit("chat message", $("#message-content").val(), loggedInUser, target_user, date.toString());
+			var msg = $("#message-content").val();
+			$("#messages").append("<div style='background-color: lightskyblue; text-align: right; padding: 5px; color: darkblue; margin-top: 5px; width:60%; position: relative; left: 40%; border-radius: 10px; word-wrap: break-word'> " + msg + "</div>");
+			socket.emit("chat message", msg, loggedInUser, target_user, date.toLocaleString());
 			$("#message-content").val(""); //clear message textfield after its sent
 		}
 	});
@@ -64,21 +73,36 @@ $(document).ready(function() {
 	//if a user logged in since we logged in, populate user list
 	socket.on("login user", function(username) {
 		console.log("new user logged in: " + username); //debug
-		$("#users-chatlist").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" >' + username + '</a></li>');
+		if ($("#online-badges").html() == "") {
+			$("#online-badges").html("1");
+		} else {
+			$("#online-badges").html(parseInt($("#online-badges").html()) + 1);
+		}
+		$("#online").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" style="border-radius: 0px;">' + username + '</a></li>');
 	});
 
 	//if a user logged out since we logged in, remove that user from the user list
 	socket.on("logout user", function(username) {
 		console.log("user logged out: " + username); //debug
+		if ($("#online-badges").html() == "1" || $("#online-badges").html() == "") {
+			$("#online-badges").html("0");
+		} else {
+			$("#online-badges").html(parseInt($("#online-badges").html()) - 1);
+		}
 		$("#" + username + "_label").remove();
 	});
 
 	socket.on("chat message", function(msg, src, dest, date) {
 		if (dest === loggedInUser) {
-			if ($("#messages").text() !== "") {
-				$("#messages").append("<br>");
+			//show badge if message-modal isn't visible
+			if (!$("#message-modal").is(":visible")) {
+				if ($("#message-badges").html() == "") {
+					$("#message-badges").html("1");
+				} else {
+					$("#message-badges").html(parseInt($("#message-badges").html()) + 1);
+				}
 			}
-			$("#messages").append($("<b>").text(date + " " + src + ": ").append(msg));
+			$("#messages").append("<div style='background-color: lightgreen; text-align:left; padding: 5px; color: darkgreen; margin-top: 5px; width:60%; position: relative; border-radius: 10px; word-wrap: break-word'> " + msg + "</div>");
 		}
 	});
 });

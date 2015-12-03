@@ -200,12 +200,14 @@ router.get('/:request', function (req, res) {
 			if (refuseRender == 'true') {
 				utils.sendSuccessResponse(res, {
 					userProfile: req.currentUser, 
-					request: data
+					request: data,
+					colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"} //color code
 				});
 			} else {
 				res.render('request', {
 					userProfile: req.currentUser,
-					request: data
+					request: data,
+					colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"} //color code
 				});
 			}
 		}

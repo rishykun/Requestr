@@ -18,9 +18,9 @@
 <% if (userProfile) { %>
 	<button class="btn btn-primary" onclick="goHome()">Go Back</button>
 
-	<div id="request-box" style="background-color:rgb(231,231,231); width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid green; padding: 10px">
-		<div id="request-header" style="background-color:rgb(208,208,208); padding: 10px">
-			<div id="request-status" style="display: inline-block; font-weight: bold; color: green; background-color: rgb(244,244,244); padding:2px">
+	<div id="request-box" style="background-color:whitesmoke; width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid <%= colors[request.status] %>; padding: 10px">
+		<div id="request-header" style="background-color:<%= colors[request.status] %>; padding: 10px; color:white">
+			<div id="request-status" style="display: inline-block; font-weight: bold; color: <%= colors[request.status] %>; background-color: whitesmoke; padding:2px">
 				<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
 				<%= request.status %>
 			</div>

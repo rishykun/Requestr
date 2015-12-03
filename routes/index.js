@@ -31,7 +31,8 @@ router.get('/', function(req, res) {
 
 		    	res.render('index', {
 					userProfile: req.currentUser,
-					requests: requests
+					requests: requests,
+					colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"} //color code
 				});
 		    }
 		 });
@@ -54,7 +55,8 @@ router.post('/', function(req, res) {
 
 		res.render('index', {
 			userProfile: req.currentUser,
-			requests: req.body.passedData
+			requests: req.body.passedData,
+			colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"} //color code
 		}, function (err, html) {
 			res.send(html);
 		});
