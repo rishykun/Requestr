@@ -72,6 +72,16 @@
 				<% } else if (request.status === "In-Progress") { %>
 					The request is currently in progress.
 				<% } else if (request.status === "Completed") { %>
+					<% var participantNames = request.helpers.map(function (ele) { %>
+					<% return ele.username; %>
+					<% }); %>
+
+					<% participantNames.push(request.creator.username); %>
+
+					<% if (participantNames.indexOf(userProfile.username) > -1) { %>
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#review-modal" onclick="configureReviewModal('<%= request._id %>');">Submit a Review</button>
+					<% } %>
+					
 					<% if (userProfile.username === request.creator.username) { %>
 						<% if (request.paid) { %>
 							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Paid</button>
@@ -79,13 +89,10 @@
 						<% } else { %>
 							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Pay</button>
 						<% } %>
-
 					<% } %>
 				<% } %>
 			</div>
 		</div>
-
-
 		<% }); %>
 	<% } %>
 </div>

@@ -108,7 +108,6 @@ var main = (function Main() {
 			});
 		});
 	}
-
 	// Production error handler.
 	// No stacktraces leaked to user.
 	that.app.use(function(err, req, res, next) {

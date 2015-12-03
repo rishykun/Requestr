@@ -3,9 +3,8 @@ var express = require('express');
 var router = express.Router();
 var utils = require('../utils/utils');
 
-var Schema = require('../models/schema');
-var User = Schema.User;
-var Request = Schema.Request;
+var User = require('../models/schema').User;
+var Request = require('../models/schema').Request;
 /*
 	Require authentication on ALL access to /requests/*
 	Clients who are not logged in will receive a 403 error code.
@@ -90,7 +89,7 @@ router.get('/myRequests', function(req, res) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 
-			utils.sendSuccessResponse(res, { requests: data.myRequests });
+			utils.sendSuccessResponse(res, { currentUser: req.currentUser.username, requests: data.myRequests });
 
 			/*
 			res.render('requests_active', {
@@ -192,16 +191,23 @@ router.post('/search', function(req, res) {
 		- err: on failure, an error message
 */
 router.get('/:request', function (req, res) {
+	var refuseRender = req.param('refuseRender');
+
 	Request.getRequestById(req.params.request, function (err, data) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-			console.log("REQUEST REQUESTED:\n", data);
-
-			res.render('request', {
-				userProfile: req.currentUser,
-				request: data
-			});
+			if (refuseRender == 'true') {
+				utils.sendSuccessResponse(res, {
+					userProfile: req.currentUser, 
+					request: data
+				});
+			} else {
+				res.render('request', {
+					userProfile: req.currentUser,
+					request: data
+				});
+			}
 		}
 	});
 });

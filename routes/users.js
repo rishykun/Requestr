@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var utils = require('../utils/utils');
 
-var Schema = require('../models/schema');
-var User = Schema.User;
+var User = require('../models/schema').User;
+var Request = require('../models/schema').Request;
+var Review = require('../models/ReviewSchema');
 
 var msgbase = require("../messagebase");
 
@@ -128,6 +129,56 @@ router.post('/', function(req, res) {
 });
 
 /*
+	Add a new review to given user.
+	One review exists per writer per request. If a user has written a review for a request,
+	error code 403 is returned.
+
+	POST /users/:userID/reviews
+	Request body:
+		- victimUsername
+		- reviewText
+		- rating
+		- requestId
+	Response:
+		- success: true if review creation succeeded; false otherwise
+		- err: on error, an error message
+*/
+router.post('/:userID/reviews', function (req, res) {
+	if (req.currentUser) {
+		if (req.body.victimUsername != req.params.userID) {
+			utils.sendErrResponse(res, 400, 'Malformed review creation request.');
+		} else {
+			Review.validReview(req.body.requestId, req.currentUser.username, function (err, reviewValid) {
+				if (err) {
+					utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+				} else {
+					if (reviewValid) {
+						utils.sendErrResponse(res, 403, 'You may not submit a review.');
+					} else {
+						Review.addReview(
+							req.currentUser.username, 
+							req.body.victimUsername, 
+							req.body.reviewText, 
+							req.body.rating, 
+							req.body.requestId, 
+							function (err, response) {
+								if (err) {
+									utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+								} else {
+									utils.sendSuccessResponse(res);
+								}
+							}
+						);
+					}
+				}
+			});
+		}
+	} else {
+		utils.sendErrResponse(res, 403, 'Must be logged in to use this feature.');
+	}
+});
+
+/*
 	Determine whether there is a current user logged in
 
 	GET /users/current
@@ -144,7 +195,37 @@ router.get('/current', function(req, res) {
 	}
 });
 
-
-
+/*
+	GET /users/:userID
+	Gets a specific user's user page
+	Response:
+		- success: true if the server succeeded in getting the user and the user's reviews
+		- user: on success, an object representing this user
+		- reviews: on success, an object representing this user's reviews
+		- err: on failure, an error message
+*/
+router.get('/:userID', function (req, res) {
+	if (req.currentUser) {
+		User.getUserData(req.params.userID, function (err, userObj) {
+			if (err) {
+				utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+			} else {
+				Review.getReviewsByVictimId(userObj.username, function (err, reviewObj) {
+					if (err) {
+						utils.sendErrResponse(res, 500, 'An unknown error occurred.');	
+					} else {
+						res.render('profile', {
+							userProfile: req.currentUser,
+							user: userObj,
+							reviews: reviewObj
+						});
+					}
+				});
+			}
+		});
+	} else {
+		utils.sendErrResponse(res, 403, 'Must be logged in to use this feature.');
+	}
+});
 
 module.exports = router;
