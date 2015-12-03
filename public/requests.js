@@ -294,9 +294,9 @@ $(document).ready(function() {
 	}
 
 
-	makePayment = function(){
-		$.post('/requests/pay',{
-				// NEED REQUEST ID , AND VENMO EMAIL
+	makePayment = function(request_id, venmo_email){
+		$.post('/requests/' + request_id + '/pay',{
+				'venmo_email': venmo_email,
 		}).done(function(data){
 			console.log(data);
 		}).fail(function(error){

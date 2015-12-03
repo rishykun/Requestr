@@ -159,7 +159,7 @@ router.post('/pay', function(req,res){
 	Request.getRequestById(req.params.request, function(err, request){
 	var post_data = {
       'access_token' : oauth_token,
-      'email': req.venmoEmail,
+      'email': req.venmo_email,
       'note': 'Requestr payment.',
        'amount' : request.reward
   	};
