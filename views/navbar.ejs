@@ -31,8 +31,8 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Accepted Requests <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">In Progress</a></li>
-                <li><a href="#">Completed</a></li>
+                <li><a href="#" onclick="getMyAcceptedRequests('In progress')">In Progress</a></li>
+                <li><a href="#" onclick="getMyAcceptedRequests('Completed')">Completed</a></li>
               </ul>
             </li>
             <li><a href="/users/<%= userProfile.username %>"><b>View <b id="username"><%= userProfile.username %></b>'s Profile</b></a></li>

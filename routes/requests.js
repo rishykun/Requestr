@@ -102,10 +102,40 @@ router.get('/myRequests', function(req, res) {
 
 router.get('/myRequests/:filter', function(req, res) {
 	User.getRequestsByStatus(req.currentUser.username, req.params.filter, function(err, data) {
+
+		console.log("data received: ", data); //debug
+
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 			utils.sendSuccessResponse(res, { requests: data });
+
+			/*
+			res.render('requests_active', {
+				userProfile: req.currentUser,
+				requests: data.myRequests
+			});*/
+		}
+	});
+});
+
+/*
+	GET /requests/myAcceptedRequests
+	No request parameters
+	Response:
+		- success: true if the server succeeded in getting the user's requests
+		- candidates: on success, an object with a single field 'requests', which contains a list of the
+		user's accepted requests
+		- err: on failure, an error message
+*/
+router.get('/myAcceptedRequests', function(req, res) {
+	User.getUserData(req.currentUser.username, function(err, data) {
+
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+
+			utils.sendSuccessResponse(res, { currentUser: req.currentUser.username, requests: data.requestsTaken });
 
 			/*
 			res.render('requests_active', {

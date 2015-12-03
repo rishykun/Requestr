@@ -51,7 +51,7 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
-
+		console.log("PASSSSSED IN: ", req.body.passedData); //debug
 
 		res.render('index', {
 			userProfile: req.currentUser,

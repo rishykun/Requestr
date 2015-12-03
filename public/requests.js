@@ -131,6 +131,37 @@ $(document).ready(function() {
 		});
 	}
 
+	getMyAcceptedRequests = function(filter) {
+		$.get("/requests/myAcceptedRequests/", {
+		})
+		//when done, log user in because successful signup doesn't automatically log user in
+		.done(function(results) {
+			console.log("results.content: ", results.content);
+
+			var filteredRequests = results.content.requests.filter(function(ele) {
+				return ele.status === filter;
+			});
+
+			console.log("filteredRequests: ", filteredRequests);
+			$.post("/", {
+				"passedData": filteredRequests
+			})
+			.done(function(result) {
+				try {
+					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
+					$("body").html(resultBody);
+				}
+				catch (err) {
+					alert("No results found.");
+				}
+			});
+		})
+		//failed response from registration request
+		.fail(function(error) {
+			console.error("ERROR: ", error);
+		});
+	}
+
 	viewRequest = function(request_id) {
 		location.href="/requests/" + request_id;
 	}

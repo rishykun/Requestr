@@ -105,18 +105,38 @@ UserSchema.statics.getUserData = function(user, cb){
       that.populate(result, {path: 'requestsTaken'}, function(err, result){
         if (err) cb({err: "Failed to populate requests taken"});
         else {
-          that.populate(result, {path: 'myRequests.creator', model: 'User'}, function(err, result){
+          that.populate(result, {path: 'requestsTaken.creator', model: 'User'}, function(err, result){
             if (err) cb({err: "Failed to populate creator"});
             else {
-              that.populate(result, {path: 'myRequests.candidates', model: 'User'}, function(err, result){
+              that.populate(result, {path: 'requestsTaken.candidates', model: 'User'}, function(err, result){
                 if (err) cb({err: "Failed to populate candidates"});
                 else {
-                  that.populate(result, {path: 'myRequests.helpers', model: 'User'}, function(err, result){
+                  that.populate(result, {path: 'requestsTaken.helpers', model: 'User'}, function(err, result){
                     if (err) cb({err: "Failed to populate helpers"});
                     else {
-                      that.populate(result, {path: 'myRequests.unpaidUsers', model: 'User'}, function(err, result){
+                      that.populate(result, {path: 'requestsTaken.unpaidUsers', model: 'User'}, function(err, result){
                         if (err) cb({err: "Failed to populate unpaid users"});
-                        else cb(null, result);
+                        else {
+                          that.populate(result, {path: 'myRequests.creator', model: 'User'}, function(err, result){
+                            if (err) cb({err: "Failed to populate creator"});
+                            else {
+                              that.populate(result, {path: 'myRequests.candidates', model: 'User'}, function(err, result){
+                                if (err) cb({err: "Failed to populate candidates"});
+                                else {
+                                  that.populate(result, {path: 'myRequests.helpers', model: 'User'}, function(err, result){
+                                    if (err) cb({err: "Failed to populate helpers"});
+                                    else {
+                                      that.populate(result, {path: 'myRequests.unpaidUsers', model: 'User'}, function(err, result){
+                                        if (err) cb({err: "Failed to populate unpaid users"});
+                                        else cb(null, result);
+                                      })
+                                    }
+                                  });
+                                }
+                              });
+                            }
+                          });
+                        }
                       })
                     }
                   });
