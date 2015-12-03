@@ -43,29 +43,41 @@
 			</div>
 		</div>
 		<div id = "request-tags">
-			Tags: <% request.tags.forEach(function(tag){ %>
-				<%= tag%>
-			<% }); %>
+			<h4>
+				Tags: <% request.tags.forEach(function(tag){ %>
+					<%= tag%>
+				<% }); %>
+			</h4>
 		</div>
 		<div id="request-footer">
 			<% if (request.status === "Open") { %>
+				
+				<% var candidateNames = request.candidates.map(function (ele) { %>
+				<% return ele.username; %>
+				<% }); %>
+
+				<% var helperNames = request.helpers.map(function (ele) { %>
+				<% return ele.username; %>
+				<% }); %>
+
 				<% if (userProfile.username !== request.creator.username) { %>
-
-					<% var candidateNames = request.candidates.map(function (ele) { %>
-					<% return ele.username; %>
-					<% }); %>
-
-					<% var helperNames = request.helpers.map(function (ele) { %>
-					<% return ele.username; %>
-					<% }); %>
-
 					<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
-						<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
+						<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'candidate')">Offer Help</button>
 					<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
-						<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Drop Out</button>
+						<button class="btn btn-default" disabled>Offer Help</button>
 					<% } else {%>
-						Your help has been accepted.
+						Your help has been accepted! Wait for the requester to mark the request as In Progress.
 					<% } %>
+				<% } else { %>
+					<h4>Current Candidates:</h4>
+					<ul class="list-group">
+					 	<% candidateNames.forEach(function (candidate) { %>
+					 		<li class="list-group-item">
+					 			<a href="/users/<%= candidate %>"><%= candidate %></a>
+					 			<button class="btn btn-default accept-candidate" type="submit">Accept Help</button>
+					 		</li>
+					 	<% }); %>
+					</div>
 				<% } %>
 			<% } else if (request.status === "In-Progress") { %>
 				The request is currently in progress.
@@ -98,7 +110,7 @@
 					<select class="form-control" id="review-rating">
 						<option>1</option>
 					    <option>2</option>
-					    <option>3</option>
+					    <option selected="selected">3</option>
 					    <option>4</option>
 					    <option>5</option>
 					</select>
