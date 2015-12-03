@@ -40,41 +40,62 @@
 				</div>
 			</div>
 			<div id = "request-tags">
-				Tags:
+				<h4>Tags:
 					<% if (request.tags.length > 0) { %>
 						<% request.tags.forEach(function(tag){ %>
 							<%= tag%>
 						<% }); %>
 					<% } else { %>
 						<i>n/a</i>
-					<% } %>
+					<% } %> </h4>
 			</div>
 			<div id="request-footer">
 				<% if (request.status === "Open") { %>
 					<% if (userProfile.username !== request.creator.username) { %>
-
-						<% var candidateNames = request.candidates.map(function (ele) { %>
-						<% return ele.username; %>
-						<% }); %>
-
-						<% var helperNames = request.helpers.map(function (ele) { %>
-						<% return ele.username; %>
-						<% }); %>
-
-						<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
+						<% if (request.candidates.indexOf(userProfile.username) === -1 && request.helpers.indexOf(userProfile.username) === -1) { %>
 							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
-						<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
+						<% } else if (request.candidates.indexOf(userProfile.username) !== -1 ) { %>
 							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Drop Out</button>
 						<% } else {%>
 							Your help has been accepted.
 						<% } %>
+					<% } else { %>
+						<h4>Current Candidates:</h4>
+						<ul class="list-group">
+						 	<% request.candidates.forEach(function (candidate) { %>
+						 		<li class="list-group-item">
+						 			<a href="/users/<%= candidate %>"><%= candidate.username %></a>
+						 			<button class="btn btn-default" onclick="handleCandidate('<%= request._id %>', '<%= candidate.username %>', 'accept')">Accept Help</button>
+						 		</li>
+						 	<% }); %>
+						</ul>
+						<h4>Current Helpers:</h4>
+						<ul class="list-group">
+						 	<% request.helpers.forEach(function (helper) { %>
+						 		<li class="list-group-item">
+						 			<a href="/users/<%= helper.username %>"><%= helper.username %></a>
+						 		</li>
+						 	<% }); %>
+						 	<% if (request.helpers.length > 0) { %>
+						 		<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'start')">Start With Current Helpers</button>
+						 	<% } %> 
+						</ul>
 					<% } %>
-				<% } else if (request.status === "In-Progress") { %>
+				<% } else if (request.status === "In progress") { %>
 					The request is currently in progress.
+					<h4>Current Helpers:</h4>
+					<ul class="list-group">
+					 	<% request.helpers.forEach(function (helper) { %>
+					 		<li class="list-group-item">
+					 			<a href="/users/<%= helper.username %>"><%= helper.username %></a>
+					 		</li>
+					 	<% }); %>
+					 	<% if (request.helpers.length > 0 && userProfile.username === request.creator.username) { %>
+					 		<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'complete')">Completed!</button>
+					 	<% } %> 
+					</ul>
 				<% } else if (request.status === "Completed") { %>
-					<% var participantNames = request.helpers.map(function (ele) { %>
-					<% return ele.username; %>
-					<% }); %>
+					<% var participantNames = request.helpers.map(function (e) {return e.username;}); %>
 
 					<% participantNames.push(request.creator.username); %>
 

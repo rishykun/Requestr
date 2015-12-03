@@ -356,7 +356,13 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
               cb({err: "Failed to accept candidate"});
             }
             else {
-              cb(null);
+              userModel.update({"_id": userObj._id}, {$push: {'requestsTaken': requestId}}, {upsert: true}, function (err) {
+                if (err) {
+                  cb({err: "Failed to add request to requests taken."});
+                } else {
+                  cb(null);
+                }
+              });
             }
           });
         }

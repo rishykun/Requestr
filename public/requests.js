@@ -3,6 +3,7 @@
 */
 //define the following functions so that they can be used by the frontend
 var handleRequest;
+var handleCandidate;
 var getSearchRequests;
 var getMyRequests;
 
@@ -195,7 +196,7 @@ $(document).ready(function() {
 	/*
 		Instantiates review submission function
 	*/
-	$("#review-form").submit(function (event) {
+	$(".review-form").submit(function (event) {
 		event.preventDefault();
 
 		var victimUsername = $("#review-victim").val();
@@ -210,9 +211,8 @@ $(document).ready(function() {
 			"rating": rating,
 			"requestId": requestId
 		}).done(function (data) {
-			$("#review-success").html("Your review has been submitted!");
-			$("#review-error").html("");
-			$("#review-form :input").prop("readonly", true);
+			$('#review-modal').modal('hide');
+			clearReviewModal();
 		}).fail(function (error) {
 			console.error("ERROR: ", error);
 			$("#review-error").html("Your review could not be submitted.");
@@ -236,21 +236,27 @@ $(document).ready(function() {
 				}
 			});
 
-			$("#review-form").attr('id', request._id);
+			$(".review-form").attr('id', request._id);
 		});
+	}
+
+	var clearReviewModal = function () {
+	    $(".review-form").attr('id', "");
+	    $("#review-victim").html("");
+	    $("#review-text").val("");
+	    $("#review-success").html("");
+	    $("#review-error").html("");
+	    $("#review-rating-default").attr("selected", "selected");
 	}
 
 	/*
 		Clear the review modal when it closes.
 	*/
 	$('#review-modal').on('hidden.bs.modal', function () {
-	    $("#review-form").attr('id', "");
-	    $("#review-victim").html("");
-	    $("#review-text").val("");
-	    $("#review-success").html("");
-	    $("#review-error").html("");
-	    $("#review-rating-default").attr("selected", "selected");
+		clearReviewModal();
 	});
+
+
 
 	/*
 		makes a call to the server and attempts to authenticate with the specified credentials
