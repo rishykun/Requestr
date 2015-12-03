@@ -50,37 +50,54 @@
 					<% } %>
 			</div>
 			<div id="request-footer">
+				<% var getUsernames = function(userArr){ %>
+					<% return userArr.map(function(ele){ %>
+						<% return ele.username; %>
+					<% }); %>
+				<% } %>
+				<% var candidateNames = request.candidates === undefined ? [] : getUsernames(request.candidates) %>
+				<% var helperNames = request.helpers === undefined ? [] : getUsernames(request.helpers) %>
+				<% var unpaidUsers = request.unpaidUsers === undefined ? [] : getUsernames(request.unpaidUsers); %>
+				<% var helperString = "" %>
+				<% helperNames.forEach(function(helper){ %>
+				<% helperString += (", " + helper) %>
+				<% }); %>
+				<% helperString = helperString.substring(1); %>
 				<% if (request.status === "Open") { %>
 					<% if (userProfile.username !== request.creator.username) { %>
-						<% console.log("DID"); %>
-						<% var candidateNames = request.candidates === undefined ? [] : request.candidates.map(function (ele) { %>
-						<% return ele.username; %>
-						<% }); %>
-						<% console.log("YOU"); %>
-						<% var helperNames = request.helpers === undefined ? [] : request.helpers.map(function (ele) { %>
-						<% return ele.username; %>
-						<% }); %>
-						<% console.log("GET"); %>
 						<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
 							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
 						<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
 							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Drop Out</button>
-						<% } else {%>
+						<% } else { %>
 							Your help has been accepted.
 						<% } %>
-						<% console.log("HERE?"); %>
+					<% } else { %>
+						<% candidateNames.forEach(function(candidate){ %>
+							<button class="btn btn-success" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'accept')"> Accept <%= candidate %>
+							</button>
+							<button class="btn btn-danger" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'reject')">Reject  <%= candidate %>
+							</button>
+						<% }); %>
+						<br>
+						Helpers: <%= helperString %>
+						<br><button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'start')">Start Request</button>
 					<% } %>
-				<% } else if (request.status === "In-Progress") { %>
-					The request is currently in progress.
+				<% } else if (request.status === "In progress") { %>
+						<% if (userProfile.username === request.creator.username) { %>
+						<br>
+						Helpers: <%= helperString %>
+						<br><button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'complete')">Complete Request</button>
+					<% } %>
 				<% } else if (request.status === "Completed") { %>
 					<% if (userProfile.username === request.creator.username) { %>
-						<% if (request.paid) { %>
-							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Paid</button>
-
-						<% } else { %>
-							<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Pay</button>
-						<% } %>
-
+						<% helperNames.forEach(function(user){ %>
+							<% if (unpaidUsers.indexOf(user) > -1){ %>
+								<%= user %> : <button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Pay</button>
+							<% } else { %>
+								<%= user %>: Paid
+							<% } %>
+						<% }); %>
 					<% } %>
 				<% } %>
 			</div>

@@ -106,7 +106,6 @@ router.get('/myRequests/:filter', function(req, res) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-
 			utils.sendSuccessResponse(res, { requests: data });
 
 			/*
@@ -165,7 +164,6 @@ router.post('/create', function(req,res){
 		- err: on failure, an error message
 */
 router.post('/search', function(req, res) {
-	console.log(req.body);
 
 	Request.getRequestByFilter(null, req.body.keywords, req.body.tags, function(err, data) {
 

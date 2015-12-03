@@ -15,6 +15,10 @@ var UserSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
+  email: {
+    type: String,
+    required: true
+  },
 	myRequests: [{type: Schema.Types.ObjectId, ref:'Request'}],
 	requestsTaken: [{type: Schema.Types.ObjectId, ref:'Request'}]
 });
@@ -52,7 +56,7 @@ UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
 
 //creates a user in the model if username doesn't already exists (callbacks on false)
 //else callbacks on true if the username is taken
-UserSchema.statics.createNewUser = function(user, password, cb){
+UserSchema.statics.createNewUser = function(user, password, email, cb){
 	var that = this;
 	that.getUser(user, function(err, userQuery){
 		if (err){
@@ -60,6 +64,7 @@ UserSchema.statics.createNewUser = function(user, password, cb){
 				that.create({
 					'username': user,
 					'password': password,
+          'email': email,
 					'myRequests': [],
 					'requestsTaken': []
 				},  function(err, res) {
@@ -94,7 +99,12 @@ UserSchema.statics.getUserData = function(user, cb){
                 else {
                   that.populate(result, {path: 'myRequests.helpers', model: 'User'}, function(err, result){
                     if (err) cb({err: "Failed to populate helpers"});
-                    else cb(null, result);
+                    else {
+                      that.populate(result, {path: 'myRequests.unpaidUsers', model: 'User'}, function(err, result){
+                        if (err) cb({err: "Failed to populate unpaid users"});
+                        else cb(null, result);
+                      })
+                    }
                   });
                 }
               });
@@ -173,6 +183,7 @@ var RequestSchema = mongoose.Schema({
   paid: Boolean,
   candidates: [{type: Schema.Types.ObjectId, ref:'User'}],
   helpers: [{type: Schema.Types.ObjectId, ref:'User'}],
+  unpaidUsers: [{type: Schema.Types.ObjectId, ref:'User'}],
   tags: [String],
   comments: [{
     user: {type: Schema.Types.ObjectId, ref:'User'},
@@ -195,9 +206,14 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
             that.populate(result, {path: 'helpers'}, function(err, result){
               if (err) cb({err: "Failed to populate helpers"});
               else {
-                that.populate(result, {path: 'comments.user'}, function (err, result) {
-                  if (err) cb({err: "Failed to populate comment users"});
-                  else cb(null, result);
+                that.populate(result, {path: 'unpaidUsers'}, function (err, result) {
+                  if (err) cb({err: "Failed to populate unpaid users"});
+                  else {
+                    that.populate(result, {path: 'comments.user'}, function (err, result) {
+                      if (err) cb({err: "Failed to populate comment users"});
+                      else cb(null, result);
+                    });
+                  }
                 });
               }
             });
@@ -263,6 +279,7 @@ RequestSchema.statics.createRequest = function(userModel, user, requestData, cb)
   requestData.status = 'Open';
   requestData.candidates = [];
   requestData.helpers = [];
+  requestData.unpaidUsers = [];
   requestData.comments = [];
   requestData.paid = false;
   userModel.getUser(user, function(err, user){
@@ -298,7 +315,8 @@ RequestSchema.statics.startRequest = function(requestId, cb){
     if (err) cb(err);
     else if (request.status !== "Open") cb({err: "Request is not open!"});
     else {
-      that.update({"_id":  requestId}, {status: 'In progress', $set: {'candidates': []}}, {upsert: true}, function(err){
+      var helpersCopy = request.helpers.slice(0);
+      that.update({"_id":  requestId}, {status: 'In progress', $set: {'candidates': [], 'unpaidUsers': helpersCopy}}, {upsert: true}, function(err){
         if (err) cb({err: "Failed to start request"});
         else cb(null);
       });
