@@ -3,6 +3,7 @@
 */
 //define the following functions so that they can be used by the frontend
 var handleRequest;
+var handleCandidate;
 var getSearchRequests;
 var getMyRequests;
 

@@ -62,7 +62,7 @@
 
 				<% if (userProfile.username !== request.creator.username) { %>
 					<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
-						<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'candidate')">Offer Help</button>
+						<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Offer Help</button>
 					<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
 						<button class="btn btn-default" disabled>Offer Help</button>
 					<% } else {%>
@@ -74,7 +74,7 @@
 					 	<% candidateNames.forEach(function (candidate) { %>
 					 		<li class="list-group-item">
 					 			<a href="/users/<%= candidate %>"><%= candidate %></a>
-					 			<button class="btn btn-default accept-candidate" type="submit">Accept Help</button>
+					 			<button class="btn btn-default accept-candidate" onclick=>Accept Help</button>
 					 		</li>
 					 	<% }); %>
 					</div>

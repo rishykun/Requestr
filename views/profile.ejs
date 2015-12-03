@@ -53,7 +53,7 @@
                 <div id="user-takenRequests" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
                     <% if (user.requestsTaken.length > 0) { %>
                         <ul class="list-group">
-                            <% user.myRequests.forEach(function (request) { %>
+                            <% user.requestsTaken.forEach(function (request) { %>
                                 <li class="list-group-item"><a href="/requests/<%= request._id %>" style="padding: 1%"><%= request.title %></a></li>
                             <% }); %>
                         </ul>
