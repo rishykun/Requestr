@@ -10,7 +10,6 @@ var bodyParser = require("body-parser");
 var index = require('./routes/index');
 var users = require('./routes/users');
 var requests = require('./routes/requests');
-var profile = require('./routes/profile');
 
 //import backend database handler
 var mongoose = require("mongoose");
@@ -81,7 +80,6 @@ var main = (function Main() {
 	that.app.use('/', index);
 	that.app.use('/users', users);
 	that.app.use('/requests', requests);
-	that.app.use('/profile', profile);
 
 
 	// ERROR HANDLERS
