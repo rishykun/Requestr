@@ -68,18 +68,30 @@ var Messagebase = (function Messagebase() {
 				console.error(err);
 				cb(err);
 			} else {
-				var userList = result.reduce(function(prev, cur, i, arr) {
-					if (i == 1) {
-						return [prev.username, cur.username]
+				if (result.length > 0) {
+					var userList;
+					if (result.length > 1) {
+						userList = result.reduce(function(prev, cur, i, arr) {
+							if (i == 1) {
+								return [prev.username, cur.username]
+							} else {
+								return prev.concat(cur.username);
+							}
+						});
 					} else {
-						return prev.concat(cur.username);
+						userList = [result[0].username];
 					}
-				});
-				var offlineUsers = userList.filter(function(user) {
-					return Object.keys(loggedInUsers).indexOf(user) === -1 || !loggedInUsers[user];
-				});
-				console.log("offlineUsers: ", offlineUsers); //debug
-				cb(null, offlineUsers);
+					console.log("userList: ", userList); //debug
+					console.log("loggedInUsers: ", loggedInUsers); //debug
+					var offlineUsers = userList.filter(function(user) {
+						console.log("inspecting user: ", user); //debug
+						return Object.keys(loggedInUsers).indexOf(user) === -1 || !loggedInUsers[user];
+					});
+					console.log("offlineUsers: ", offlineUsers); //debug
+					cb(null, offlineUsers);
+				} else {
+					cb(null, []);
+				}
 			}
 		});
 	}
