@@ -58,9 +58,10 @@ $(document).ready(function() {
 		}
 	}
 	else {
+			console.log("request sent");
 			// tags
 			var tagsString = $("#request-search-tags").val();
-				var tagsArray = tagString === "" ? [] : tagsString.split(",");
+				var tagsArray = tagsString === "" ? [] : tagsString.split(",");
 				// Trim the beginning and end spaces off all tags in the array
 				tagsArray = tagsArray.map(function(tag){
 					return tag.trim();
