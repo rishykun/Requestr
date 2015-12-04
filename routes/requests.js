@@ -183,38 +183,48 @@ router.get('/pay', function(req, res) {
 var request = require('request');
 // TODO: if logged out clear authentication token
 // /:request
-router.post('/pay', function(req,res){
+router.post('/:request/pay/:userid', function(req,res){
 	console.log(oauth_token);
-	Request.getRequestById(req.params.request, function(err, request){
+/*	Request.getRequestById(req.params.request, function(err, request){
 	var post_data = {
       'access_token' : oauth_token,
-      'email': req.venmo_email,
+      'email': req.body.venmo_email,
       'note': 'Requestr payment.',
        'amount' : request.reward
-  	};
-
-  /*	var post_data = {
-      'access_token' : oauth_token,
-      'email': 'soulenski5@gmail.com',
-      'note': 'Requestr payment.',
-       'amount': 3
   	};*/
+
+  	var post_data = {
+      'access_token' : oauth_token,
+      'email': 'rrrahman@mit.edu',
+      'note': 'Requestr payment.',
+       'amount': 0.01
+  	};
+  	console.log(req.body)
 	 request.post('https://api.venmo.com/v1/payments', {form: post_data}, function(e, r, venmo_receipt){
         // parsing the returned JSON string into an object
         var venmo_receipt = JSON.parse(venmo_receipt);
-        onsole.log(venmo_receipt);
+        console.log(venmo_receipt);
         if(venmo_receipt.error)
         {
-        	utils.sendErrResponse(428, venmo_receipt.error.message)
+        	utils.sendErrResponse(res, 500, venmo_receipt.error.message)
         }
         else
         {
-        	utils.sendSuccessResponse('Request has been paid.');
+        	Request.payHelper(req.params.request,req.params.userid, function(err)
+        	{
+        		if(err){
+        			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+        		}
+        		else {
+        			utils.sendSuccessResponse(res, 'Request has been paid.');
+        		}
+        	});
+        	
         }
 
     });
 
-	});
+	///});
 });
 
 
@@ -225,7 +235,7 @@ router.post('/pay', function(req,res){
 */
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
-	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires, 'tags': req.body.tags },
+	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires, 'reward': req.body.reward, 'tags': req.body.tags },
 		function(err){
 			 if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');

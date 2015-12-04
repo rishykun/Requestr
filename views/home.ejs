@@ -33,9 +33,9 @@
 			<div id="request-body" style="padding:10px">
 				<div id="request-desc-bar">
 					Description: <%= request.description %>
-				</div>
+				</div> 
 				<div id="request-rewards-bar" style="margin-top:5px">
-					Rewards: 1 cookie
+					Rewards: $<%= request.reward %>
 				</div>
 			</div>
 			<div id = "request-tags" style="font-size:16px">
@@ -107,11 +107,11 @@
 					<% participantNames.push(request.creator.username); %>
 					
 					<% if (userProfile.username === request.creator.username) { %>
-						<% helperNames.forEach(function(user){ %>
-							<% if (unpaidUsers.indexOf(user) > -1){ %>
-								<%= user %> : <button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Pay</button>
+						<% request.helpers.forEach(function(helper){ %>
+							<% if (unpaidUsers.indexOf(helper.username) > -1){ %>
+								<%= helper.username %> : <button class="btn btn-default" onclick="makePayment('<%= request._id %>', '<%= helper._id %>', '<%= helper.email %>')">Pay</button>
 							<% } else { %>
-								<%= user %>: Paid
+								<%= helper.username %>: Paid
 							<% } %>
 						<% }); %>
 					<% } %>

@@ -211,10 +211,12 @@ $(document).ready(function() {
 		//automatic data sanitization
 		var username = $("#signup-username").val();
 		var password = $("#signup-password").val();
-
+		var email = $("#signup-email").val();
+		console.log(email);
 		$.post("/users", {
 			"username": username,
-			"password": password
+			"password": password,
+			"email": email,
 		})
 		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(data) {
@@ -325,8 +327,8 @@ $(document).ready(function() {
 	}
 
 
-	makePayment = function(request_id, venmo_email){
-		$.post('/requests/' + request_id + '/pay',{
+	makePayment = function(request_id, user_id, venmo_email){
+		$.post('/requests/' + request_id + '/pay/' + user_id,{
 				'venmo_email': venmo_email,
 		}).done(function(data){
 			console.log(data);
@@ -357,6 +359,7 @@ $(document).ready(function() {
 			var desc = $("#request-desc").val();
 			var expires = $("#request-expires").val();
 			var tagsString = $("#request-tags").val();
+			var reward = $("#request-rewards").val();
 			var tagsArray = tagsString.split(",");
 			// Trim the beginning and end spaces off all tags in the array
 			tagsArray = tagsArray.map(function(tag){
@@ -369,6 +372,7 @@ $(document).ready(function() {
 				"desc": desc,
 				"expires": expires,
 				"tags": tagsArray,
+				"reward": reward,
 			})
 			//successful response from request creation
 			.done(function(data) {

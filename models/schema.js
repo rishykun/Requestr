@@ -258,6 +258,13 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
   }
 };
 
+RequestSchema.statics.payHelper = function(requestId, helperId, cb){
+  var that = this;
+  that.update({"_id": requestId}, {$pull:{'unpaidUsers':helperId}}, {upsert: true}, function(err){
+    if (err) cb(err);
+    else cb(null);
+  });
+}
 //Callback on all created requests
 RequestSchema.statics.getAllRequests = function(cb){
   var that = this;

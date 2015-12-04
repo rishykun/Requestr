@@ -173,7 +173,7 @@ router.post('/', function(req, res) {
 		return;
 	}
 
-	User.createNewUser(req.body.username, req.body.password, 
+	User.createNewUser(req.body.username, req.body.password, req.body.email,
 		function(err, taken) {
 
 			if (!err) {
