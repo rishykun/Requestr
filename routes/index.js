@@ -12,13 +12,14 @@ var Schema = require('../models/schema');
 */
 router.get('/', function(req, res) {
 	//check if logged in and render with the appropriate value
+	console.log("REROUTED----"); //debug
 	if (req.currentUser) {
-
+		console.log(1)
 		Schema.Request.getAllRequests(function(err, requests) {
 		    if (err) {
 		      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		    } else {
-
+		    	console.log(2)
 		    	requests.forEach(function(request) {
 		    		request.candidates = request.candidates.map(function (ele) {
 		    			return ele.username;
@@ -28,7 +29,8 @@ router.get('/', function(req, res) {
 			    		return ele.username;
 			    	});
 		    	});
-
+		    	console.log("req.currentUser: ", req.currentUser);
+		    	console.log("requests: ", requests); 
 		    	res.render('index', {
 					userProfile: req.currentUser,
 					requests: requests,
@@ -42,6 +44,7 @@ router.get('/', function(req, res) {
 	}
 	//if not logged in, render with no userProfile data
 	else {
+		console.log("why")
 		res.render('index', {
 			userProfile: undefined
 		});
@@ -50,6 +53,7 @@ router.get('/', function(req, res) {
 
 router.post('/', function(req, res) {
 	//check if logged in and render with the appropriate value
+	console.log("REROUTED----"); //debug
 	if (req.currentUser) {
 		console.log("PASSSSSED IN: ", req.body.passedData); //debug
 
@@ -90,6 +94,7 @@ router.post('/', function(req, res) {
 	}
 	//if not logged in, render with no userProfile data
 	else {
+		console.log("NO DAATA");
 		res.render('index', {
 			userProfile: undefined
 		});

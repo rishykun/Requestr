@@ -92,6 +92,9 @@ router.post('/login', function(req, res) {
   if (isLoggedInOrInvalidBody(req, res)) {
     return;
   }
+
+  console.log("REQBODY2: ", req.body);
+
   User.verifyPassword(req.body.username, req.body.password, function(err, match) {
 
     if (match) {
@@ -173,7 +176,7 @@ router.post('/', function(req, res) {
 		return;
 	}
 
-	User.createNewUser(req.body.username, req.body.password, 
+	User.createNewUser(req.body.username, req.body.password, req.body.email,
 		function(err, taken) {
 
 			if (!err) {

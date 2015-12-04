@@ -211,10 +211,12 @@ $(document).ready(function() {
 		//automatic data sanitization
 		var username = $("#signup-username").val();
 		var password = $("#signup-password").val();
+		var email = $("#signup-email").val();
 
 		$.post("/users", {
 			"username": username,
-			"password": password
+			"password": password,
+			"email": email
 		})
 		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(data) {
@@ -309,6 +311,7 @@ $(document).ready(function() {
 		//successful response from login request
 		.done(function(data) {
 			//if signin was successful
+			console.log("success loggin in");
 			if (data.success) {
 				location.href="/"; //reload page
 
