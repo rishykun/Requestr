@@ -6,6 +6,7 @@
 <div id="requests-container" style="margin-top:20px; margin-bottom:20px">
 
 	<% if (requests.length > 0) { %>
+
 		<% requests.forEach(function(request) { %>
 
 		<div id="request-box" style="background-color:whitesmoke; width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid <%= colors[request.status] %>; padding: 10px">
@@ -80,7 +81,12 @@
 						<% }); %>
 						<br>
 						Helpers: <%= helperString %>
-						<br><button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'start')">Start Request</button>
+						<br>
+						<% if (helperString.length > 0) { %>
+							<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'start')">Start Request</button>
+						<% } else { %>
+							You must accept helpers before you can start this request
+						<% } %>
 					<% } %>
 				<% } else if (request.status === "In progress") { %>
 						<% if (userProfile.username === request.creator.username) { %>
