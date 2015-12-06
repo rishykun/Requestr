@@ -161,9 +161,28 @@ $(document).ready(function() {
 			//prepare data to be sent over to backend
 			//reason why we don't simply just pass in the form values to the ajax request is because
 			//we handle data sanitization here
+
 			var title = $("#request-title").val();
 			var desc = $("#request-desc").val();
-			var expires = $("#request-expires").val();
+
+			var expDateArray = $("#request-expires").val().split("/");
+			var hour = 0;
+			var minutes = 0;
+			if ($("#request-expires-time").val() !== "") {
+				var expDateTimeArray = $("#request-expires-time").val().split(":")
+				minutesAndPeriod = expDateTimeArray[1].split(" ");
+				hour = parseInt(expDateTimeArray[0])
+				minutes = parseInt(minutesAndPeriod[0])
+
+				if (minutesAndPeriod[1] === "PM" && hour !== 12) {
+					hour += 12;
+				}
+				if (hour === 12 && minutesAndPeriod[1] === "AM") {
+					hour = 0;
+				}
+			}
+			var expires = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
+
 			var tagsString = $("#request-tags").val();
 			var reward = $("#request-rewards").val();
 			var tagsArray = tagsString.split(",");

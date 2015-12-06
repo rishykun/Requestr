@@ -14,13 +14,10 @@ var Messagebase = (function Messagebase() {
 
 		//io connection
 		io.on('connection', function(socket){
-			console.log('a user connected');
 			socket.on('disconnect', function(){
-				console.log('user disconnected');
 			});
 
 			socket.on('chat message', function(msg, from, to, date) {
-				console.log('message: ' + msg + " from " + from + " to " + to + " on " + date);
 				if (Object.keys(messages).indexOf(to) === -1) {
 					messages[to] = {};
 				}
@@ -28,7 +25,6 @@ var Messagebase = (function Messagebase() {
 					messages[to][from] = [];
 				}
 				messages[to][from].push([msg, date, false]);
-				console.log("\n\t1: ", messages[to]);
 				if (Object.keys(messages).indexOf(from) === -1) {
 					messages[from] = {};
 				}
@@ -36,8 +32,6 @@ var Messagebase = (function Messagebase() {
 					messages[from][to] = [];
 				}
 				messages[from][to].push([msg, date, true]);
-				console.log("\t2: ", messages[from]);
-				console.log("\tmessages: ", messages); //debug
 
 				io.emit("chat message", msg, from, to, date);
 			});
@@ -81,13 +75,9 @@ var Messagebase = (function Messagebase() {
 					} else {
 						userList = [result[0].username];
 					}
-					console.log("userList: ", userList); //debug
-					console.log("loggedInUsers: ", loggedInUsers); //debug
 					var offlineUsers = userList.filter(function(user) {
-						console.log("inspecting user: ", user); //debug
 						return Object.keys(loggedInUsers).indexOf(user) === -1 || !loggedInUsers[user];
 					});
-					console.log("offlineUsers: ", offlineUsers); //debug
 					cb(null, offlineUsers);
 				} else {
 					cb(null, []);
@@ -98,13 +88,10 @@ var Messagebase = (function Messagebase() {
 
 	//get all messages associated with the specified user
 	that.getMessagesByUsername = function(username) {
-		console.log("that.getMessagesByUsername() called"); //debug
 
 		if (Object.keys(messages).indexOf(username) !== -1) {
-			console.log("returning ", messages[username]); //debug
 			return messages[username];
 		} else {
-			console.log("returning nothing {}"); //debug
 			return {};
 		}
 	}
