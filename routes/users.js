@@ -49,7 +49,6 @@ router.get('/current', function(req, res) {
 */
 router.get("/messages", function (req, res) {
 	if (req.currentUser) {
-		console.log("/users/messages route reached"); //debug
 		utils.sendSuccessResponse(res, msgbase.getMessagesByUsername(req.currentUser.username));
 	} else {
 		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
@@ -79,14 +78,11 @@ router.post('/login', function(req, res) {
     return;
   }
 
-  console.log("REQBODY2: ", req.body);
-
   User.verifyPassword(req.body.username, req.body.password, function(err, match) {
 
     if (match) {
       req.session.username = req.body.username;
       msgbase.login(req.body.username);
-      console.log("LOGIN: logged In users: ", msgbase.getActiveUsers()); //debug
       utils.sendSuccessResponse(res, { user : req.body.username });
     } else {
       utils.sendErrResponse(res, 403, 'Username or password invalid.');
@@ -106,7 +102,6 @@ router.post('/logout', function(req, res) {
 	if (req.currentUser) {
 		msgbase.logout(req.currentUser.username)
 		req.session.destroy();
-		console.log("LOGOUT: logged In users: ", msgbase.getActiveUsers()); //debug 
 		utils.sendSuccessResponse(res);
 	} else {
 		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
@@ -129,7 +124,6 @@ router.get("/offline", function (req, res) {
 			if (err) {
 				utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
 			}
-			console.log("returning the following: ", result); //debug
 			utils.sendSuccessResponse(res, result);
 		});
 	} else {
@@ -162,18 +156,16 @@ router.post('/', function(req, res) {
 		return;
 	}
 
-	User.createNewUser(req.body.username, req.body.password, req.body.email,
-		function(err, taken) {
-
-			if (!err) {
-				if (taken) {
-					utils.sendErrResponse(res, 400, 'That username is already taken!');
-				} else {
-					utils.sendSuccessResponse(res, req.body.username);
-				}
+	User.createNewUser(req.body.username, req.body.password, req.body.email, function(err, taken) {
+		if (!err) {
+			if (taken) {
+				utils.sendErrResponse(res, 400, 'That username is already taken!');
 			} else {
-				utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+				utils.sendSuccessResponse(res, req.body.username);
 			}
+		} else {
+			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+		}
 	});
 });
 
