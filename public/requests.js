@@ -185,7 +185,8 @@ $(document).ready(function() {
 			}
 			var expires = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
 
-			var tagsString = $("#request-tags").val();
+			var tagsString = $("#request-create-tags").val();
+			console.log(tagsString);
 			console.log(tagsString);
 			var reward = $("#request-rewards").val();
 			var tagsArray = tagsString.split(",");
