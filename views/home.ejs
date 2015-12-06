@@ -1,4 +1,7 @@
-<div style="text-align:center; font-weight: bold; font-size: 24px; color: #555">Home</div>
+<div style="text-align:center">
+	<button class="btn btn-default" id="homeButton" onclick="goHome()" style="display:none">Go home</button>
+	<div id="pageStatus" style="font-weight: bold; font-size: 24px; color: #555">Home</div>
+</div>
 
 <!--  Search Only Implemented For Tags. Tags can be typed into the search bar and delimited by commas. -->
 <input class="form-control" id="request-search" onKeyPress = "getSearchRequests(event)" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by tags, request creator, etc." placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 20px">

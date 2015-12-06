@@ -30,6 +30,8 @@ $(document).ready(function() {
 				try {
 					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
 					$("body").html(resultBody);
+					$("#pageStatus").html("My " + filter + " Created Requests");
+					$("#homeButton").css("display", "inline-block");
 				}
 				catch (err) {
 					$.notify({
@@ -65,6 +67,8 @@ $(document).ready(function() {
 				try {
 					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
 					$("body").html(resultBody);
+					$("#pageStatus").html("My " + filter + " Accepted Requests");
+					$("#homeButton").css("display", "inline-block");
 				}
 				catch (err) {
 					$.notify({
