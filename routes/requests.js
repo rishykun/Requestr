@@ -268,6 +268,7 @@ router.post('/:request/pay/:userid', function (req,res){
 */
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
+	console.log(req.body.tags);
 	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires, 'reward': req.body.reward, 'tags': req.body.tags },
 		function(err){
 			 if (err) {

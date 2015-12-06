@@ -186,6 +186,7 @@ $(document).ready(function() {
 			var expires = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
 
 			var tagsString = $("#request-tags").val();
+			console.log(tagsString);
 			var reward = $("#request-rewards").val();
 			var tagsArray = tagsString.split(",");
 			// Trim the beginning and end spaces off all tags in the array

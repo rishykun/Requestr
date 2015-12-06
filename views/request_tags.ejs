@@ -2,7 +2,7 @@
 	Tags:
 	<% if (request.tags.length > 0) { %>
 		<% request.tags.forEach(function(tag){ %>
-		<%= tag%>
+		<a> <%= tag%> </a>
 		<% }); %>
 	<% } else { %>
 		<i>n/a</i>
