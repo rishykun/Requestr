@@ -13,7 +13,7 @@ var Schema = require('../models/schema');
 router.get('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
-		Schema.Request.getAllRequests(function(err, requests) {
+		Schema.Request.getRequestByFilter('Open', null, null, function(err, requests) {
 		    if (err) {
 		      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		    } else {
@@ -26,6 +26,7 @@ router.get('/', function(req, res) {
 			    		return ele.username;
 			    	});
 		    	});
+
 		    	res.render('index', {
 					userProfile: req.currentUser,
 					requests: requests,
@@ -40,6 +41,18 @@ router.get('/', function(req, res) {
 			userProfile: undefined
 		});
 	}
+});
+
+router.get('/payment/success', function(req, res) {
+	res.render('venmoRedirect', {
+		status: "succeeded"
+	});
+});
+
+router.get('/payment/failed', function(req, res) {
+	res.render('venmoRedirect', {
+		status: "failed"
+	});
 });
 
 router.post('/', function(req, res) {

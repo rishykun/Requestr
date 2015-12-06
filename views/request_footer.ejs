@@ -51,7 +51,7 @@
 		<% if (userProfile.username === request.creator.username) { %>
 			<% request.helpers.forEach(function(helper){ %>
 				<% if (unpaidUsers.indexOf(helper.username) > -1){ %>
-					<%= helper.username %> : <button class="btn btn-default" onclick="makePayment('<%= request._id %>', '<%= helper._id %>', '<%= helper.email %>')">Pay</button>
+					<%= helper.username %> : <a href="https://api.venmo.com/v1/oauth/authorize?client_id=3233&scope=make_payments&response_type=token" onclick="makePayment('<%= request._id %>', '<%= helper._id %>', '<%= helper.email %>')">Pay</a>
 				<% } else { %>
 					<%= helper.username %>: Paid
 				<% } %>
