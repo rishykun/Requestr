@@ -8,12 +8,17 @@ var messages = {};
 $(document).ready(function() {
 	var target_user = "";
 
-	$.get("/users/session", {
+	$.get("/users/current", {
 	})
 	.done(function(data) {
 		//upon login, get list of logged in users and populate
-		loggedInUser = data.content;
-		getActiveUsers();
+		if (data.content.loggedIn) {
+			console.log("USER LOGGED IN, loading online users"); //debug
+			loggedInUser = data.content.user;
+			getActiveUsers();
+		} else {
+			console.log("USER NOT LOGGED IN"); //debug
+		}
 	})
 	.fail(function(error) {
 		//don't do anything because this gets called even when we're not logged in

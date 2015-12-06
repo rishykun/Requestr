@@ -26,20 +26,6 @@ var isLoggedInOrInvalidBody = function(req, res) {
 };
 
 /*
-	checks to see if the user is logged in
-	if so, return user name
-*/
-router.get("/session", function (req, res) {
-	if (req.currentUser) {
-		console.log("logged in: " + req.currentUser.username); //debug
-		utils.sendSuccessResponse(res, req.currentUser.username);
-	} else {
-		console.log("not logged in"); //debug
-		utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
-	}
-});
-
-/*
 	Determine whether there is a current user logged in
 
 	GET /users/current
