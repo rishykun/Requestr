@@ -1,4 +1,8 @@
-<title>Requestr v0.1</title>
+<!-- meant solely for use in an iframe
+    preferrably the iframe should be wrapped by a modal that's called by a data-toggle
+    should inherit all of the parent's global javascript variables as well as ejs variables
+-->
+
 <!-- javascript -->
 <!-- external -->
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -8,6 +12,10 @@
 <!-- internal -->
 <script src="../../requests.js" type="text/javascript"></script>
 
+<script src="../../init.js" type="text/javascript"></script>
+<script src="../../utils.js" type="text/javascript"></script>
+<script src="../../review.js" type="text/javascript"></script>
+
 <!-- css -->
 <!-- external -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -15,79 +23,83 @@
 <!--internal -->
 <link rel="stylesheet" href="../../requestr.css">
 
-<% if (userProfile) { %>
-    <div id="user-container" style="width:75%; margin-left: 15%; padding:1%">
-        <button class="btn btn-primary" onclick="goHome()">Go Back</button>
-        <div id="user-username" style="margin-left: 3%; padding: 1%">
-            <h1><%= user.username %></h1>
+
+<div id="user-container" style="width:75%; margin-left: 15%">
+    <button class="btn btn-primary" onclick="parent.goBack()" style="margin-bottom: 10px">Go Back</button>
+    <div style="margin-bottom: 5px;">
+        <div id="user-username" style="display:inline-block; font-weight:500px; font-size: 36px">
+            <%= user.username %>
         </div>
-        <div class="panel-group" id="user-accordion">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#user-myRequests"><%= user.username %>'s Requests</a>
-                    </h4>
-                </div>
-                <div id="user-myRequests" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
-                    <% if (user.myRequests.length > 0) { %>
-                        <ul class="list-group">
-                            <% user.myRequests.forEach(function (request) { %>
-                                <li class="list-group-item">
-                                    <h4 style="padding: 1%"><a href="/requests/<%= request._id %>"><%= request.title %></a> - <%= request.status %></h4>
-                                </li>
-                            <% }); %>
-                        </ul>
-                    <% } else { %>
-                        <div class="panel-body">
-                            <h4><%= user.username %> has not made any requests.</h4>
-                        </div>
-                    <% } %>
-                </div>
-          </div>
-          <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#user-takenRequests"><%= user.username %>'s Taken Requests</a>
-                    </h4>
-                </div>
-                <div id="user-takenRequests" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
-                    <% if (user.requestsTaken.length > 0) { %>
-                        <ul class="list-group">
-                            <% user.requestsTaken.forEach(function (request) { %>
-                                <li class="list-group-item"><a href="/requests/<%= request._id %>" style="padding: 1%"><%= request.title %></a></li>
-                            <% }); %>
-                        </ul>
-                    <% } else { %>
-                        <div class="panel-body">
-                            <h4><%= user.username %> has not taken any requests.</h4>
-                        </div>
-                    <% } %>
-                </div>
-          </div>
-          <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#user-reviews" >Reviews of <%= user.username %></a>
-                    </h4>
-                </div>
-                <div id="user-reviews" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
-                    <% if (reviews.length > 0) { %>
-                        <ul class="list-group">
-                            <% reviews.forEach(function (review) { %>
-                                <li class="list-group-item">
-                                    <div><h4><a href="/requests/<%= review.request._id %>"><%= review.request.title %></a></h4>
-                                    by <a href="/users/<%= review.writer.username %>"><%= review.writer.username %></a> - <%= review.rating %>/5</div>
-                                    <div><%= review.text %></div>
-                                </li>
-                            <% }); %>
-                        </ul>
-                    <% } else { %>
-                        <div class="panel-body">
-                            <h4>No reviews exist for <%= user.username %>.</h4>
-                        </div>
-                    <% } %>
-                </div>
-          </div>
-        </div>
+        <% if (user.username !== userProfile.username) { %>
+            <button class="btn btn-primary" onclick="parent.message('<%= user.username %>')" style="margin-left: 20px; margin-bottom:15px; display: inline-block">Message</button>
+        <% } %>
     </div>
-<% } %>
+    <div class="panel-group" id="user-accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#user-myRequests"><%= user.username %>'s Requests</a>
+                </h4>
+            </div>
+            <div id="user-myRequests" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
+                <% if (user.myRequests.length > 0) { %>
+                    <ul class="list-group">
+                        <% user.myRequests.forEach(function (request) { %>
+                            <li class="list-group-item">
+                                <h4 style="padding: 1%"><a href="/requests/<%= request._id %>"><%= request.title %></a> - <%= request.status %></h4>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <div class="panel-body">
+                        <h4><%= user.username %> has not made any requests.</h4>
+                    </div>
+                <% } %>
+            </div>
+      </div>
+      <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#user-takenRequests"><%= user.username %>'s Taken Requests</a>
+                </h4>
+            </div>
+            <div id="user-takenRequests" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
+                <% if (user.requestsTaken.length > 0) { %>
+                    <ul class="list-group">
+                        <% user.requestsTaken.forEach(function (request) { %>
+                            <li class="list-group-item"><a href="/requests/<%= request._id %>" style="padding: 1%"><%= request.title %></a></li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <div class="panel-body">
+                        <h4><%= user.username %> has not taken any requests.</h4>
+                    </div>
+                <% } %>
+            </div>
+      </div>
+      <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#user-reviews" >Reviews of <%= user.username %></a>
+                </h4>
+            </div>
+            <div id="user-reviews" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
+                <% if (reviews.length > 0) { %>
+                    <ul class="list-group">
+                        <% reviews.forEach(function (review) { %>
+                            <li class="list-group-item">
+                                <div><h4><a href="/requests/<%= review.request._id %>"><%= review.request.title %></a></h4>
+                                by <a href="/users/<%= review.writer.username %>"><%= review.writer.username %></a> - <%= review.rating %>/5</div>
+                                <div><%= review.text %></div>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <div class="panel-body">
+                        <h4>No reviews exist for <%= user.username %>.</h4>
+                    </div>
+                <% } %>
+            </div>
+      </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div id="request-header" style="background-color:<%= colors[request.status] %>; color: white; padding: 10px; cursor:pointer">
+	<div onclick="openIframeModal('requests/<%= request._id %>')">
+		<div data-toggle="tooltip" data-placement="right" title="Click to view request details">
+			<div id="request-status" style="display: inline-block; font-weight: bold; color: <%= colors[request.status] %>; background-color: whitesmoke; padding:2px">
+				<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
+				<%= request.status %>
+			</div>
+			<div id="request-title-bar" style="display: inline-block; margin-left: 5px">
+				Title: <%= request.title %>
+			</div>
+			<div id="request-expdate-bar" style="float:right; display: inline-block">
+				Expires: <%= request.expirationDate.toLocaleString() %>
+			</div>
+		</div>
+	</div>
+
+	<div id="request-creator-bar" style="margin-top:5px; display: inline-block">
+		<div onclick="openIframeModal('users/<%= request.creator.username %>')">
+			<div data-toggle="tooltip" data-placement="right" title="View user profile">
+				Requester: <%= request.creator.username %>
+			</div>
+		</div>
+		<% if (request.status === "Completed" && userProfile.username === request.creator.username) { %>
+		<div style="display:inline-block; float:right">
+			<%= request.paid ? "Paid" : "Unpaid" %>
+		</div>
+		<% } %>
+	</div>
+</div>

@@ -1,53 +1,53 @@
 <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/" data-toggle="tooltip" data-placement="bottom" title="Go to homepage">Requestr</a>
-      </div>
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/" data-toggle="tooltip" data-placement="bottom" title="Go to homepage">Requestr</a>
+		</div>
 
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav" style="float: right">
-          <% if (userProfile) { %>
-          	<li><a href="#" data-toggle="modal" data-target="#createRequestModal"><b>Create New Request</b></a>
-            <li><a href="#" data-toggle="modal" onclick="openMessageModal()">Messages <span id="message-badges" class="badge"></span></a></li>
-            <li><a href="#" data-toggle="modal" data-target="#createAdvancedSearchModal">Advanced Search</a>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Created Requests <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" onclick="getMyRequests('Open')">Active</a></li>
-                <li><a href="#" onclick="getMyRequests('In progress')">In Progress</a></li>
-                <li><a href="#" onclick="getMyRequests('Completed')">Completed</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Accepted Requests <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" onclick="getMyAcceptedRequests('In progress')">In Progress</a></li>
-                <li><a href="#" onclick="getMyAcceptedRequests('Completed')">Completed</a></li>
-              </ul>
-            </li>
-            <li><a href="/users/<%= userProfile.username %>"><b>View <b id="username"><%= userProfile.username %></b>'s Profile</b></a></li>
-            <li><a href="#" id="logout-button"><b>Logout</b></a></li>
-          <% } else { %>
-            <li><a href="#" data-toggle="modal" data-target="#login-modal"><b>Login / Signup</b></a></li>
-          <% } %>
-        </ul>
-        <!--
-        <form class="navbar-form navbar-right" role="search">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search Open Requests">
-          </div>
-          <button type="submit" class="btn btn-default">Search</button>
-        </form>
-      -->
-      </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav" style="float: right">
+				<% if (userProfile) { %>
+
+					<li><a href="#" data-toggle="modal" data-target="#createRequestModal"><b>Create New Request</b></a>
+					<li><a href="#" data-toggle="modal" onclick="openMessageModal()">Messages <span id="message-badges" class="badge"></span></a></li>
+					<li><a href="#" data-toggle="modal" data-target="#createAdvancedSearchModal">Advanced Search</a>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Created Requests <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#" onclick="getMyRequests('Open')">Active</a></li>
+							<li><a href="#" onclick="getMyRequests('In progress')">In Progress</a></li>
+							<li><a href="#" onclick="getMyRequests('Completed')">Completed</a></li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Accepted Requests <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#" onclick="getMyAcceptedRequests('In progress')">In Progress</a></li>
+							<li><a href="#" onclick="getMyAcceptedRequests('Completed')">Completed</a></li>
+						</ul>
+					</li>
+					<li><a href="#" onclick="openIframeModal('users/<%= userProfile.username %>')"><b>View <b id="username"><%= userProfile.username %></b>'s Profile</b></a></li>
+					<li><a href="#" id="logout-button"><b>Logout</b></a></li>
+				<% } else { %>
+					<li><a href="#" data-toggle="modal" data-target="#login-modal"><b>Login / Signup</b></a></li>
+				<% } %>
+			</ul>
+			<!--
+			<form class="navbar-form navbar-right" role="search">
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="Search Open Requests">
+				</div>
+				<button type="submit" class="btn btn-default">Search</button>
+			</form>
+		-->
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container-fluid -->
 </nav>
-<div id="below-nav-bar"></div>
