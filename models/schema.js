@@ -87,6 +87,12 @@ UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
 //else callbacks on true if the username is taken
 UserSchema.statics.createNewUser = function(user, password, email, cb){
 	var that = this;
+
+	if (!email.match(/\S+@\S+/)) {
+		cb({err: "Invalid email address."});
+		return;
+	}
+
 	that.getUser(user, function(err, userQuery){
 		if (err){
 			if (err.msg === "No such user!"){
@@ -340,6 +346,20 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
 //Creates a new request and adds it to the corresponding user in userModel
 RequestSchema.statics.createRequest = function(userModel, user, requestData, cb){
 	var that = this;
+	
+	var expirationDate = new Date(requestData.expirationDate);
+
+	if (expirationDate.toDateString() !== "Invalid Date") {
+		var minDate = new Date();
+		minDate.setHours(0, 0, 0, 0);
+
+		if (expirationDate < minDate) {
+			cb({err: "Request already expired."});
+		} 
+	} else {
+		cb({err: "Request date invalid."});
+	}
+
 	requestData.status = 'Open';
 	requestData.candidates = [];
 	requestData.helpers = [];
