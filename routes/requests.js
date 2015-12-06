@@ -171,14 +171,16 @@ router.get('/takenRequests', function(req, res) {
 });
 
 
-// TODO: Declare at top - Clean up this code
-// TODO: Attach oauth_token to req
-//var oauth_token = null;
-
 var pendingPayments = {};
 
-// MAKE SURE THE SAME PAYMENT CANT BE MADE TWICE - IF NOT AUTHENTICATED TAKE PAYMENT OFF PENDING
-// Dictionary? - and then keep request id and compare request id so cant add payment for same request? dunno
+
+/*
+	GET requests/pay
+
+		Redirect url for venmo. 
+		Params:
+			access_token - venmo sent back oauth token with make payment scope
+*/
 router.get('/pay', function(req, res) {
 	console.log("In authentication route.");
 	var url_parts = url.parse(req.url, true);
@@ -224,16 +226,19 @@ router.get('/pay', function(req, res) {
         			res.redirect('/payment/success');
         		}
         	});
-			//res.redirect('/');
         }
 
     });
-	// if success redirect to success page
-	// if fail redirect to fail page
-		//res.redirect('/');
 	}
 });
 
+/*
+	Post /requests/:request/pay/:userid
+	Params:
+		request - the id of the request being paid
+		userid - the id of the user to be paid
+
+*/
 router.post('/:request/pay/:userid', function (req,res){
 	
 	Request.getRequestById(req.params.request, function(err, request){
@@ -255,59 +260,6 @@ router.post('/:request/pay/:userid', function (req,res){
 		});
 });
 
-// TODO: if logged out clear authentication token
-// /:request
-/*router.post('/:request/pay/:userid', function(req,res){
-	console.log(oauth_token);
-	console.log(req.params.request);
-//Request.getRequestById(req.params.request, function(err, request){
-	
-//if(err) utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-//else{
-	//console.log(request.reward);
-	//console.log("Venmo Email: " + req.body.venmo_email);
-	/*var post_data = {
-      'access_token' : oauth_token,
-      'email': req.body.venmo_email,
-      'note': 'Requestr payment.',
-       'amount' : request.reward
-  	};
-
-  	var post_data = {
-      'access_token' : oauth_token,
-      'email': 'rrrahman@mit.edu',
-      'note': 'Requestr payment.',
-       'amount': 0.01
-  	};
-	 request.post('https://api.venmo.com/v1/payments', {form: post_data}, function(e, r, venmo_receipt){
-        console.log("In venmo return");
-        // parsing the returned JSON string into an object
-        var venmo_receipt = JSON.parse(venmo_receipt);
-        console.log(venmo_receipt);
-        if(venmo_receipt.error)
-        {
-        	utils.sendErrResponse(res, 500, venmo_receipt.error.message)
-        }
-        else
-        {
-        	Request.payHelper(req.params.request,req.params.userid, function(err)
-        	{
-        		if(err){
-        			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-        		}
-        		else {
-        			utils.sendSuccessResponse(res, 'Request has been paid.');
-        		}
-        	});
-	 		utils.sendSuccessResponse(res, 'Request has been paid.');
-        	
-        }
-
-    });
-	//}
-	//});
-});*/
-
 
 /*
 	POST /requests/create
@@ -327,7 +279,7 @@ router.post('/create', function(req,res){
 });
 
 /*
-	GET /requests/search/tags
+	POST /requests/search/tags
 	Params:
 		tags - string array of the tags to search for
 	Response:
@@ -338,7 +290,7 @@ router.post('/create', function(req,res){
 */
 router.post('/search', function(req, res) {
 
-	Request.getRequestByFilter(null, req.body.keywords, req.body.tags, function(err, data) {
+	Request.getRequestByFilter('Open', req.body.keywords, req.body.tags, function(err, data) {
 
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');

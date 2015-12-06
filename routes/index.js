@@ -13,7 +13,7 @@ var Schema = require('../models/schema');
 router.get('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
-		Schema.Request.getAllRequests(function(err, requests) {
+		Schema.Request.getRequestByFilter('Open', null, null, function(err, requests) {
 		    if (err) {
 		      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		    } else {

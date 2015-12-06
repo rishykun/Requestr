@@ -319,8 +319,8 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
 
 	filter['$or'] = [{tags: {$in: tagQuery}}, {tags: {$in: keywords}}];
 
+	var regex = "";
 	if(keywords.length != 0){
-		var regex = "";
 		keywords.forEach(function(el){
 			regex = "|"+regex+el; 
 		});
@@ -328,6 +328,9 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
 		regex = regex.substring(1);
 		filter['$or'].push({title: {$regex: regex}});
 		filter['$or'].push({description: {$regex: regex}});
+	}
+	else if(tagQuery.length == 0 ){
+		filter['$or'].push({title: {$regex: regex}});
 	}
 
 	if (status !== null) filter.status = status;
