@@ -1,0 +1,10 @@
+<div id = "request-tags" style="font-size:16px">
+	Tags:
+	<% if (request.tags.length > 0) { %>
+		<% request.tags.forEach(function(tag){ %>
+		<%= tag%>
+		<% }); %>
+	<% } else { %>
+		<i>n/a</i>
+	<% } %>
+</div>

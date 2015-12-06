@@ -1,0 +1,79 @@
+<div id="request-footer" style="margin-top:5px">
+	<% var getUsernames = function(userArr){ %>
+		<% return userArr.map(function(ele){ %>
+			<% return ele.username; %>
+		<% }); %>
+	<% } %>
+	<% var candidateNames = request.candidates === undefined ? [] : getUsernames(request.candidates) %>
+	<% var helperNames = request.helpers === undefined ? [] : getUsernames(request.helpers) %>
+	<% var unpaidUsers = request.unpaidUsers === undefined ? [] : getUsernames(request.unpaidUsers); %>
+	<% var helperString = "" %>
+	<% helperNames.forEach(function(helper){ %>
+	<% helperString += (", " + helper) %>
+	<% }); %>
+	<% helperString = helperString.substring(1); %>
+	<% if (request.status === "Open") { %>
+		<% if (userProfile.username !== request.creator.username) { %>
+			<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
+				<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
+			<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
+				<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Drop Out</button>
+			<% } else { %>
+				Your help has been accepted.
+			<% } %>
+		<% } else { %>
+			<% candidateNames.forEach(function(candidate){ %>
+				<button class="btn btn-success" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'accept')"> Accept <%= candidate %>
+				</button>
+				<button class="btn btn-danger" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'reject')">Reject  <%= candidate %>
+				</button>
+			<% }); %>
+			<br>
+			Helpers: <%= helperString %>
+			<br>
+			<% if (helperString.length > 0) { %>
+				<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'start')">Start Request</button>
+			<% } else { %>
+				You must accept helpers before you can start this request
+			<% } %>
+		<% } %>
+	<% } else if (request.status === "In progress") { %>
+			<% if (userProfile.username === request.creator.username) { %>
+			<br>
+			Helpers: <%= helperString %>
+			<br><button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'complete')">Complete Request</button>
+		<% } %>
+	<!-- <% } else if (request.status === "In progress") { %>
+		The request is currently in progress.
+		<h4>Current Helpers:</h4>
+		<ul class="list-group">
+		 	<% request.helpers.forEach(function (helper) { %>
+		 		<li class="list-group-item">
+		 			<a href="/users/<%= helper.username %>"><%= helper.username %></a>
+		 		</li>
+		 	<% }); %>
+		 	<% if (request.helpers.length > 0 && userProfile.username === request.creator.username) { %>
+		 		<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'complete')">Completed!</button>
+		 	<% } %> 
+		 	</ul> -->
+	<% } else if (request.status === "Completed") { %>
+		<% var participantNames = request.helpers.map(function (e) {return e.username;}); %>
+
+		<% participantNames.push(request.creator.username); %>
+		
+		<% if (userProfile.username === request.creator.username) { %>
+			<% request.helpers.forEach(function(helper){ %>
+				<% if (unpaidUsers.indexOf(helper.username) > -1){ %>
+					<%= helper.username %> : <button class="btn btn-default" onclick="makePayment('<%= request._id %>', '<%= helper._id %>', '<%= helper.email %>')">Pay</button>
+				<% } else { %>
+					<%= helper.username %>: Paid
+				<% } %>
+			<% }); %>
+		<% } %>
+
+		<br>
+		<% if (participantNames.indexOf(userProfile.username) > -1) { %>
+			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#review-modal" onclick="configureReviewModal('<%= request._id %>');">Submit a Review</button>
+		<% } %>
+	<% } %>
+</div>
