@@ -7,7 +7,6 @@
 <!-- external -->
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="../../ejs/ejs.js"></script>
-<script src="../../jQuery.ptTimeSelect/jquery.ptTimeSelect.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <!-- internal -->
@@ -92,7 +91,7 @@
 			The request is currently in progress.
 		<% } %>
 	</div>
-	<div id="comments">
+	<div id="comments" style="margin-top:5px; margin-bottom: 5px">
 		<% request.comments.forEach(function(comment) { %>
 			<div class="comment-box">
 				<b> <%= comment.user.username %> : </b> <%= comment.comment %> <i>@ <%= comment.dateCreated.toLocaleString() %></i>
