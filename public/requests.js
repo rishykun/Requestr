@@ -15,6 +15,7 @@ $(document).ready(function() {
 	//var date = new Date();
 	//var date_string = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()
 
+
 	$("#request-expires").datepicker();
 	//$("#request-expires").attr("min", date_string); //ensure we cannot pick a date in the past
 

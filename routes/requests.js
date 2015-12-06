@@ -196,7 +196,7 @@ router.get('/pay', function(req, res) {
 	}
 	else {
 		// Redirect to fail page
-		res.redirect('/');
+		res.redirect('/payment/fail');
 	}
 	post_data.access_token = oauth_token;
 	request.post('https://api.venmo.com/v1/payments', {form: post_data}, function(e, r, venmo_receipt){
@@ -207,7 +207,7 @@ router.get('/pay', function(req, res) {
         {
         	// Redirect to fail page
         	pendingPayments[req.currentUser.username] = null;
-        	res.redirect('/');
+        	res.redirect('/payment/fail');
         }
         else
         {
@@ -217,11 +217,11 @@ router.get('/pay', function(req, res) {
         		if(err){
         			// Redirect to fail page
         			pendingPayments[req.currentUser.username] = null;
-        			res.redirect('/');
+        			res.redirect('/payment/fail');
         		}
         		else {
         			// Redirect to success page
-        			res.redirect('/');
+        			res.redirect('/payment/success');
         		}
         	});
 			//res.redirect('/');

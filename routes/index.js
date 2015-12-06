@@ -46,6 +46,18 @@ router.get('/', function(req, res) {
 	}
 });
 
+router.get('/payment/success', function(req, res) {
+	res.render('venmoRedirect', {
+		status: "succeeded"
+	});
+});
+
+router.get('/payment/failed', function(req, res) {
+	res.render('venmoRedirect', {
+		status: "failed"
+	});
+});
+
 router.post('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
