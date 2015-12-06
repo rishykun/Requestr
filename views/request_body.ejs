@@ -1,8 +1,10 @@
-<div id="request-body" style="padding:10px">
-	<div id="request-desc-bar">
-		Description: <%= request.description %>
-	</div> 
-	<div id="request-rewards-bar" style="margin-top:5px">
-		Rewards: $<%= request.reward %>
+<div onclick="openIframeModal('requests/<%= request._id %>')">
+	<div id="request-body" data-toggle="tooltip" data-placement="right" title="Click to view details" style="padding:10px; cursor: pointer">
+		<div id="request-desc-bar">
+			Description: <%= request.description %>
+		</div> 
+		<div id="request-rewards-bar" style="margin-top:5px">
+			Rewards: $<%= request.reward %>
+		</div>
 	</div>
 </div>

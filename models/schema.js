@@ -446,11 +446,13 @@ RequestSchema.statics.addComment = function(requestId, userModel, user, commentS
           cb(err);
         } else {
           var currentDate = new Date();
-          that.update({"_id": requestId}, {$push: {'comments': {user: userObj._id, comment: commentString, dateCreated: currentDate}}}, {upsert: true}, function (err) {
+          var commentObj = {user: userObj._id, comment: commentString, dateCreated: currentDate};
+          var returnComment = {user: userObj.username, comment: commentString, dateCreated: currentDate.toLocaleString()};
+          that.update({"_id": requestId}, {$push: {'comments': commentObj}}, {upsert: true}, function (err) {
             if (err) {
               cb({err: "Failed to add comment"});
             } else {
-              cb(null);
+              cb(null, returnComment);
             }
           });
         }

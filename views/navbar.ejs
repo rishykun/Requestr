@@ -35,7 +35,7 @@
                 <li><a href="#" onclick="getMyAcceptedRequests('Completed')">Completed</a></li>
               </ul>
             </li>
-            <li><a href="/users/<%= userProfile.username %>"><b>View <b id="username"><%= userProfile.username %></b>'s Profile</b></a></li>
+            <li><a href="#" onclick="openIframeModal('users/<%= userProfile.username %>')"><b>View <b id="username"><%= userProfile.username %></b>'s Profile</b></a></li>
             <li><a href="#" id="logout-button"><b>Logout</b></a></li>
           <% } else { %>
             <li><a href="#" data-toggle="modal" data-target="#login-modal"><b>Login / Signup</b></a></li>

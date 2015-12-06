@@ -12,6 +12,8 @@ var addComment;
 var configureReviewModal;
 
 var goHome;
+var goBack;
+var openIframeModal;
 
 var makePayment;
 
@@ -162,12 +164,12 @@ $(document).ready(function() {
 		});
 	}
 
-	viewRequest = function(request_id) {
-		location.href="/requests/" + request_id;
-	}
-
 	goHome = function() {
 		location.href="/";
+	}
+
+	goBack = function() {
+		window.history.back();
 	}
 
 	$('[data-toggle="tooltip"]').tooltip(); //initializes all bootstrap tooltips
@@ -516,15 +518,30 @@ $(document).ready(function() {
 		}
 	}
 
+
+	openIframeModal = function(src) {
+		console.log("setting src: ", src); //debug
+
+		$("#iframe").attr("src", src); //set iframe
+		$("#iframeModal").modal("show"); //open modal containing iframe
+	}
+
 	//ADD COMMENT
 	addComment = function(request_id) {
-		var comment = $("#newCommentText").val();
+		var iframe = $("iframe").contents();
+		var comment = iframe.find("#newCommentText_" + request_id).val();
+		console.log("comment is: ", comment);
+
 		$.post('/requests/' + request_id + '/comments', {
 			"comment": comment
 		}).done(function (data) {
-			location.href = "/requests/" + request_id;
+			var comment = data.content;
+			iframe.find("#comments").append("<div class='comment-box'> <b>" + comment.user + " : </b>" + comment.comment + " <i> @ " + comment.dateCreated + "</i></div>")
+			iframe.find("#newCommentText_" + request_id).val("");
+
 		}).fail(function (error) {
 			console.log("ERROR: ", error);
 		});
+
 	};
 });

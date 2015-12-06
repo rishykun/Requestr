@@ -426,11 +426,11 @@ router.put('/:request/candidates/:candidate', function(req,res){
 		- err: on failure, an error message
 */
 router.post('/:request/comments', function (req, res) {
-	Request.addComment(req.params.request, User, req.currentUser, req.body.comment, function(err) {
+	Request.addComment(req.params.request, User, req.currentUser, req.body.comment, function(err, comment) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-			utils.sendSuccessResponse(res);
+			utils.sendSuccessResponse(res, comment);
 		}
 	});
 });
