@@ -29,8 +29,12 @@ $(document).ready(function() {
 			})
 			.done(function(result) {
 				try {
-					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-					$("body").html(resultBody);
+					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];
+
+					var parsedResult = $.parseHTML(resultBody);
+					console.log(parsedResult); //debug
+
+					$("#requests-container").html(resultBody);
 					$("#pageStatus").html("My " + filter + " Created Requests");
 					$("#homeButton").css("display", "inline-block");
 				}
@@ -66,8 +70,14 @@ $(document).ready(function() {
 			})
 			.done(function(result) {
 				try {
-					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-					$("body").html(resultBody);
+					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];
+
+					var parsedResult = $.parseHTML(resultBody);
+					console.log(parsedResult); //debug
+
+					$("#requests-container").html(resultBody);
+
+
 					$("#pageStatus").html("My " + filter + " Accepted Requests");
 					$("#homeButton").css("display", "inline-block");
 				}
