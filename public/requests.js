@@ -85,6 +85,42 @@ $(document).ready(function() {
 		});
 	}
 
+	$("#request-form").submit(function(event) {
+		event.preventDefault();
+
+		//do sanitization and other checks here, throw an error if checks fail
+		var reward = $("#request-rewards").val();
+		if (isNaN(reward)) {
+			$.notify({
+				message: "Rewards field must be a number!"
+			},{
+				element: "#createRequestModal",
+				type: "danger"
+			});
+
+			return false;
+		}
+
+		var expDateArray = $("#request-expires").val().split("/");
+		var expDate = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1]);
+		var now = new Date();
+
+		if (expDate <= now) {
+			$.notify({
+				message: "Expiration date must be in the future!"
+			},{
+				element: "#createRequestModal",
+				type: "danger"
+			});
+
+			return false;
+		}
+
+		handleRequest(null, "create");
+
+		return false;
+	});
+
 
 	handleRequest = function(request_id, eventType) {
 
