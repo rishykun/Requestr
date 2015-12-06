@@ -24,10 +24,15 @@
 <link rel="stylesheet" href="../../requestr.css">
 
 
-<div id="user-container" style="width:75%; margin-left: 15%; padding:1%">
-    <button class="btn btn-primary" onclick="parent.goBack()">Go Back</button>
-    <div id="user-username" style="margin-left: 3%; padding: 1%">
-        <h1><%= user.username %></h1>
+<div id="user-container" style="width:75%; margin-left: 15%">
+    <button class="btn btn-primary" onclick="parent.goBack()" style="margin-bottom: 10px">Go Back</button>
+    <div style="margin-bottom: 5px;">
+        <div id="user-username" style="display:inline-block; font-weight:500px; font-size: 36px">
+            <%= user.username %>
+        </div>
+        <% if (user.username !== userProfile.username) { %>
+            <button class="btn btn-primary" onclick="parent.message('<%= user.username %>')" style="margin-left: 20px; margin-bottom:15px; display: inline-block">Message</button>
+        <% } %>
     </div>
     <div class="panel-group" id="user-accordion">
         <div class="panel panel-default">

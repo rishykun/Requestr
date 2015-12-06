@@ -2,6 +2,7 @@ var socket = io();
 
 var setActiveChat;
 var openMessageModal;
+var message;
 var loggedInUser = "";
 var messages = {};
 
@@ -13,11 +14,8 @@ $(document).ready(function() {
 	.done(function(data) {
 		//upon login, get list of logged in users and populate
 		if (data.content.loggedIn) {
-			console.log("USER LOGGED IN, loading online users"); //debug
 			loggedInUser = data.content.user;
 			getActiveUsers();
-		} else {
-			console.log("USER NOT LOGGED IN"); //debug
 		}
 	})
 	.fail(function(error) {
@@ -56,8 +54,6 @@ $(document).ready(function() {
 		.done(function (data) {
 			messages = data.content;
 
-			console.log("getAllMessages(): got messages: ", messages); //debug
-
 		})
 		.fail(function (error) {
 			console.error("ERROR: ", error);
@@ -68,7 +64,6 @@ $(document).ready(function() {
 		$.get("/users/offline", {
 		})
 		.done(function (data) {
-			console.log("frontend: getOfflineUsers result: ", data); //debug
 			var userList = data.content;
 			$("#offline-badges").html(userList.length);
 			userList.forEach(function(username) {
@@ -80,6 +75,21 @@ $(document).ready(function() {
 		});
 	}
 
+	message = function(target) {
+		if (target === loggedInUser) {
+			$.notify({
+				message: "Can't message yourself."
+			},{
+				element: "#iframeModal",
+				type: "info"
+			});
+		} else {
+			$("#iframeModal").modal("hide");
+			openMessageModal();
+			setActiveChat(target);
+		}
+	}
+
 	openMessageModal = function() {
 		$("#message-badges").html(""); //clear badges
 		$('#message-modal').modal('show'); //then show modal
@@ -89,16 +99,15 @@ $(document).ready(function() {
 		if (target !== target_user) { //ignore if target is already active
 			$(".user-labels").removeClass("active"); //clear pre-existing active label
 			$("#" + target + "_label").addClass("active");
+
+			$("#message-target-label").html("Talking to <b>" + target + "</b>");
+
 			target_user = target;
 
 			$("#" + target + "_newlabel").html(""); //remove "new" tag
 			$("#messages").empty();
 
-			console.log("previous message? ", messages); //debug
 			if (Object.keys(messages).indexOf(target_user) !== -1 && messages[target_user].length > 0) {
-
-				console.log("has messages previously loaded: ", messages[target_user]); //debug
-
 				targetMessages = messages[target_user];
 
 				targetMessages.forEach(function(msg) {
@@ -145,7 +154,6 @@ $(document).ready(function() {
 	socket.on("login user", function(username) {
 		$("#" + username + "_label").remove(); //remove from offline
 
-		console.log("new user logged in: " + username); //debug
 		$("#online-badges").html(parseInt($("#online-badges").html()) + 1);
 		$("#online").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')" style="border-radius: 0px; border-width: 0px 0px 1px 0px; border-style: solid; border-color: gray">' + username + ' <i id="' + username + '_newlabel" style="font-size:10px; color: red"></i></a></li>');
 	
@@ -162,7 +170,6 @@ $(document).ready(function() {
 
 	//if a user logged out since we logged in, remove that user from the user list
 	socket.on("logout user", function(username) {
-		console.log("user logged out: " + username); //debug
 		if ($("#online-badges").html() == "1" || $("#online-badges").html() == "0") {
 			$("#online-badges").html("0");
 		} else {
