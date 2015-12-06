@@ -5,6 +5,11 @@ var utils = require('../utils/utils');
 
 var User = require('../models/schema').User;
 var Request = require('../models/schema').Request;
+
+var url = require('url');
+var querystring = require('querystring');
+var http = require('http');
+var request = require('request');
 /*
 	Require authentication on ALL access to /requests/*
 	Clients who are not logged in will receive a 403 error code.
@@ -103,7 +108,7 @@ router.get('/myRequests', function(req, res) {
 router.get('/myRequests/:filter', function(req, res) {
 	User.getRequestsByStatus(req.currentUser.username, req.params.filter, function(err, data) {
 
-		console.log("data received: ", data); //debug
+		//console.log("data received: ", data); //debug
 
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
@@ -168,30 +173,105 @@ router.get('/takenRequests', function(req, res) {
 
 // TODO: Declare at top - Clean up this code
 // TODO: Attach oauth_token to req
-var oauth_token = null;
-var url = require('url');
-var querystring = require('querystring');
-var http = require('http');
+//var oauth_token = null;
+
+var pendingPayments = {};
+
+// MAKE SURE THE SAME PAYMENT CANT BE MADE TWICE - IF NOT AUTHENTICATED TAKE PAYMENT OFF PENDING
+// Dictionary? - and then keep request id and compare request id so cant add payment for same request? dunno
 router.get('/pay', function(req, res) {
 	console.log("In authentication route.");
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
-	oauth_token = query.access_token;
-	res.redirect('/');
+	if(query.error){
+		// Redirect to fail page
+		pendingPayments[req.currentUser.username] = null;
+		res.redirect('/');
+	}
+	else{
+	var oauth_token = query.access_token;
+	var pay_data = pendingPayments[req.currentUser.username];
+	if(pay_data){
+		var post_data = pay_data.post_data;
+	}
+	else {
+		// Redirect to fail page
+		res.redirect('/');
+	}
+	post_data.access_token = oauth_token;
+	request.post('https://api.venmo.com/v1/payments', {form: post_data}, function(e, r, venmo_receipt){
+        // parsing the returned JSON string into an object
+        var venmo_receipt = JSON.parse(venmo_receipt);
+        console.log(venmo_receipt);
+        if(venmo_receipt.error)
+        {
+        	// Redirect to fail page
+        	pendingPayments[req.currentUser.username] = null;
+        	res.redirect('/');
+        }
+        else
+        {
+        	Request.payHelper(pay_data.request_id,pay_data.user_id, function(err)
+        	{
+        		console.log(err);
+        		if(err){
+        			// Redirect to fail page
+        			pendingPayments[req.currentUser.username] = null;
+        			res.redirect('/');
+        		}
+        		else {
+        			// Redirect to success page
+        			res.redirect('/');
+        		}
+        	});
+			//res.redirect('/');
+        }
+
+    });
+	// if success redirect to success page
+	// if fail redirect to fail page
+		//res.redirect('/');
+	}
 });
 
-var request = require('request');
+router.post('/:request/pay/:userid', function (req,res){
+	
+	Request.getRequestById(req.params.request, function(err, request){
+	
+		if(err) utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		else{
+			var pay_data = {
+				'request_id' : req.params.request,
+				'user_id' :req.params.userid,
+				'post_data':{
+		      //'access_token' : oauth_token,
+		      'email': req.body.venmo_email,
+		      'note': 'Requestr payment 2.',
+		       'amount' : request.reward
+		   }
+		  	};
+		  	pendingPayments[req.currentUser.username] = pay_data;
+		  }
+		});
+});
+
 // TODO: if logged out clear authentication token
 // /:request
-router.post('/:request/pay/:userid', function(req,res){
+/*router.post('/:request/pay/:userid', function(req,res){
 	console.log(oauth_token);
-/*	Request.getRequestById(req.params.request, function(err, request){
-	var post_data = {
+	console.log(req.params.request);
+//Request.getRequestById(req.params.request, function(err, request){
+	
+//if(err) utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+//else{
+	//console.log(request.reward);
+	//console.log("Venmo Email: " + req.body.venmo_email);
+	/*var post_data = {
       'access_token' : oauth_token,
       'email': req.body.venmo_email,
       'note': 'Requestr payment.',
        'amount' : request.reward
-  	};*/
+  	};
 
   	var post_data = {
       'access_token' : oauth_token,
@@ -199,8 +279,8 @@ router.post('/:request/pay/:userid', function(req,res){
       'note': 'Requestr payment.',
        'amount': 0.01
   	};
-  	console.log(req.body)
 	 request.post('https://api.venmo.com/v1/payments', {form: post_data}, function(e, r, venmo_receipt){
+        console.log("In venmo return");
         // parsing the returned JSON string into an object
         var venmo_receipt = JSON.parse(venmo_receipt);
         console.log(venmo_receipt);
@@ -219,13 +299,14 @@ router.post('/:request/pay/:userid', function(req,res){
         			utils.sendSuccessResponse(res, 'Request has been paid.');
         		}
         	});
+	 		utils.sendSuccessResponse(res, 'Request has been paid.');
         	
         }
 
     });
-
-	///});
-});
+	//}
+	//});
+});*/
 
 
 /*

@@ -29,7 +29,7 @@ router.get('/', function(req, res) {
 			    		return ele.username;
 			    	});
 		    	});
-		    	console.log("req.currentUser: ", req.currentUser);
+		    	//console.log("req.currentUser: ", req.currentUser);
 		    	console.log("requests: ", requests); 
 		    	res.render('index', {
 					userProfile: req.currentUser,
@@ -55,7 +55,7 @@ router.post('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	console.log("REROUTED----"); //debug
 	if (req.currentUser) {
-		console.log("PASSSSSED IN: ", req.body.passedData); //debug
+		//console.log("PASSSSSED IN: ", req.body.passedData); //debug
 
 		res.render('index', {
 			userProfile: req.currentUser,

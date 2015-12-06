@@ -162,6 +162,7 @@ $(document).ready(function() {
 		});
 	}
 
+
 	viewRequest = function(request_id) {
 		location.href="/requests/" + request_id;
 	}
