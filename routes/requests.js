@@ -246,7 +246,7 @@ router.post('/:request/pay/:userid', function (req,res){
 				'post_data':{
 		      //'access_token' : oauth_token,
 		      'email': req.body.venmo_email,
-		      'note': 'Requestr payment 2.',
+		      'note': 'Requestr payment to ' +request.creator.username + ' for ' + request.title + '.',
 		       'amount' : request.reward
 		   }
 		  	};
