@@ -91,7 +91,7 @@
 			The request is currently in progress.
 		<% } %>
 	</div>
-	<div id="comments">
+	<div id="comments" style="margin-top:5px; margin-bottom: 5px">
 		<% request.comments.forEach(function(comment) { %>
 			<div class="comment-box">
 				<b> <%= comment.user.username %> : </b> <%= comment.comment %> <i>@ <%= comment.dateCreated.toLocaleString() %></i>
