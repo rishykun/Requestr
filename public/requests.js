@@ -102,8 +102,28 @@ $(document).ready(function() {
 		}
 
 		var expDateArray = $("#request-expires").val().split("/");
-		var expDate = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1]);
+
+		var hour = 0;
+		var minutes = 0;
+
+		if ($("#request-expires-time").val() !== "") {
+			var expDateTimeArray = $("#request-expires-time").val().split(":")
+			minutesAndPeriod = expDateTimeArray[1].split(" ");
+			hour = parseInt(expDateTimeArray[0])
+			minutes = parseInt(minutesAndPeriod[0])
+
+			if (minutesAndPeriod[1] === "PM" && hour !== 12) {
+				hour += 12;
+			}
+			if (hour === 12 && minutesAndPeriod[1] === "AM") {
+				hour = 0;
+			}
+		}
+
+		var expDate = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
 		var now = new Date();
+
+		console.log("expDate set to: ", expDate); //debug
 
 		if (expDate <= now) {
 			$.notify({
