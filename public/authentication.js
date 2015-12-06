@@ -16,22 +16,23 @@ $(document).ready(function() {
 		//successful response from login request
 		.done(function(data) {
 			//if signin was successful
-			console.log("success loggin in");
 			if (data.success) {
 				location.href="/"; //reload page
-
-				$("#login-modal").modal("hide");
 			} else { //signup failed
 				console.error("ERROR: Login failed");
 			}
 		})
 		//failed response from login request
 		.fail(function(error) {
-			console.error("ERROR: ", error);
-			alert("Failed authentication. Is your username/password combination correct?");
+			$.notify({
+				message: "Failed authentication. Is your username/password combination correct?"
+			},{
+				element: "#login-modal",
+				type: "danger"
+			});
 		});
 	}
-	
+
 	/*
 		makes a call to the server in attempt to "log out" the user from being "logged in" on the server
 		if successful status received, the page will reload and the client will no longer have user credentials
@@ -43,7 +44,12 @@ $(document).ready(function() {
 			location.href="/"; //reload page
 		})
 		.fail(function(error) {
-			console.error("ERROR: ", error);
+			$.notify({
+				message: "Failed logout. Try reloading the page?"
+			},{
+				element: "#login-modal",
+				type: "danger"
+			});
 		});
 	});
 
@@ -85,7 +91,13 @@ $(document).ready(function() {
 		//failed response from registration request
 		.fail(function(error) {
 			console.error("ERROR: ", error);
-			alert("Failed registration. Username probably already taken.");
+
+			$.notify({
+				message: "Failed registration. Username probably already taken."
+			},{
+				element: "#login-modal",
+				type: "danger"
+			});
 		});
 	});
 });

@@ -32,7 +32,11 @@ $(document).ready(function() {
 					$("body").html(resultBody);
 				}
 				catch (err) {
-					alert("No results found.");
+					$.notify({
+						message: "No results found."
+					},{
+						type: "info"
+					});
 				}
 			});
 		})
@@ -63,7 +67,11 @@ $(document).ready(function() {
 					$("body").html(resultBody);
 				}
 				catch (err) {
-					alert("No results found.");
+					$.notify({
+						message: "No results found."
+					},{
+						type: "info"
+					});
 				}
 			});
 		})

@@ -116,7 +116,12 @@ $(document).ready(function() {
 		event.preventDefault();
 
 		if (target_user === "") {
-			alert("No user selected!"); //TODO replace alert with better alert system
+			$.notify({
+				message: "No user selected."
+			},{
+				element: "#message-modal",
+				type: "info"
+			});
 		} else if ($("#message-content").val() !== "") {
 			var date = new Date();
 			var msg = $("#message-content").val();
