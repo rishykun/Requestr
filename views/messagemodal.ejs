@@ -8,7 +8,7 @@
 				<h4 class="modal-title" id="message-target-label">No user selected</h4>
 			</div>
 			<div class="modal-body" style="min-height:70%">
-				<div class=" col-md-4" id="users-chatlist" style="min-height: 50%; background-color: whitesmoke; border-radius: 5px; padding:0px; text-align: center">
+				<div class=" col-md-4" id="users-chatlist">
 					<a class="btn btn-success" role="button" data-toggle="collapse" href="#online" aria-expanded="false" aria-controls="online" style="width:100%">
 						Currently Online <span id="online-badges" class="badge"></span>
 					</a>
@@ -19,7 +19,7 @@
 					<ul class="nav nav-pills nav-stacked collapse" id="offline" style="padding:5px"></ul>
 				</div>
 				<div class="col-md-8">
-					<ul id="messages" style="min-height:50%; background-color:whitesmoke; padding: 5px; border-radius: 5px; max-height:50%; overflow-y: auto"></ul>
+					<ul id="messages"></ul>
 					<form id="message-form" style="text-align: center">
 						<input class="form-control" id="message-content" autocomplete="off" style="width: inherit; display: inline"/>
 						<button class="btn btn-primary" id="message-send">Send</button>

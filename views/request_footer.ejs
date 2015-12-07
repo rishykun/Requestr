@@ -1,4 +1,4 @@
-<div id="request-footer" style="margin-top:5px">
+<div class="request-footer">
 	<% var getUsernames = function(userArr){ %>
 		<% return userArr.map(function(ele){ %>
 			<% return ele.username; %>
@@ -64,7 +64,7 @@
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#review-modal" onclick="configureReviewModal('<%= request._id %>');">Submit a Review</button>
 		<% } %>
 	<% } %>
-	<div class="panel-group" style="padding: 10px">
+	<div class="panel-group comment-panel">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h4 class="panel-title">
