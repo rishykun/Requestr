@@ -34,9 +34,6 @@ router.get('/', function(req, res) {
 				});
 		    }
 		 });
-
-		
-
 	}
 	//if not logged in, render with no userProfile data
 	else {
@@ -89,7 +86,6 @@ router.post('/', function(req, res) {
 		}, function (err, html) {
 			res.send(html);
 		});
-
 	}
 	//if not logged in, render with no userProfile data
 	else {
