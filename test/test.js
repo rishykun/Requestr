@@ -461,7 +461,7 @@ describe("Request", function() {
 				Request.createRequest(user, "userSS",
 					{
 						"_id": "5664e76697a3aa5a475bd9d1",
-						"title": "hott",
+						"title": "hottaaaaa",
 						"dateCreated": "2015-12-07T01:56:54.314Z",
 						"description": "asdaa",
 						"expirationDate": "2016-12-07T01:56:54.314Z",
@@ -519,7 +519,7 @@ describe("Request", function() {
 				Request.createRequest(user, "userSS",
 					{
 						"_id": "5664e76697a3aa5a475bd9d1",
-						"title": "hott",
+						"title": "hotteee",
 						"dateCreated": "2015-12-07T01:56:54.314Z",
 						"description": "asdaa",
 						"expirationDate": "2016-12-07T01:56:54.314Z",
