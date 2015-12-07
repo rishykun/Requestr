@@ -427,7 +427,7 @@ describe("Request", function() {
 				Request.createRequest(user, "userSS",
 					{
 						"_id": "5664e76697a3aa5a475bd9d1",
-						"title": "hott",
+						"title": "hottaaaaa",
 						"dateCreated": "2015-12-07T01:56:54.314Z",
 						"description": "asdaa",
 						"expirationDate": "2016-12-07T01:56:54.314Z",
@@ -485,7 +485,7 @@ describe("Request", function() {
 				Request.createRequest(user, "userSS",
 					{
 						"_id": "5664e76697a3aa5a475bd9d1",
-						"title": "hott",
+						"title": "hotteee",
 						"dateCreated": "2015-12-07T01:56:54.314Z",
 						"description": "asdaa",
 						"expirationDate": "2016-12-07T01:56:54.314Z",
@@ -541,5 +541,68 @@ describe("Request", function() {
 
 	//complete request is completely analogous to the above function ^
 
+	//startRequest is the method under test.
+	describe("addCandidate", function() {
+
+		it("able to add candidate to request", function (done) {
+
+			user.createNewUser("userSS", "S", "test@test.com", function (err, userData) {
+				if (err) {
+					throw err;
+					done();
+				}
+				Request.createRequest(user, "userSS",
+					{
+						"_id": "5664e76697a3aa5a475bd9d1",
+						"title": "hottcccc",
+						"dateCreated": "2015-12-07T01:56:54.314Z",
+						"description": "asdaa",
+						"expirationDate": "2016-12-07T01:56:54.314Z",
+						"reward": 3,
+						"status": "Open",
+						"paid": false,
+						"creator": "56649af50c1986f34aaa6894",
+						"comments": [],
+						"tags": [],
+						"unpaidUsers": [],
+						"helpers": [],
+						"candidates": []
+					}, function(err, addID) {
+					if (err) {
+						user.removeUser("userSS", function(err) {
+							Request.removeRequest("5664e76697a3aa5a475bd9d1", function(err) {
+								throw err;
+								done();
+							});
+						}); //remove traces of test from database
+					}
+
+					Request.addCandidate("5664e76697a3aa5a475bd9d1", user, "userSS", function(err) {
+						Request.getRequestById("5664e76697a3aa5a475bd9d1", function(err, data) {
+							if (err) {
+								user.removeUser("userSS", function(err) {
+									Request.removeRequest("5664e76697a3aa5a475bd9d1", function(err) {
+										throw err;
+										done();
+									});
+								});
+							}
+							assert.equal(1, data.candidates.length);
+							assert.equal("userSS", data.candidates[0].username);
+							user.removeUser("userSS", function(err) {
+								Request.removeRequest("5664e76697a3aa5a475bd9d1", function(err) {
+									if (err) {
+										throw err;
+										done();
+									}
+									done();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+	});
 	
 });
