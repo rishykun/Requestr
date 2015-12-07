@@ -79,12 +79,14 @@
 					<button onclick="addComment('<%=request._id%>')" class="btn btn-default">Submit</button>
 				</form>
 				<ul class="list-group" id="comment-list-<%= request._id %>">
-					<% if (request.comments.length > 0) { %>
-						<% request.comments.reverse().forEach(function(comment) { %>
-							<li class="list-group-item">
-								<b> <%= comment.user.username %> : </b> <%= comment.comment %> <i>@ <%= comment.dateCreated.toLocaleString() %></i>
-							</li>
-						<% }); %>
+					<% if (request.comments !== undefined) { %>
+						<% if (request.comments.length > 0) { %>
+							<% request.comments.reverse().forEach(function(comment) { %>
+								<li class="list-group-item">
+									<b> <%= comment.user.username %> : </b> <%= comment.comment %> <i>@ <%= comment.dateCreated.toLocaleString() %></i>
+								</li>
+							<% }); %>
+						<% } %>
 					<% } %>
 				</ul>
 			</div>
