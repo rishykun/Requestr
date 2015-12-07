@@ -12,13 +12,12 @@ var getMyAcceptedRequests;
 var addComment;
 
 $(document).ready(function() {
-	//var date = new Date();
-	//var date_string = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()
 
-
+	// Datepicker
 	$("#request-expires").datepicker();
-	//$("#request-expires").attr("min", date_string); //ensure we cannot pick a date in the past
 
+	// Gets all of the logged in user's requests
+	// Params: filter - "Open", "Active", "Completed"
 	getMyRequests = function(filter) {
 		$.get("/requests/myRequests/"+filter, {
 		})
@@ -49,6 +48,9 @@ $(document).ready(function() {
 		});
 	}
 
+	/*
+		Gets all requests that the user has accepted.
+	*/
 	getMyAcceptedRequests = function(filter) {
 		$.get("/requests/myAcceptedRequests/", {
 		})
@@ -86,7 +88,7 @@ $(document).ready(function() {
 		});
 	}
 
-
+	// Form to create a request
 	$("#request-form").submit(function(event) {
 		event.preventDefault();
 
@@ -125,8 +127,6 @@ $(document).ready(function() {
 		var expDate = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
 		var now = new Date();
 
-		console.log("expDate set to: ", expDate); //debug
-
 		if (expDate <= now) {
 			$.notify({
 				message: "Expiration date must be in the future!"
@@ -143,12 +143,11 @@ $(document).ready(function() {
 		return false;
 	});
 
-
+	// Handles all actions pertaining to requests (create, accept, delete, etc.)
+	// Params:
+	//		- request_id - id of the request being handled
+	//		- eventType - what action to do with the request
 	handleRequest = function(request_id, eventType) {
-
-		//prepare data to be sent over to backend
-
-		//make post request to request route
 
 		/*
 			instantiates create request function in the request form's submit button
@@ -282,6 +281,13 @@ $(document).ready(function() {
 		}
 	}
 
+	// Handles all actions pertaining to candidates of a request
+	/*
+		Params:
+			request_id - id of the request the user is a candidate of
+			username - username of the candidate
+			eventType - action to perform with candidate
+	*/
 	handleCandidate = function(request_id, username, eventType) {
 
 		//prepare data to be sent over to backend

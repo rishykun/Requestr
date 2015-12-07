@@ -48,6 +48,9 @@ $(document).ready(function() {
 		});
 	}
 
+	/*
+		Clears review modal
+	*/
 	var clearReviewModal = function () {
 	    $(".review-form").attr('id', "");
 	    $("#review-victim").html("");
