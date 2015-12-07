@@ -130,7 +130,6 @@ ReviewSchema.statics.validReview = function (requestId, writerUsername, victimUs
                     cb(err);
                   } else {
                     if (result.length > 0) {
-                      console.log("false 1");
                       cb(null, false); // Invalid, review already exists
                     } else {
                       cb(null, true); // Valid
@@ -138,7 +137,6 @@ ReviewSchema.statics.validReview = function (requestId, writerUsername, victimUs
                   }
                 });
               } else {
-                console.log("false 2");
                 cb(null, false); // Invalid, writer not part of request
               }
             }
