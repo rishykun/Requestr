@@ -25,8 +25,7 @@ var ReviewSchema = mongoose.Schema({
   request: {
     type: Schema.Types.ObjectId,
     ref: 'Request',
-    required: true,
-    unique: true
+    required: true
   }
 });
 
@@ -41,23 +40,33 @@ ReviewSchema.statics.addReview = function (writerUsername, victimUsername, text,
         if (err) {
           cb(err);
         } else {
-          Request.getRequestById(requestId, function (err, requestObj) {
+          that.validReview(requestId, writerObj.username, function (err, isValid) {
             if (err) {
               cb(err);
             } else {
-              that.create({
-                'writer': writerObj._id,
-                'victim': victimObj._id,
-                'text': text,
-                'rating': rating,
-                'request': requestObj._id
-              }, function (err, res) {
-                if (err) {
-                  cb("Failed to create review.");
-                } else {
-                  cb(null);
-                }
-              });
+              if (isValid) {
+                Request.getRequestById(requestId, function (err, requestObj) {
+                  if (err) {
+                    cb(err);
+                  } else {
+                    that.create({
+                      'writer': writerObj._id,
+                      'victim': victimObj._id,
+                      'text': text,
+                      'rating': rating,
+                      'request': requestObj._id
+                    }, function (err, res) {
+                      if (err) {
+                        cb(err);
+                      } else {
+                        cb(null);
+                      }
+                    });
+                  }
+                });
+              } else {
+                cb({err: "Invalid review."});
+              }
             }
           });
         }

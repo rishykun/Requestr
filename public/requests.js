@@ -13,11 +13,10 @@ var addComment;
 
 $(document).ready(function() {
 
-	// Datepicker
-	$("#request-expires").datepicker();
-
-	// Gets all of the logged in user's requests
-	// Params: filter - "Open", "Active", "Completed"
+	var minDate = new Date();
+	minDate.setHours(0, 0, 0, 0);
+	$("#request-expires").datepicker({"minDate": minDate});
+	
 	getMyRequests = function(filter) {
 		$.get("/requests/myRequests/"+filter, {
 		})
@@ -167,8 +166,6 @@ $(document).ready(function() {
 		*/
 		//CREATE REQUEST
 		if (eventType === "create") {
-			//event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
-
 			//prepare data to be sent over to backend
 			//reason why we don't simply just pass in the form values to the ajax request is because
 			//we handle data sanitization here
@@ -226,6 +223,25 @@ $(document).ready(function() {
 				console.error("ERROR: ", error);
 			});
 		}
+		//DELETE REQUEST
+		if (eventType === "delete") {
+			//prepare data to be sent over to backend
+			$.ajax({
+			    url: '/requests/' + request_id,
+			    type: 'DELETE',
+			    success: function (data) {
+			        //if call was successful
+			        if (data.success) {
+			        	location.href="/"; //go to home page
+			        } else { //call failed
+			        	console.error("ERROR: request start failed");
+			        }
+			    },
+			    error: function (error) {
+			    	console.error("ERROR: ", error);
+			    }
+			});
+		}
 		//ADD CANDIDATE
 		if (eventType === "accept") {
 			//accept request
@@ -244,6 +260,10 @@ $(document).ready(function() {
 			.fail(function(error) {
 				console.error("ERROR: ", error);
 			});
+		}
+		//TODO: REMOVE CANDIDATE
+		if (eventType === "cancel") {
+
 		}
 		//START REQUEST
 		if (eventType === "start") {
@@ -360,20 +380,21 @@ $(document).ready(function() {
 		}
 	}
 
+	$(".new-comment-form").submit(function (event) {
+		event.preventDefault();
+	});
 
 	//ADD COMMENT
 	addComment = function(request_id) {
-		var iframe = $("iframe").contents();
-		var comment = iframe.find("#newCommentText_" + request_id).val();
+		var comment = $("#new-comment-" + request_id).val();
 		console.log("comment is: ", comment);
 
 		$.post('/requests/' + request_id + '/comments', {
 			"comment": comment
 		}).done(function (data) {
 			var comment = data.content;
-			iframe.find("#comments").append("<div class='comment-box'> <b>" + comment.user + " : </b>" + comment.comment + " <i> @ " + comment.dateCreated + "</i></div>")
-			iframe.find("#newCommentText_" + request_id).val("");
-
+			$("#comment-list-" + request_id).prepend("<li class='list-group-item'> <b>" + comment.user + " : </b>" + comment.comment + " <i> @ " + comment.dateCreated + "</i></li>");
+			$("#new-comment-" + request_id).val("");
 		}).fail(function (error) {
 			console.log("ERROR: ", error);
 		});
