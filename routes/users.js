@@ -194,8 +194,6 @@ router.post('/:userID/reviews', function (req, res) {
 					utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
 				} else {
 					if (reviewValid) {
-						utils.sendErrResponse(res, 403, 'You may not submit a review.');
-					} else {
 						Review.addReview(
 							req.currentUser.username, 
 							req.body.victimUsername, 
@@ -210,6 +208,8 @@ router.post('/:userID/reviews', function (req, res) {
 								}
 							}
 						);
+					} else {
+						utils.sendErrResponse(res, 403, 'You may not submit a review.');
 					}
 				}
 			});

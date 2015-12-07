@@ -115,7 +115,8 @@ ReviewSchema.statics.validReview = function (requestId, writerUsername, victimUs
             if (err) {
               cb(err);
             } else {
-              if (requestObj.creator == writerObj._id || requestObj.helpers.indexOf(writerObj._id) > -1) {
+              var helperNames = requestObj.helpers.map(function (helper) {return helper.username;});
+              if (requestObj.creator.username === writerObj.username || helperNames.indexOf(writerObj.username) > -1) {
                 that.find({"writer": writerObj._id, "victim": victimObj._id, "request": requestObj._id}, function (err, result) {
                   if (err) {
                     cb(err);
