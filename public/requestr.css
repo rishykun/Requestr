@@ -6,3 +6,107 @@
     opacity: .8;
     border-radius:0px;
 }
+
+/*
+	request_footer.ejs
+*/
+.request-footer {
+	margin-top: 5px;
+}
+
+.comment-panel {
+	padding: 10px;
+}
+
+.new-comment-form {
+	padding: 10px;
+}
+
+/* 
+	home.ejs
+*/
+#page-status {
+	font-weight: bold;
+	font-size: 24px;
+	color: #555;
+}
+
+#request-search {
+	width:50%;
+	margin-left: 25%;
+	margin-top: 20px;
+}
+
+#request-box {
+	background-color:whitesmoke;
+	width:50%;
+	margin-left:25%;
+	margin-top: 10px; 
+	padding: 10px;
+}
+
+/*
+	iframemodal.ejs
+*/
+#iframe {
+	border:none;
+	width:100%;
+	height:100%;
+}
+
+/*
+	messagemodal.ejs
+*/
+#messages {
+	min-height:50%;
+	background-color:whitesmoke;
+	padding: 5px;
+	border-radius: 5px;
+	max-height:50%;
+	overflow-y: auto
+}
+
+#users-chatlist {
+	min-height: 50%;
+	background-color: whitesmoke;
+	border-radius: 5px;
+	padding:0px;
+	text-align: center;
+}
+
+/*
+	profile.ejs
+*/
+#user-myrequests, #user-takenrequests, #user-reviews {
+	max-height: 40%; 
+	overflow: auto;
+}
+
+/*
+	request_header.ejs
+*/
+.request-header {
+	color: white; 
+	padding: 10px;
+}
+
+.request-status {
+	display: inline-block; 
+	font-weight: bold;
+	background-color: whitesmoke;
+	padding:2px;
+}
+
+.request-title-bar {
+	display: inline-block;
+	margin-left: 5px;
+}
+
+.request-expdate-bar {
+	float: right; 
+	display: inline-block;
+}
+
+.request-creator-bar {
+	margin-top: 5px;
+}

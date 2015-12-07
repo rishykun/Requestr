@@ -23,12 +23,10 @@ $(document).ready(function() {
 		})
 		.done(function(results) {
 
-
 			$.post("/", {
 				"passedData": results.content.requests
 			})
 			.done(function(result) {
-
 
 				try {
 					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];

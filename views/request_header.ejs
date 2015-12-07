@@ -1,18 +1,18 @@
-<div class="request-header" style="background-color:<%= colors[request.status] %>; color: white; padding: 10px;">
+<div class="request-header" style="background-color:<%= colors[request.status] %>">
 	<div>
-		<div class="request-status" style="display: inline-block; font-weight: bold; color: <%= colors[request.status] %>; background-color: whitesmoke; padding:2px">
+		<div class="request-status" style="color: <%= colors[request.status] %>">
 			<!-- color depends on status OPEN - green, In-Progress - yellow, etc. -->
 			<%= request.status %>
 		</div>
-		<div class="request-title-bar" style="display: inline-block; margin-left: 5px">
+		<div class="request-title-bar">
 			Title: <%= request.title %>
 		</div>
-		<div class="request-expdate-bar" style="float:right; display: inline-block">
+		<div class="request-expdate-bar">
 			Expires: <%= request.expirationDate.toLocaleString() %>
 		</div>
 	</div>
 
-	<div class="request-creator-bar" style="margin-top:5px; display: inline-block">
+	<div class="request-creator-bar">
 		<div onclick="openIframeModal('users/<%= request.creator.username %>')">
 			<div data-toggle="tooltip" data-placement="right" title="View user profile" style="cursor: pointer">
 				Requester: <%= request.creator.username %>
@@ -23,9 +23,7 @@
 				<%= request.unpaidUsers ? "Unpaid" : "Paid" %>
 			</div>
 		<% } else if (request.status === "Open" && userProfile.username === request.creator.username) { %>
-            <div style="display:inline-block; float:right">
-                <button type="button" class="btn btn-danger btn-sm" onclick="handleRequest('<%= request._id %>', 'delete');">Delete</button>
-            </div>
+            <button style="display:inline-block" type="button" class="btn btn-danger btn-sm" onclick="handleRequest('<%= request._id %>', 'delete');">Delete Request</button>
         <% } %>
 	</div>
 </div>

@@ -79,20 +79,16 @@ router.post('/', function(req, res) {
 	//check if logged in and render with the appropriate value
 	if (req.currentUser) {
 
-		console.log("/ accessed, req.body.passedData: ", req.body.passedData); //debug
 		res.render('index', {
 			userProfile: req.currentUser,
 			requests: req.body.passedData,
 			colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"} //color code
 		}, function (err, html) {
-			console.log("\n\nHTML RETURNED err: ", err); //debug
-			console.log("actual: ", html); //debug
 			res.send(html);
 		});
 	}
 	//if not logged in, render with no userProfile data
 	else {
-		console.log("/ accessed not logged in"); //debug
 
 		res.render('index', {
 			userProfile: undefined
