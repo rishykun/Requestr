@@ -22,10 +22,11 @@
 				Your help has been accepted!
 			<% } %>
 		<% } else { %>
+			<h4>Offers to Help</h4>
 			<% candidateNames.forEach(function(candidate){ %>
-				<button class="btn btn-success" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'accept')"> Accept <%= candidate %>
+				<button class="btn btn-success" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'accept')"> Accept <%= candidate %>'s Offer to Help
 				</button>
-				<button class="btn btn-danger" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'remove')">Reject  <%= candidate %>
+				<button class="btn btn-danger" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'remove')">Ignore <%= candidate %>'s Offer to Help
 				</button>
 			<% }); %>
 			<br>
