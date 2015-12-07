@@ -226,7 +226,6 @@ describe("User", function() {
 		});
 	});
 
-	
 	//removeMessage is the method under test.
 	describe("removeRequest", function() {
 		it("cannot remove a request with a non-existing user", function (done) {
@@ -277,53 +276,133 @@ describe("User", function() {
 		it("cannot get invalid status", function (done) {
 			user.getRequestsByStatus ("abcd", "asdaa", function (err, data) {
 				if (err) {
-				done();
-			}
+					done();
+				}
 			});
 		});
 
 		
 		it("gets all requests by a filter (i.e. open)", function (done) {
-			Request.view
+			user.createNewUser("userSS", "S", "test@test.com", function (err, userData) {
+				if (err) {
+					throw err;
+					done();
+				}
+				Request.createRequest(user, "userSS",
+					{
+						"_id": "5664e76697a3aa5a475bd9d1",
+						"title": "hott",
+						"dateCreated": "2015-12-07T01:56:54.314Z",
+						"description": "asdaa",
+						"expirationDate": "2016-12-07T01:56:54.314Z",
+						"reward": 3,
+						"status": "Open",
+						"paid": false,
+						"creator": "56649af50c1986f34aaa6894",
+						"comments": [],
+						"tags": [],
+						"unpaidUsers": [],
+						"helpers": [],
+						"candidates": []
+					}, function(err, addID) {
+					if (err) {
+						user.removeUser("userSS", function(err) {
+							throw err;
+							done();
+						}); //remove traces of test from database
+					}
 
-			done();
+					user.getRequestsByStatus ("userSS", "Open", function (err, data) {
+						if (err) {
+							throw err;
+							done();
+						}
+						user.removeUser("userSS", function(err) {
+							if (err) {
+								throw err;
+							}
+
+							Request.removeRequest("5664e76697a3aa5a475bd9d1", function(err) {
+								if (err) {
+									throw err;
+								}
+								done();
+							});
+						}); //remove traces of test from database
+					});
+				});
+			});
 		}); 
 	});
 });
 
 /*
-	testing the Message model
+	testing the Requests model
 	all public methods are tested for accuracy and reliability
 */
-/*
-describe("Message", function() {
-	msg = Message;
 
-	//findById is the method under test
-	describe("findById", function() {
-		it("able to find a message that was added", function (done) {
-			msg.addMessage("bleh", 6170, "dummy", function(err, data) {
+
+describe("Request", function() {
+
+	//getRequestById is the method under test
+	//this also inherently tests for removeRequest
+	describe("getRequestById", function() {
+		it("able to find a request that was added", function (done) {
+			user.createNewUser("userSS", "S", "test@test.com", function (err, userData) {
 				if (err) {
 					throw err;
 					done();
 				}
-				msg.findById(6170, function(err, data) {
+				Request.createRequest(user, "userSS",
+					{
+						"_id": "5664e76697a3aa5a475bd9d1",
+						"title": "hott",
+						"dateCreated": "2015-12-07T01:56:54.314Z",
+						"description": "asdaa",
+						"expirationDate": "2016-12-07T01:56:54.314Z",
+						"reward": 3,
+						"status": "Open",
+						"paid": false,
+						"creator": "56649af50c1986f34aaa6894",
+						"comments": [],
+						"tags": [],
+						"unpaidUsers": [],
+						"helpers": [],
+						"candidates": []
+					}, function(err, addID) {
 					if (err) {
-						throw err;
-						done();
+						user.removeUser("userSS", function(err) {
+							throw err;
+							done();
+						}); //remove traces of test from database
 					}
-					assert.equal(data.id, 6170);
-					assert.equal(data.author, "bleh");
-					assert.equal(data.value, "dummy");
-					msg.removeMessage(6170, function (err) {
-						done();
+
+					Request.getRequestById ("5664e76697a3aa5a475bd9d1", function (err, data) {
+						if (err) {
+							throw err;
+							done();
+						}
+						user.removeUser("userSS", function(err) {
+							if (err) {
+								throw err;
+								done();
+							}
+							Request.removeRequest("5664e76697a3aa5a475bd9d1", function(err) {
+								if (err) {
+									throw err;
+									done();
+								}
+								done();
+							});
+						}); //remove traces of test from database
 					});
 				});
 			});
 		});
 
+	
 		it("attempting to find a nonexistent message returns an error", function (done) {
-			msg.findById(617090, function(err, data) {
+			Request.getRequestById(617090, function(err, data) {
 				if (err) {
 					done();
 				} else {
@@ -335,61 +414,122 @@ describe("Message", function() {
 	});
 
 	
-	//addMessage is the method under test.
-	describe("addMessage", function() {
+	//addRequest is the method under test.
+	//this also inherently tests for removeRequest
+	describe("addRequest", function() {
+
 		it("adding a message shows up", function (done) {
-			msg.addMessage("user", 6170, "dummytext", function(err) {
+			user.createNewUser("userSS", "S", "test@test.com", function (err, userData) {
 				if (err) {
 					throw err;
 					done();
 				}
-				msg.findById(6170, function(err, data) {
+				Request.createRequest(user, "userSS",
+					{
+						"_id": "5664e76697a3aa5a475bd9d1",
+						"title": "hott",
+						"dateCreated": "2015-12-07T01:56:54.314Z",
+						"description": "asdaa",
+						"expirationDate": "2016-12-07T01:56:54.314Z",
+						"reward": 3,
+						"status": "Open",
+						"paid": false,
+						"creator": "56649af50c1986f34aaa6894",
+						"comments": [],
+						"tags": [],
+						"unpaidUsers": [],
+						"helpers": [],
+						"candidates": []
+					}, function(err, addID) {
 					if (err) {
-						throw err;
-						done();
+						user.removeUser("userSS", function(err) {
+							throw err;
+							done();
+						}); //remove traces of test from database
 					}
-					assert.equal(data.id, 6170);
-					assert.equal(data.author, "user");
-					assert.equal(data.value, "dummytext");
-					msg.removeMessage(6170, function(err) {
-						done();
-					}); //remove traces of test from database
-				});
-			});
-		});
 
-		it("adding multiple messages, all show up", function (done) {
-			msg.addMessage("user", 6170, "dummytext", function(err) {
-				if (err) {
-					throw err;
-					done();
-				}
-				msg.findById(6170, function(err, data) {
-					if (err) {
-						throw err;
-						done();
-					}
-					assert.equal(data.id, 6170);
-					assert.equal(data.author, "user");
-					assert.equal(data.value, "dummytext");
-
-					msg.addMessage("user2", 61700, "dummytext2", function(err) {
+					Request.getRequestById ("5664e76697a3aa5a475bd9d1", function (err, data) {
 						if (err) {
 							throw err;
 							done();
 						}
-						msg.findById(61700, function(err, data) {
+						user.removeUser("userSS", function(err) {
 							if (err) {
 								throw err;
 								done();
 							}
-							assert.equal(data.id, 61700);
-							assert.equal(data.author, "user2");
-							assert.equal(data.value, "dummytext2");
-							msg.removeMessage(61700, function(err) {
-								msg.removeMessage(6170, function(err) {
+							Request.removeRequest("5664e76697a3aa5a475bd9d1", function(err) {
+								if (err) {
+									throw err;
 									done();
-								}); //remove traces of test from database
+								}
+								done();
+							});
+						}); //remove traces of test from database
+					});
+				});
+			});
+		});
+	});
+
+
+	//startRequest is the method under test.
+	describe("startRequest", function() {
+
+		it("able to start request", function (done) {
+			user.createNewUser("userSS", "S", "test@test.com", function (err, userData) {
+				if (err) {
+					throw err;
+					done();
+				}
+				Request.createRequest(user, "userSS",
+					{
+						"_id": "5664e76697a3aa5a475bd9d1",
+						"title": "hott",
+						"dateCreated": "2015-12-07T01:56:54.314Z",
+						"description": "asdaa",
+						"expirationDate": "2016-12-07T01:56:54.314Z",
+						"reward": 3,
+						"status": "Open",
+						"paid": false,
+						"creator": "56649af50c1986f34aaa6894",
+						"comments": [],
+						"tags": [],
+						"unpaidUsers": [],
+						"helpers": [],
+						"candidates": []
+					}, function(err, addID) {
+					if (err) {
+						user.removeUser("userSS", function(err) {
+							throw err;
+							done();
+						}); //remove traces of test from database
+					}
+
+					Request.startRequest("5664e76697a3aa5a475bd9d1", function(err) {
+						if (err) {
+							throw err;
+							done();
+						}
+						Request.getRequestById ("5664e76697a3aa5a475bd9d1", function (err, data) {
+							if (err) {
+								throw err;
+								done();
+							}
+							assert.deepEqual(data.id, "5664e76697a3aa5a475bd9d1");
+							assert.deepEqual(data.status, "In progress");
+							user.removeUser("userSS", function(err) {
+								if (err) {
+									throw err;
+									done();
+								}
+								Request.removeRequest("5664e76697a3aa5a475bd9d1", function(err) {
+									if (err) {
+										throw err;
+										done();
+									}
+									done();
+								});
 							}); //remove traces of test from database
 						});
 					});
@@ -398,173 +538,8 @@ describe("Message", function() {
 		});
 
 	});
+
+	//complete request is completely analogous to the above function ^
+
 	
-	//removeMessage is the method under test.
-	describe("removeMessage", function() {
-		it("remove an added message successfully", function (done) {
-			msg.addMessage("userA", 6858, "dummyholder", function(err, data) {
-				if (err) {
-					throw err;
-					done();
-				}
-
-				msg.removeMessage(6858, function (err) {
-					if (err) {
-						throw err;
-						done();
-					}
-					msg.findById(6858, function(err, data) {
-						if (err) {
-							done();
-						} else {
-							throw err;
-							done();
-						}
-					});
-				});
-			});
-		});
-
-		it("remove multiple added messages successfully", function (done) {
-			msg.addMessage("userA", 6900, "dummyholder", function(err, data) {
-				if (err) {
-					throw err;
-					done();
-				}
-
-				msg.addMessage("op", 6100, "opness", function(err2, data) {
-					if (err2) {
-						throw err2;
-						done();
-					}
-					
-					msg.removeMessage(6900, function (err3) {
-						if (err3) {
-							throw err3;
-							done();
-						}
-
-						msg.findById(6900, function (findErr, data) {
-							if (findErr) {
-								msg.removeMessage(6100, function (err4) {
-									if (err4) {
-										throw err4;
-										done();
-									}
-
-									msg.findById(6100, function(err3, data) {
-										if (err3) {
-											done();
-										} else {
-											throw err3;
-											done();
-										}
-									});
-								});
-							} else {
-								throw {msg: "WHY YOU FAIL"};
-								done();
-							}
-						});
-					});
-				});
-			});
-		});
-
-		it("remove a nonexistent message throws an error", function (done) {
-			msg.removeMessage(6149, function (err) {
-				if (err) {
-					done();
-				} else {
-					throw {msg: "WHY YOU FAIL"};
-					done();
-				}
-			});
-		});
-	});
-
-
-	//getAllMessages is the method under test
-	describe("getAllMessages", function() {
-		it("able to find a single message that was added, length 1", function (done) {
-			msg.addMessage("bleh", 6004, "dummy", function(err, addMsg) {
-				if (err) {
-					throw err;
-					done();
-				}
-				msg.getAllMessages(function(err, data) {
-					if (err) {
-						throw err;
-						done();
-					}
-
-					var valid = false;
-					data.forEach(function(datapoint) {
-						if (datapoint.id == 6004 && datapoint.author === "bleh" && datapoint.value === "dummy") {
-							valid = true;
-						}
-					});
-					assert.equal(valid, true);
-
-					msg.removeMessage(addMsg.id, function(err) {
-						if (err) {
-							throw {msg: "WHY YOU FAIL"};
-							done();
-						} else {
-							done();
-						}
-					}); //remove traces of test from database
-				});
-			});
-		});
-
-		it("able to find all added messages, with appropriate length, in correct time order", function (done) {
-			msg.addMessage("bleh", 6004, "dummy", function(err, addMsg1) {
-				if (err) {
-					throw err;
-					done();
-				}
-				msg.addMessage("blehas", 6006, "dummy5", function(err, addMsg2) {
-					if (err) {
-						throw err;
-						done();
-					}
-					msg.getAllMessages(function(err, data) {
-						if (err) {
-							throw err;
-							done();
-						}
-
-						var validCount = 0;
-						data.forEach(function(datapoint) {
-							if ( (datapoint.id == 6004 && datapoint.author === "bleh" && datapoint.value === "dummy")
-								|| (datapoint.id == 6006 && datapoint.author === "blehas" && datapoint.value === "dummy5") ) {
-								validCount += 1;
-							}
-						});
-						assert.equal(validCount, 2);
-
-						msg.removeMessage(addMsg1.id, function(err) {
-							if (err) {
-								throw {msg: "WHY YOU FAIL"};
-								done();
-							} else {
-								msg.removeMessage(addMsg2.id, function(err) {
-									if (err) {
-										throw {msg: "WHY YOU FAIL"};
-										done();
-									} else {
-										done();
-									}
-								});
-							}
-						}); //remove traces of test from database
-
-					});
-				});
-			});
-		});
-	});
 });
-
-*/

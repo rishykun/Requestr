@@ -234,7 +234,6 @@ UserSchema.statics.addRequest = function(user, requestId, cb){
 UserSchema.statics.removeRequest = function(user, requestModel, requestId, cb){
 	var that = this;
 	that.getUser(user, function(err, user){
-		console.log("23err: ", err, " user: ", user);
 		if (err) cb(err);
 		else {
 			that.update(user,{$pull: {'myRequests': requestId}},{upsert:true},function(err){
