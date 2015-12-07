@@ -433,7 +433,7 @@ router.post('/:request/candidates', function(req, res) {
 /*
 	"ACCEPT CANDIDATE"
 	PUT /requests/:request/candidates/:candidate
-	Adds or Accepts the specified candidate for the specified request
+	Accepts the specified candidate for the specified request
 */
 router.put('/:request/candidates/:candidate', function(req,res){
 	Request.acceptCandidate(req.params.request, User, req.params.candidate, function(err){
@@ -445,6 +445,20 @@ router.put('/:request/candidates/:candidate', function(req,res){
 	});
 });
 
+/*
+	"REMOVE CANDIDATE"
+	DELETE /requests/:request/candidates/:candidate
+	Removes the specified candidate from the specified request
+*/
+router.delete('/:request/candidates/:candidate', function (req, res) {
+	Request.removeCandidate(req.params.request, User, req.params.candidate, function (err) {
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+			utils.sendSuccessResponse(res);
+		}
+	});
+});
 
 /*
 	"ADD COMMENT"

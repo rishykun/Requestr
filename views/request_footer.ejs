@@ -17,15 +17,16 @@
 			<% if (candidateNames.indexOf(userProfile.username) === -1 && helperNames.indexOf(userProfile.username) === -1) { %>
 				<button class="btn btn-primary" onclick="handleRequest('<%= request._id %>', 'accept')">Accept</button>
 			<% } else if (candidateNames.indexOf(userProfile.username) !== -1 ) { %>
-				<button class="btn btn-default" onclick="handleRequest('<%= request._id %>', 'cancel')">Drop Out</button>
+				<button class="btn btn-default" onclick="handleCandidate('<%= request._id %>', '<%= userProfile.username %>', 'remove')">Drop Out</button>
 			<% } else { %>
-				Your help has been accepted.
+				Your help has been accepted!
 			<% } %>
 		<% } else { %>
+			<h4>Offers to Help</h4>
 			<% candidateNames.forEach(function(candidate){ %>
-				<button class="btn btn-success" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'accept')"> Accept <%= candidate %>
+				<button class="btn btn-success" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'accept')"> Accept <%= candidate %>'s Offer to Help
 				</button>
-				<button class="btn btn-danger" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'reject')">Reject  <%= candidate %>
+				<button class="btn btn-danger" onclick="handleCandidate('<%= request._id %>', '<%= candidate %>', 'remove')">Ignore <%= candidate %>'s Offer to Help
 				</button>
 			<% }); %>
 			<br>
@@ -78,11 +79,13 @@
 					<button onclick="addComment('<%=request._id%>')" class="btn btn-default">Submit</button>
 				</form>
 				<ul class="list-group" id="comment-list-<%= request._id %>">
-					<% request.comments.reverse().forEach(function(comment) { %>
-						<li class="list-group-item">
-							<b> <%= comment.user.username %> : </b> <%= comment.comment %> <i>@ <%= comment.dateCreated.toLocaleString() %></i>
-						</li>
-					<% }); %>
+					<% if (request.comments.length > 0) { %>
+						<% request.comments.reverse().forEach(function(comment) { %>
+							<li class="list-group-item">
+								<b> <%= comment.user.username %> : </b> <%= comment.comment %> <i>@ <%= comment.dateCreated.toLocaleString() %></i>
+							</li>
+						<% }); %>
+					<% } %>
 				</ul>
 			</div>
 		</div>
