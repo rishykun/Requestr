@@ -264,14 +264,20 @@ router.post('/:request/pay/:userid', function (req,res){
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
 	console.log(req.body.tags);
-	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires, 'reward': req.body.reward, 'tags': req.body.tags },
+	Request.createRequest(User, req.currentUser.username, {
+		'title': req.body.title, 
+		'dateCreated': new Date(), 
+		'description': req.body.desc, 
+		'expirationDate':req.body.expires, 
+		'reward': req.body.reward, 
+		'tags': req.body.tags },
 		function(err){
 			 if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 			utils.sendSuccessResponse(res);
 		}
-		});
+	});
 });
 
 /*
@@ -317,18 +323,17 @@ router.get('/:request', function (req, res) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
+
+			var dataToSend = {
+				userProfile: req.currentUser, 
+				request: data,
+				colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"}
+			};
+
 			if (refuseRender == 'true') {
-				utils.sendSuccessResponse(res, {
-					userProfile: req.currentUser, 
-					request: data,
-					colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"} //color code
-				});
+				utils.sendSuccessResponse(res, dataToSend);
 			} else {
-				res.render('request', {
-					userProfile: req.currentUser,
-					request: data,
-					colors: {"Open": "mediumseagreen", "In progress": "lightcoral", "Completed": "lightskyblue"} //color code
-				});
+				res.render('request', dataToSend);
 			}
 		}
 	});
@@ -379,14 +384,12 @@ router.put('/:request', function(req,res) {
 */
 // Requires Ownership (middleware)
 router.delete('/:request', function(req, res) {
-	User.removeRequest( 
-		req.body.request_id, 
-		function(err) {
-			if (err) {
-				utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-			} else {
-				utils.sendSuccessResponse(res);
-			}
+	User.removeRequest(req.currentUser.username, Request, req.params.request, function (err) {
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+			utils.sendSuccessResponse(res);
+		}
 	});
 });
 

@@ -93,7 +93,7 @@ $(document).ready(function() {
 			console.error("ERROR: ", error);
 
 			$.notify({
-				message: "Failed registration. Username probably already taken."
+				message: "Failed registration. Username taken or email invalid."
 			},{
 				element: "#login-modal",
 				type: "danger"
