@@ -177,7 +177,6 @@ var pendingPayments = {};
 		Redirects to success or failure page after payment has been processed
 */
 router.get('/pay', function(req, res) {
-	console.log("In authentication route.");
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
 	if(query.error){
@@ -257,12 +256,12 @@ router.post('/:request/pay/:userid', function (req,res){
 
 
 /*
-	POST /requests/create
+	POST /requests
 	Params:
 		No params.
 */
 // json with title description - date created - expiration date
-router.post('/create', function(req,res){
+router.post('/', function(req,res){
 	console.log(req.body.tags);
 	Request.createRequest(User, req.currentUser.username, {
 		'title': req.body.title, 
@@ -434,7 +433,7 @@ router.post('/:request/candidates', function(req, res) {
 /*
 	"ACCEPT CANDIDATE"
 	PUT /requests/:request/candidates/:candidate
-	Adds or Accepts the specified candidate for the specified request
+	Accepts the specified candidate for the specified request
 */
 router.put('/:request/candidates/:candidate', function(req,res){
 	Request.acceptCandidate(req.params.request, User, req.params.candidate, function(err){
@@ -446,6 +445,20 @@ router.put('/:request/candidates/:candidate', function(req,res){
 	});
 });
 
+/*
+	"REMOVE CANDIDATE"
+	DELETE /requests/:request/candidates/:candidate
+	Removes the specified candidate from the specified request
+*/
+router.delete('/:request/candidates/:candidate', function (req, res) {
+	Request.removeCandidate(req.params.request, User, req.params.candidate, function (err) {
+		if (err) {
+			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+		} else {
+			utils.sendSuccessResponse(res);
+		}
+	});
+});
 
 /*
 	"ADD COMMENT"

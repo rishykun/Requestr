@@ -202,7 +202,7 @@ $(document).ready(function() {
 			});
 
 			//make post request to request route
-			$.post("/requests/create", {
+			$.post("/requests", {
 				"title": title,
 				"desc": desc,
 				"expires": expires,
@@ -261,10 +261,6 @@ $(document).ready(function() {
 				console.error("ERROR: ", error);
 			});
 		}
-		//TODO: REMOVE CANDIDATE
-		if (eventType === "cancel") {
-
-		}
 		//START REQUEST
 		if (eventType === "start") {
 			console.log("START REQUEST"); //debug
@@ -319,11 +315,6 @@ $(document).ready(function() {
 			eventType - action to perform with candidate
 	*/
 	handleCandidate = function(request_id, username, eventType) {
-
-		//prepare data to be sent over to backend
-
-		//make post request to request route
-
 		/*
 			instantiates create request function in the request form's submit button
 
@@ -333,11 +324,6 @@ $(document).ready(function() {
 		//ACCEPT CANDIDATE
 		if (eventType === "accept") {
 			event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
-
-			//prepare data to be sent over to backend
-			//reason why we don't simply just pass in the form values to the ajax request is because
-			//we handle data sanitization here
-			var title = $("#request-title").val();
 
 			$.ajax({
 				url: "/requests/" + request_id + "/candidates/" + username,
@@ -355,28 +341,25 @@ $(document).ready(function() {
 				}
 			});
 		}
-		//TODO
-		//REJECT CANDIDATE
-		if (eventType === "reject") {
-			/*
-			//accept request
-			$.post("/requests/addCandidate", {
-				"request_id": request_id
-			})
-			//successful response from request creation
-			.done(function(data) {
-				//if call was successful
-				if (data.success) {
-					location.href="/"; //go to home page
-				} else { //call failed
-					console.error("ERROR: request creation failed");
+		//REMOVE CANDIDATE
+		if (eventType === "remove") {
+			event.preventDefault(); //prevent modal from performing default actions such as closing automatically when submitting form
+
+			$.ajax({
+				url: "/requests/" + request_id + "/candidates/" + username,
+				method: "DELETE",
+				success: function(data) {
+					//if call was successful
+					if (data.success) {
+						location.href="/"; //go to home page
+					} else { //call failed
+						console.error("ERROR: remove candidate failed");
+					}
+				},
+				error: function(error) {
+					console.error("ERROR: ", error);
 				}
-			})
-			//failed response from call
-			.fail(function(error) {
-				console.error("ERROR: ", error);
 			});
-			*/
 		}
 	}
 

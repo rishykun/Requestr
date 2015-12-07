@@ -498,6 +498,37 @@ RequestSchema.statics.acceptCandidate = function(requestId, userModel, candidate
 	});
 };
 
+//Remove a candidate, removing them from the candidates list
+RequestSchema.statics.removeCandidate = function(requestId, userModel, candidate, cb) {
+	var that = this;
+
+	userModel.getUser(candidate, function (err, userObj) {
+		if (err) {
+			cb(err);
+		} else {
+			that.getRequestById(requestId, function (err, result) {
+				if (err) {
+					cb(err);
+				} else {
+					that.update({"_id": requestId}, {$pull: {'candidates': userObj._id}}, {upsert: true}, function (err) {
+						if (err) {
+							cb({err: "Failed to remove candidate."});
+						} else {
+							userModel.update({"_id": userObj._id}, {$pull: {'requestsTaken': requestId}}, {upsert: true}, function (err) {
+								if (err) {
+									cb({err: "Failed to remove request from requests taken."});
+								} else {
+									cb(null);
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	});
+};
+
 RequestSchema.statics.addComment = function(requestId, userModel, user, commentString, cb) {
 	var that = this;
 
