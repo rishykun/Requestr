@@ -270,12 +270,46 @@ describe("User", function() {
 			});
 		}); 
 	});
-	
-	//getRequestsByStatus is the method under test.
-	describe("getRequestsByStatus", function () {
-		it("cannot get invalid status", function (done) {
-			user.getRequestsByStatus ("abcd", "asdaa", function (err, data) {
+});
+
+/*
+	testing the Message model
+	all public methods are tested for accuracy and reliability
+*/
+/*
+describe("Message", function() {
+	msg = Message;
+
+	//findById is the method under test
+	describe("findById", function() {
+		it("able to find a message that was added", function (done) {
+			msg.addMessage("bleh", 6170, "dummy", function(err, data) {
 				if (err) {
+					throw err;
+					done();
+				}
+				msg.findById(6170, function(err, data) {
+					if (err) {
+						throw err;
+						done();
+					}
+					assert.equal(data.id, 6170);
+					assert.equal(data.author, "bleh");
+					assert.equal(data.value, "dummy");
+					msg.removeMessage(6170, function (err) {
+						done();
+					});
+				});
+			});
+		});
+
+		it("attempting to find a nonexistent message returns an error", function (done) {
+			msg.findById(617090, function(err, data) {
+				if (err) {
+					done();
+				} else {
+					throw err;
+>>>>>>> Stashed changes
 					done();
 				}
 			});
@@ -538,8 +572,95 @@ describe("Request", function() {
 		});
 
 	});
+});
+/*
+	testing the Review model
+	all public methods are tested for accuracy and reliability
+*/
+describe("Review", function() {
+	review = Reviews;
 
-	//complete request is completely analogous to the above function ^
-
-	
+	describe("addReview", function() {
+		
+		it("should add a review", function (done) {
+			User.createNewUser("writer", "a", "a@a.com", function(err, taken){
+				if (err) {
+					throw err;
+					done();
+				}
+				User.createNewUser("victim", "b", "b@b.com", function(err, taken){
+					if (err) {
+						throw err;
+						done();
+					}
+					Request.createRequest(User, "writer", {}, function(err){
+						if(err){
+							throw err;
+							done();
+						}
+						User.getUser("writer", function(err, result){
+							if(err){
+								throw err;
+								done();
+							}
+							var requestId = result.myRequests[0];
+							Request.addCandidate(requestId, User, "victim", function(err){
+								if(err){
+									throw err;
+									done();
+								}
+								Request.acceptCandidate(requestId, User, "victim", function(err){
+									if(err){
+										throw err;
+										done();
+									}
+									review.addReview("writer", "victim", "review", 3, requestId, function(err){
+										if(err){
+											throw err;
+											done();
+										}
+										review.getReviewsByVictimId("victim", function(err, result){
+											if(err){
+												throw err;
+												done();
+											}
+											var reviewId = result[0]._id;
+											assert.equal(result[0].text, "review");
+											User.removeUser("writer", function(err){
+												if(err){
+													throw err;
+													done();
+												}
+												User.removeUser("victim", function(err){
+													if(err){
+														throw err;
+														done();
+													}
+													Request.removeRequest(requestId, function(err){
+														if(err){
+															throw err;
+															done();
+														}
+														review.removeReview(reviewId, function(err){
+															if (err){
+																throw err;
+																done();
+															}
+															else{
+																done();
+															}
+														});
+													});
+												});
+											});
+										});
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+	});
 });
