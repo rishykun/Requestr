@@ -317,7 +317,7 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
 	if (keywords === undefined || keywords === null || keywords.length === 0) keywords = [];
 	if (tagQuery === undefined || tagQuery === null || tagQuery.length === 0) tagQuery = [];
 
-	filter['$or'] = [{tags: {$in: tagQuery}}, {tags: {$in: keywords}}];
+	filter['$or'] = [{tags: {$in: tagQuery}}];
 
 	var regex = "";
 	if(keywords.length != 0){
@@ -334,10 +334,28 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
 	}
 
 	if (status !== null) filter.status = status;
-
-	that.find(filter, function(err, requestQuery){;
-		that.populateRequests(err, requestQuery, cb);
-	});
+  that.aggregate([ 
+    {$match: filter}, 
+    {$unwind: "$tags"},
+    {$match: filter}, 
+    {$group: {
+        _id: "$_id", 
+        matches:{$sum:1}
+    }}, 
+    {$sort:{matches:-1}}
+    ], function(err, result){
+      console.log(result);
+      that.populate(result, {path: "_id"}, function(err, result){
+        if (err) cb(err);
+        else {
+          result = result.map(function(el){
+            return el._id;
+          });
+          that.populateRequests(err, result, cb);
+        }
+      });
+    }
+  );
 }
 
 //Creates a new request and adds it to the corresponding user in userModel
