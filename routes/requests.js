@@ -95,12 +95,6 @@ router.get('/myRequests', function(req, res) {
 		} else {
 
 			utils.sendSuccessResponse(res, { currentUser: req.currentUser.username, requests: data.myRequests });
-
-			/*
-			res.render('requests_active', {
-				userProfile: req.currentUser,
-				requests: data.myRequests
-			});*/
 		}
 	});
 });
@@ -108,18 +102,10 @@ router.get('/myRequests', function(req, res) {
 router.get('/myRequests/:filter', function(req, res) {
 	User.getRequestsByStatus(req.currentUser.username, req.params.filter, function(err, data) {
 
-		//console.log("data received: ", data); //debug
-
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 			utils.sendSuccessResponse(res, { requests: data });
-
-			/*
-			res.render('requests_active', {
-				userProfile: req.currentUser,
-				requests: data.myRequests
-			});*/
 		}
 	});
 });
@@ -139,7 +125,6 @@ router.get('/myAcceptedRequests', function(req, res) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
-
 			utils.sendSuccessResponse(res, { currentUser: req.currentUser.username, requests: data.requestsTaken });
 		}
 	});
@@ -198,7 +183,6 @@ router.get('/pay', function(req, res) {
 	request.post('https://api.venmo.com/v1/payments', {form: post_data}, function(e, r, venmo_receipt){
         // parsing the returned JSON string into an object
         var venmo_receipt = JSON.parse(venmo_receipt);
-        console.log(venmo_receipt);
         if(venmo_receipt.error)
         {
         	// Redirect to fail page
@@ -209,7 +193,6 @@ router.get('/pay', function(req, res) {
         {
         	Request.payHelper(pay_data.request_id,pay_data.user_id, function(err)
         	{
-        		console.log(err);
         		if(err){
         			// Redirect to fail page
         			pendingPayments[req.currentUser.username] = null;
@@ -226,32 +209,39 @@ router.get('/pay', function(req, res) {
 	}
 });
 
-/*
-	Post /requests/:request/pay/:userid
-	Params:
-		request - the id of the request being paid
-		userid - the id of the user to be paid
 
+/*
+	POST /:request/pay/:userid
+	Handles payment of a user for a request
+	Params:
+		request - request the payment involves
+		userid - user to pay
+		venmo_email - venmo email of user to pay
+	Response:
+		- success: true if the server succeeded in getting the user's requests
+		- candidates: on success, an object with a single field 'requests', which contains a list of the
+		user's requests
+		- err: on failure, an error message
 */
 router.post('/:request/pay/:userid', function (req,res){
 	
 	Request.getRequestById(req.params.request, function(err, request){
 	
-		if(err) utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-		else{
-			var pay_data = {
-				'request_id' : req.params.request,
-				'user_id' :req.params.userid,
-				'post_data':{
-		      //'access_token' : oauth_token,
+	if(err) utils.sendErrResponse(res, 500, 'An unknown error occurred.');
+	else{
+		var pay_data = {
+			'request_id' : req.params.request,
+			'user_id' :req.params.userid,
+			'post_data':
+			{
 		      'email': req.body.venmo_email,
 		      'note': 'Requestr payment for ' + request.title + '.',
 		       'amount' : request.reward
-		   }
-		  	};
-		  	pendingPayments[req.currentUser.username] = pay_data;
-		  }
-		});
+		   	}
+	  	};
+	  	pendingPayments[req.currentUser.username] = pay_data;
+	  }
+	});
 });
 
 
@@ -260,9 +250,7 @@ router.post('/:request/pay/:userid', function (req,res){
 	Params:
 		No params.
 */
-// json with title description - date created - expiration date
 router.post('/', function(req,res){
-	console.log(req.body.tags);
 	Request.createRequest(User, req.currentUser.username, {
 		'title': req.body.title, 
 		'dateCreated': new Date(), 
@@ -283,6 +271,7 @@ router.post('/', function(req,res){
 	POST /requests/search/tags
 	Params:
 		tags - string array of the tags to search for
+		keywords - string array of keywords to search for
 	Response:
 		- success: true if the server succeeded in getting the user's requests
 		- candidates: on success, an object with a single field 'requests', which contains a list of the
@@ -350,7 +339,6 @@ router.get('/:request', function (req, res) {
 */
 // Requires Ownership (middleware)
 router.put('/:request', function(req,res) {
-	console.log("START REQUEST BACKEND"); //debug
 	if (req.body.updateType == "start") {
 		Request.startRequest(req.params.request,
 		function(err){

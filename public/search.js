@@ -3,10 +3,10 @@ var getSearchRequests;
 $(document).ready(function() {
 
 	/*
-		Gets requests from search. Filters search by keyword, tags, and relevance.
+		Gets requests from search. Filters search by keyword, tags passed in from front end.
 	*/
 	getSearchRequests = function(e) {
-		if(e) {
+		if(e) { //Basic search
 			if(e.keyCode == 13) {
 				// keyword
 				var keyword = $("#request-search").val();
@@ -21,8 +21,6 @@ $(document).ready(function() {
 					"startDate": null,
 					"endDate": null
 				})
-			
-				//when done, log user in because successful signup doesn't automatically log user in
 				.done(function(results) {
 					$.post("/", {
 						"passedData": results.content.requests
@@ -41,28 +39,29 @@ $(document).ready(function() {
 						}
 					});
 				})
-				//failed response from registration request
 				.fail(function(error) {
 					console.error("ERROR: ", error);
 				});
 			}
 		}
-		else {
-			console.log("request sent");
-			// tags
+		else { //Advanced search
+
 			var tagsString = $("#request-search-tags").val();
-				var tagsArray = tagsString === "" ? [] : tagsString.split(",");
-				// Trim the beginning and end spaces off all tags in the array
-				tagsArray = tagsArray.map(function(tag){
-					return tag.trim();
-				});
-				// keyword
+			var tagsArray = tagsString === "" ? [] : tagsString.split(",");
+
+			// Trim the beginning and end spaces off all tags in the array
+			tagsArray = tagsArray.map(function(tag){
+				return tag.trim();
+			});
+
 			var keyword = $("#request-search-keyword").val();
 			var keyArray = keyword === "" ? [] : keyword.split(",");
-				// Trim the beginning and end spaces off all tags in the array
+			
+			// Trim the beginning and end spaces off all tags in the array
 			keyArray = keyArray.map(function(key){
 				return key.trim();
 			});
+
 			var startDate = $("#request-search-expire-start").val();
 			var endDate = $("#request-search-expire-end").val();
 			$.post("/requests/search", {
@@ -71,7 +70,6 @@ $(document).ready(function() {
 				"startDate": startDate,
 				"endDate": endDate,
 			})
-			//when done, log user in because successful signup doesn't automatically log user in
 			.done(function(results) {
 				$.post("/", {
 					"passedData": results.content.requests
@@ -90,7 +88,6 @@ $(document).ready(function() {
 					}
 				});
 			})
-			//failed response from registration request
 			.fail(function(error) {
 				console.error("ERROR: ", error);
 			});

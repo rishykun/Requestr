@@ -27,7 +27,6 @@ $(document).ready(function() {
 			src - url of source.
 	*/
 	openIframeModal = function(src) {
-		console.log("setting src: ", src); //debug
 
 		$("#iframe").attr("src", src); //set iframe
 		$("#iframeModal").modal("show"); //open modal containing iframe

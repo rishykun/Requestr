@@ -164,7 +164,6 @@ router.post('/', function(req, res) {
 				utils.sendSuccessResponse(res, req.body.username);
 			}
 		} else {
-			console.log(err);
 			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
 		}
 	});

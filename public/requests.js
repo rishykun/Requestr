@@ -17,10 +17,10 @@ $(document).ready(function() {
 	minDate.setHours(0, 0, 0, 0);
 	$("#request-expires").datepicker({"minDate": minDate});
 	
+	//Gets the requests of the current user under the filter status (Open, In progress, Complete)	
 	getMyRequests = function(filter) {
 		$.get("/requests/myRequests/"+filter, {
 		})
-		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(results) {
 			$.post("/", {
 				"passedData": results.content.requests
@@ -30,7 +30,6 @@ $(document).ready(function() {
 					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];
 
 					var parsedResult = $.parseHTML(resultBody);
-					console.log(parsedResult); //debug
 
 					$("#requests-container").html(resultBody);
 					$("#pageStatus").html("My " + filter + " Created Requests");
@@ -52,20 +51,17 @@ $(document).ready(function() {
 	}
 
 	/*
-		Gets all requests that the user has accepted.
+		Gets all requests that the user has accepted with the corresoonding filter (In progress, Completed).
 	*/
 	getMyAcceptedRequests = function(filter) {
 		$.get("/requests/myAcceptedRequests/", {
 		})
-		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(results) {
-			console.log("results.content: ", results.content);
 
 			var filteredRequests = results.content.requests.filter(function(ele) {
 				return ele.status === filter;
 			});
 
-			console.log("filteredRequests: ", filteredRequests);
 			$.post("/", {
 				"passedData": filteredRequests
 			})
@@ -74,7 +70,6 @@ $(document).ready(function() {
 					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];
 
 					var parsedResult = $.parseHTML(resultBody);
-					console.log(parsedResult); //debug
 
 					$("#requests-container").html(resultBody);
 
@@ -91,7 +86,6 @@ $(document).ready(function() {
 				}
 			});
 		})
-		//failed response from registration request
 		.fail(function(error) {
 			console.error("ERROR: ", error);
 		});
@@ -192,8 +186,7 @@ $(document).ready(function() {
 			var expires = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
 
 			var tagsString = $("#request-create-tags").val();
-			console.log(tagsString);
-			console.log(tagsString);
+
 			var reward = $("#request-rewards").val();
 			var tagsArray = tagsString.split(",");
 			// Trim the beginning and end spaces off all tags in the array
@@ -263,7 +256,6 @@ $(document).ready(function() {
 		}
 		//START REQUEST
 		if (eventType === "start") {
-			console.log("START REQUEST"); //debug
 			$.ajax({
 				url: "/requests/" + request_id,
 				method: "PUT",
@@ -370,7 +362,6 @@ $(document).ready(function() {
 	//ADD COMMENT
 	addComment = function(request_id) {
 		var comment = $("#new-comment-" + request_id).val();
-		console.log("comment is: ", comment);
 
 		$.post('/requests/' + request_id + '/comments', {
 			"comment": comment
@@ -379,7 +370,7 @@ $(document).ready(function() {
 			$("#comment-list-" + request_id).prepend("<li class='list-group-item'> <b>" + comment.user + " : </b>" + comment.comment + " <i> @ " + comment.dateCreated + "</i></li>");
 			$("#new-comment-" + request_id).val("");
 		}).fail(function (error) {
-			console.log("ERROR: ", error);
+			console.error("ERROR: ", error);
 		});
 
 	};

@@ -9,9 +9,7 @@ $(document).ready(function() {
 		$.post('/requests/' + request_id + '/pay/' + user_id,{
 				'venmo_email': venmo_email,
 		}).done(function(data){
-			console.log(data);
 		}).fail(function(error){
-			console.log("error");
 		});
 	}
 });

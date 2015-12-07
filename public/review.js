@@ -27,6 +27,7 @@ $(document).ready(function() {
 		});
 	});
 
+	//Modifies the review modal window accordingly to the participants of a request
 	configureReviewModal = function(requestId) {
 		$.get(/requests/ + requestId, {"refuseRender": true}).done(function (data) {
 			var request = data.content.request;

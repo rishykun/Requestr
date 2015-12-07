@@ -82,7 +82,6 @@ $(document).ready(function() {
 			"username": username,
 			"password": password,
 			"email": email,
-
 		})
 		//when done, log user in because successful signup doesn't automatically log user in
 		.done(function(data) {

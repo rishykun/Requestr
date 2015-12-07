@@ -20,8 +20,6 @@ $(document).ready(function() {
 	})
 	.fail(function(error) {
 		//don't do anything because this gets called even when we're not logged in
-		//remove error below for production
-		console.log("error: ", error); //debug
 	});
 
 	//get list of logged in users and populate
@@ -75,6 +73,7 @@ $(document).ready(function() {
 		});
 	}
 
+	//triggers messaging with a target user
 	message = function(target) {
 		if (target === loggedInUser) {
 			$.notify({
@@ -95,6 +94,7 @@ $(document).ready(function() {
 		$('#message-modal').modal('show'); //then show modal
 	}
 
+	//sets chat with a target user
 	setActiveChat = function(target) {
 		if (target !== target_user) { //ignore if target is already active
 			$(".user-labels").removeClass("active"); //clear pre-existing active label
@@ -121,6 +121,7 @@ $(document).ready(function() {
 		}
 	}
 
+	//Handles submitting a message
 	$("#message-form").submit(function(event) {
 		event.preventDefault();
 
@@ -145,6 +146,7 @@ $(document).ready(function() {
 		}
 	});
 
+	//Clears messages
 	$("#message-clear").click(function(event) {
 		event.preventDefault();
 		$("#messages").empty();
@@ -184,7 +186,7 @@ $(document).ready(function() {
 		$("#offline-badges").html(parseInt($("#offline-badges").html()) + 1);
 		$("#offline").append('<li role="presentation" class="user-labels" id="' + username + '_label"><a id="' + username + '_button" href="#" onclick="setActiveChat(\'' + username + '\')"  style="border-radius: 0px; border-width: 0px 0px 1px 0px; border-style: solid; border-color: gray">' + username + '</a></li>');
 	});
-
+	
 	socket.on("chat message", function(msg, src, dest, date) {
 		if (dest === loggedInUser) {
 			//show badge if message-modal isn't visible
