@@ -4,8 +4,10 @@ var Schema = mongoose.Schema;
 var passwordHasher = require("password-hash-and-salt");
 
 /*
-	We currently have both schemas in the same file because of their circular dependency. In the future, we will figure out how to separate the schemas into two separate files
+	Both schemas are in the same file because of their circular dependency (the models can't be instantiated
+	unless both schemas are defined beforehand).
 */
+
 var UserSchema = mongoose.Schema({
 	username: {
 		type: String,
@@ -24,7 +26,8 @@ var UserSchema = mongoose.Schema({
 	requestsTaken: [{type: Schema.Types.ObjectId, ref:'Request'}]
 });
 
-//Callback on query entry for a username
+//Gets the query entry given a username in the User Model 
+//if the username exists
 UserSchema.statics.getUser = function(user, cb){
 	var that = this;
 
@@ -44,7 +47,7 @@ UserSchema.statics.getUser = function(user, cb){
 	});
 }
 
-//Callback on query entry for a username
+//Gets the query entries of all users in the User Model
 UserSchema.statics.getAllUsers = function(cb){
 	var that = this;
 
@@ -58,7 +61,7 @@ UserSchema.statics.getAllUsers = function(cb){
 	});
 }
 
-//callback on true if candidatepw matches user pw else false
+//Verifies if candidatepw matches user pw
 UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
 	var that = this;
 
@@ -83,16 +86,10 @@ UserSchema.statics.verifyPassword = function(user, candidatepw, cb){
 	});
 }
 
-//creates a user in the model if username doesn't already exists (callbacks on false)
-//else callbacks on true if the username is taken
+//creates a user in the model if username doesn't already exists (returns false)
+//else returns true if the username is taken
 UserSchema.statics.createNewUser = function(user, password, email, cb){
 	var that = this;
-
-	if (!email.match(/\S+@\S+/)) {
-		cb({err: "Invalid email address."});
-		return;
-	}
-
 	that.getUser(user, function(err, userQuery){
 		if (err){
 			if (err.msg === "No such user!"){
@@ -123,7 +120,7 @@ UserSchema.statics.createNewUser = function(user, password, email, cb){
 	});
 }
 
-//Callback on query entry for a user after population
+//Gets extended information on a user's created and taken requests
 UserSchema.statics.getUserData = function(user, cb){
 	var that = this;
 	that.getUser(user, function(err, user){
@@ -180,7 +177,7 @@ UserSchema.statics.getUserData = function(user, cb){
  });
 }
 
-//Callback on requests by a user with the corresponding status
+//Gets requests by a user with the corresponding status
 UserSchema.statics.getRequestsByStatus = function(user, status, cb){
 	if (status !== "Open" && status !== "In progress" && status !== "Completed"){
 		cb({err: "Invalid status"});
@@ -212,7 +209,7 @@ UserSchema.statics.addRequest = function(user, requestId, cb){
 	});
 }
 
-//Removes a request with the corresponding requestId to the user
+//Removes a request with the corresponding requestId from the user
 UserSchema.statics.removeRequest = function(user, requestModel, requestId, cb){
 	var that = this;
 	that.getUser(user, function(err, user){
@@ -255,7 +252,12 @@ var RequestSchema = mongoose.Schema({
 	}]
 });
 
-//Callback on the request query after population
+//Gets extended information about a request's
+//	-creator
+//	-tentative helpers (candidates)
+//	-actual helpers
+//	-unpaid helpers
+//	-comments
 RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
 	if (err) cb({err: "Failed to query request"});
 	else {
@@ -287,6 +289,7 @@ RequestSchema.statics.populateRequests = function(err, requestQuery, cb){
 	}
 };
 
+//Update the Model to reflect paying a helper
 RequestSchema.statics.payHelper = function(requestId, helperId, cb){
 	var that = this;
 	that.update({"_id": requestId}, {$pull:{'unpaidUsers':helperId}}, {upsert: true}, function(err){
@@ -294,7 +297,8 @@ RequestSchema.statics.payHelper = function(requestId, helperId, cb){
 		else cb(null);
 	});
 }
-//Callback on all created requests
+
+//Get all created requests
 RequestSchema.statics.getAllRequests = function(cb){
 	var that = this;
 	that.find({}, function(err, requestQuery){
@@ -302,7 +306,7 @@ RequestSchema.statics.getAllRequests = function(cb){
 	});
 };
 
-//Callback on request with corresponding requestId
+//Get a request by its ID
 RequestSchema.statics.getRequestById = function(requestId, cb){
 	var that = this;
 	that.find({ _id: requestId }, function(err, requestQuery){
@@ -315,7 +319,8 @@ RequestSchema.statics.getRequestById = function(requestId, cb){
 	});
 }
 
-//Callback on requests with the corresponding status and have title, description, or tags in keywords or at least one tag in tagQuery
+//Gets requests with the corresponding status and have title or description in keywords or at least one tag in tagQuery
+//Results are sorted by matches with tags
 RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, cb){
 	var that = this;
 	var filter = {};
@@ -350,7 +355,6 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
     }}, 
     {$sort:{matches:-1}}
     ], function(err, result){
-      console.log(result);
       that.populate(result, {path: "_id"}, function(err, result){
         if (err) cb(err);
         else {
@@ -364,23 +368,9 @@ RequestSchema.statics.getRequestByFilter = function(status, keywords, tagQuery, 
   );
 }
 
-//Creates a new request and adds it to the corresponding user in userModel
+//Creates a new request and adds it to the corresponding user in the User model
 RequestSchema.statics.createRequest = function(userModel, user, requestData, cb){
 	var that = this;
-	
-	var expirationDate = new Date(requestData.expirationDate);
-
-	if (expirationDate.toDateString() !== "Invalid Date") {
-		var minDate = new Date();
-		minDate.setHours(0, 0, 0, 0);
-
-		if (expirationDate < minDate) {
-			cb({err: "Request already expired."});
-		} 
-	} else {
-		cb({err: "Request date invalid."});
-	}
-
 	requestData.status = 'Open';
 	requestData.candidates = [];
 	requestData.helpers = [];
@@ -429,7 +419,7 @@ RequestSchema.statics.startRequest = function(requestId, cb){
 	})
 }
 
-//Changes the request from In progress to completed
+//Changes the request from In progress to Completed
 RequestSchema.statics.completeRequest = function(requestId, cb){
 	var that = this;
 	that.getRequestById(requestId, function(err, request){
@@ -444,7 +434,7 @@ RequestSchema.statics.completeRequest = function(requestId, cb){
 	})
 }
 
-//Adds a candidate to a request
+//Adds a potential helper/candidate to a request
 RequestSchema.statics.addCandidate = function(requestId, userModel, candidate, cb){
 	var that = this;
 
@@ -529,6 +519,7 @@ RequestSchema.statics.removeCandidate = function(requestId, userModel, candidate
 	});
 };
 
+//Adds a comment to a request
 RequestSchema.statics.addComment = function(requestId, userModel, user, commentString, cb) {
 	var that = this;
 

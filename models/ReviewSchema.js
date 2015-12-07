@@ -29,6 +29,9 @@ var ReviewSchema = mongoose.Schema({
   }
 });
 
+//Adds a review of a victimUsername
+//  -text: written review
+//  -rating: 1,2,3,4,5 (higher the better)
 ReviewSchema.statics.addReview = function (writerUsername, victimUsername, text, rating, requestId, cb) {
   var that = this;
 
@@ -75,6 +78,8 @@ ReviewSchema.statics.addReview = function (writerUsername, victimUsername, text,
   });
 };
 
+
+//Gets the review of victimUsername
 ReviewSchema.statics.getReviewsByVictimId = function (victimUsername, cb) {
   var that = this;
 
@@ -93,6 +98,8 @@ ReviewSchema.statics.getReviewsByVictimId = function (victimUsername, cb) {
   });
 };
 
+
+//Validates if a reviewer can review a request which can be done
 ReviewSchema.statics.validReview = function (requestId, writerUsername, cb) {
   var that = this;
 
