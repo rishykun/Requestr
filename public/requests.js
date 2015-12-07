@@ -205,7 +205,7 @@ $(document).ready(function() {
 			});
 
 			//make post request to request route
-			$.post("/requests/create", {
+			$.post("/requests", {
 				"title": title,
 				"desc": desc,
 				"expires": expires,

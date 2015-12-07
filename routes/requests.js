@@ -177,7 +177,6 @@ var pendingPayments = {};
 		Redirects to success or failure page after payment has been processed
 */
 router.get('/pay', function(req, res) {
-	console.log("In authentication route.");
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
 	if(query.error){
@@ -257,12 +256,12 @@ router.post('/:request/pay/:userid', function (req,res){
 
 
 /*
-	POST /requests/create
+	POST /requests
 	Params:
 		No params.
 */
 // json with title description - date created - expiration date
-router.post('/create', function(req,res){
+router.post('/', function(req,res){
 	console.log(req.body.tags);
 	Request.createRequest(User, req.currentUser.username, {'title': req.body.title, 'dateCreated': new Date(), 'description': req.body.desc, 'expirationDate':req.body.expires, 'reward': req.body.reward, 'tags': req.body.tags },
 		function(err){
