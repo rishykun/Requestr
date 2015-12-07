@@ -120,6 +120,27 @@ UserSchema.statics.createNewUser = function(user, password, email, cb){
 	});
 }
 
+/*
+	removes the specified users and clears them from the database
+	parameters:
+		username - the username of the user to remove
+	callback return: null if successfully deleted
+		an error message otherwise
+*/
+UserSchema.statics.removeUser = function(username, callback) {
+	var that = this;
+	that.remove({username: username}, function(err) {
+		if (err) {
+			callback(err);
+		} else {
+			callback(null);
+		}
+	});
+}
+
+//Callback on query entry for a user after population
+
+
 //Gets extended information on a user's created and taken requests
 UserSchema.statics.getUserData = function(user, cb){
 	var that = this;
@@ -213,6 +234,7 @@ UserSchema.statics.addRequest = function(user, requestId, cb){
 UserSchema.statics.removeRequest = function(user, requestModel, requestId, cb){
 	var that = this;
 	that.getUser(user, function(err, user){
+		console.log("23err: ", err, " user: ", user);
 		if (err) cb(err);
 		else {
 			that.update(user,{$pull: {'myRequests': requestId}},{upsert:true},function(err){

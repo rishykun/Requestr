@@ -22,10 +22,16 @@ $(document).ready(function() {
 		$.get("/requests/myRequests/"+filter, {
 		})
 		.done(function(results) {
+
+			console.log("SEARCH 0 results: ", results);  //debug
+
 			$.post("/", {
 				"passedData": results.content.requests
 			})
 			.done(function(result) {
+
+				console.log("SEARCH results: ", result); //debug
+
 				try {
 					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];
 

@@ -54,7 +54,7 @@ var main = (function Main() {
 	that.app.use(cookieParser());
 	that.app.use(session({ secret : '6170', resave : true, saveUninitialized : true }));
 	that.app.use(express.static(path.join(__dirname, 'public'))); //treat public as root folder when linking
-	that.app.use(favicon(__dirname + '/public/images/favicon.ico'));
+	//that.app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 	// Authentication middleware. This function
 	// is called on _every_ request and populates

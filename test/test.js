@@ -7,8 +7,9 @@ mongoose.connect(process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost:27
 
 
 //import modules for testing
-var User = require('../models/User'); //model
-var Message = require('../models/Message'); //model
+var User = require('../models/schema').User; //model
+var Request = require('../models/schema').Request; //model
+var Reviews = require("../models/ReviewSchema"); //model
 
 /*
 	testing the User model
@@ -20,36 +21,48 @@ describe("User", function() {
 	//createNewUser is the method under test
 	describe("createNewUser", function() {
 		it("able to create a new user", function (done) {
-			user.createNewUser("AA", "Board", function(err, data) {
+			user.createNewUser("AA", "Board", "test@test.com", function(err, data) {
 				if (err) {
 					throw err;
 				}
-				assert.deepEqual(data.username, "AA");
-				assert.deepEqual(data.password, "Board")
-				user.removeUser("AA", function(err) {
+
+				user.getUser("AA", function(err, data) {
 					if (err) {
 						throw err;
 					}
-					done();
-				}); //remove traces of test from database
+
+					assert.deepEqual(data.username, "AA");
+					//assert.deepEqual(data.password, "Board")
+					assert.deepEqual(data.email, "test@test.com")
+					user.removeUser("AA", function(err) {
+						if (err) {
+							throw err;
+						}
+						done();
+					}); //remove traces of test from database
+
+				});
 			});
 		});
 
-		
 		it("unable to create an already existing user (identified by username)", function (done) {
-			user.createNewUser("A", "B", function(err, data) {
+			user.createNewUser("A", "B", "test@test.com", function(err, taken) {
 				if (err) {
 					throw err;
 					done();
 				}
-				user.createNewUser("A", "Baaaa", function(err, data) {
+				user.createNewUser("A", "Baaaa", "test@test.com", function(err, taken) {
 					if (err) {
+						throw err;
+						done();
+					}
+					if (taken) {
 						user.removeUser("A", function(err) {
 							done();
 						}); //remove traces of test from database
 					} else {
 						user.removeUser("A", function(err) {
-							throw err;
+							throw {msg: "Fail"};
 							done();
 						}); //remove traces of test from database
 					}
@@ -58,21 +71,25 @@ describe("User", function() {
 		});
 	});
 	
-	//findByUsername is the method under test
-	describe("findByUsername", function() {
+	//getUser is the method under test
+	describe("getUser", function() {
 		it("able to find a newly created user", function (done) {
-			user.createNewUser("A", "B", function(err, data) {
+			user.createNewUser("A", "B", "test@test.com", function(err, taken) {
 				if (err) {
 					throw err;
 					done();
 				}
-				user.findByUsername("A", function(err, data2) {
+				if (taken) {
+					throw err;
+					done();
+				}
+				user.getUser("A", function(err, data2) {
 					if (err) {
 						throw err;
 						done();
 					}
 					assert.deepEqual(data2.username, "A");
-					assert.deepEqual(data2.password, "B");
+					//assert.deepEqual(data2.password, "B");
 					user.removeUser("A", function(err) {
 						done();
 					}); //remove traces of test from database
@@ -81,27 +98,26 @@ describe("User", function() {
 		});
 
 		it("properly throws an error when trying to find a nonexistent user", function (done) {
-			user.findByUsername("nonexist", function(err, data3) {
+			user.getUser("nonexist", function(err, data3) {
 				if (err) {
-					throw err;
-					done();
-				} else {
-					if (!data3) {
+					if (err.msg === "No such user!") {
 						done();
-					}
-					else {
+					} else {
 						throw err;
 						done();
 					}
+				} else {
+					throw err;
+					done();
 				}
 			});
 		});
 	});
-
+	
 	//VerifyPassword is the method under test
 	describe("verifyPassword", function() {
 		it("able to appropriately verify password for newly created user", function (done) {
-			user.createNewUser("A", "B", function(err, data) {
+			user.createNewUser("A", "B", "test@test.com", function(err, data) {
 				if (err) {
 					throw err;
 					done();
@@ -128,40 +144,34 @@ describe("User", function() {
 		});
 
 		it("appropriately returns false for attempting to verify with the wrong username or password", function (done) {
-			user.createNewUser("A", "B", function (err, data) {
+			user.createNewUser("A", "B", "test@test.com", function (err, data) {
 				if (err) {
 					throw err;
 					done();
 				}
-				user.verifyPassword("A", "aaqweB", function (err, data) {
+				user.verifyPassword("A", "aaqweB", function (err, verified) {
+
 					if (err) {
 						user.removeUser("A", function(err) {
 							throw err;
 							done();
 						}); //remove traces of test from database
 					}
-					if (data) {
+					if (verified) {
 						user.removeUser("A", function(err) {
 							throw err;
 							done();
 						}); //remove traces of test from database
 					} else {
-						user.verifyPassword("Aasdas", "B", function (err, data) {
+						//should return an error because it can't find the user
+						user.verifyPassword("Aasdas", "B", function (err, verified) {
 							if (err) {
 								user.removeUser("A", function(err) {
-									throw err;
-									done();
-								}); //remove traces of test from database
-							}
-							if (data) {
-								user.removeUser("A", function(err) {
-									throw err;
 									done();
 								}); //remove traces of test from database
 							} else {
-								user.removeUser("A", function(err) {
-									done();
-								}); //remove traces of test from database
+								throw err;
+								done();
 							}
 						});
 					}
@@ -170,10 +180,10 @@ describe("User", function() {
 		});
 	});
 	
-	//addmessage is the method under test.
-	describe("addMessage", function() {
+	//addrequest is the method under test.
+	describe("addRequest", function() {
 		it("cannot add a message without a non-existing user", function (done) {
-			user.addMessage("userSZAS", "dummytextS", function(err, data) {
+			user.addRequest("userSZAS", "5664e7669763725a475bd922", function(err, data) {
 				if (err) {
 					done();
 				} else {
@@ -185,33 +195,30 @@ describe("User", function() {
 			});
 		});
 
-		it("adding a message shows up", function (done) {
-			user.createNewUser("userS", "S", function (err, userData) {
+		
+		it("adding a request shows up", function (done) {
+			user.createNewUser("userS", "S", "test@test.com", function (err, userData) {
 				if (err) {
 					throw err;
 					done();
 				}
-				user.addMessage("userS", "dummytextS", function(err, addID) {
+				user.addRequest("userS", "5664e7669763725a475cc922", function(err) {
 					if (err) {
 						user.removeUser("userS", function(err) {
 							throw err;
 							done();
 						}); //remove traces of test from database
 					}
-					Message.findById(addID, function(err, findData) {
+					user.getUser("userS", function(err, findData) {
 						if (err) {
 							user.removeUser("userS", function(err) {
 								throw err;
 								done();
 							}); //remove traces of test from database
 						}
-						assert.equal(addID, findData.id);
-						assert.equal(findData.author, "userS");
-						assert.equal(findData.value, "dummytextS");
-						Message.removeMessage(addID, function(err) {
-							user.removeUser("userS", function(err) {
-								done();
-							}); //remove traces of test from database
+						assert.equal("5664e7669763725a475cc922", findData.myRequests[0]);
+						user.removeUser("userS", function(err) {
+							done();
 						}); //remove traces of test from database
 					});
 				});
@@ -219,77 +226,11 @@ describe("User", function() {
 		});
 	});
 
-	//sharemessage is the method under test.
-	describe("shareMessage", function() {
-		it("sharing a message shows up", function (done) {
-			user.createNewUser("userS", "S", function (err, userData) {
-				if (err) {
-					throw err;
-					done();
-				}
-				user.addMessage("userS", "dummytextS", function(err, addID) {
-					if (err) {
-						user.removeUser("userS", function(err) {
-							throw err;
-							done();
-						}); //remove traces of test from database
-					}
-
-					user.createNewUser("sharon", "share", function (err, userData2) {
-						if (err) {
-							throw err;
-							done();
-						}
-
-						user.findByUsername("userS", function (err, valuableUserData) {
-							if (err) {
-								throw err;
-								done();
-							}
-							var shareMessageID = valuableUserData.messages[0];
-							user.shareMessage("sharon", shareMessageID, function(err, shareID) {
-								if (err) {
-									throw err;
-									done();
-								}
-								Message.findById(shareID, function(err, msg) {
-									if (err) {
-										user.removeUser("userS", function(err) {
-											user.removeUser("sharon", function(err) {
-												throw err;
-												done();
-											});
-										}); //remove traces of test from database
-									}
-
-									assert.equal(shareID, msg.id);
-									assert.equal(msg.author, "userS");
-									assert.equal(msg.sharer, "sharon");
-
-									Message.removeMessage(addID, function(err) {
-										Message.removeMessage(shareID, function(err) {
-											user.removeUser("userS", function(err) {
-												user.removeUser("sharon", function(err) {
-													done();
-												});
-											});
-										});
-									}); //remove traces of test from database
-								});
-							});
-						});
-					});
-				});
-			});
-		});
-	});
-
-
-
+	
 	//removeMessage is the method under test.
-	describe("removeMessage", function() {
-		it("cannot remove a message with a non-existing user", function (done) {
-			user.removeMessage("userSZAS", 1234, function(err, data) {
+	describe("removeRequest", function() {
+		it("cannot remove a request with a non-existing user", function (done) {
+			user.removeRequest("userSZAS", Request, 1234, function(err) {
 				if (err) {
 					done();
 				} else {
@@ -301,121 +242,52 @@ describe("User", function() {
 
 		
 		it("successfully remove an added message", function (done) {
-			user.createNewUser("userSS", "S", function (err, userData) {
+			user.createNewUser("userSS", "S", "test@test.com", function (err, userData) {
 				if (err) {
 					throw err;
 					done();
 				}
-				user.addMessage("userSS", "dummytextS", function(err, addID) {
+				user.addRequest("userSS", "5664e7669763725a475cc922", function(err, addID) {
 					if (err) {
 						user.removeUser("userSS", function(err) {
 							throw err;
 							done();
 						}); //remove traces of test from database
 					}
-					user.removeMessage("userSS", addID, function(err) {
-						Message.findById(addID, function(err, findData) {
-							if (err) {
-								user.removeUser("userSS", function(err) {
-									done();
-								}); //remove traces of test from database
-							} else {
-								user.removeUser("userSS", function(err) {
-									throw err;
-									done();
-								}); //remove traces of test from database
-							}
-						});
+					user.removeRequest("userSS", Request, "5664e7669763725a475cc922", function(err) {
+
+						if (err) {
+							user.removeUser("userSS", function(err) {
+								throw err;
+								done();
+							}); //remove traces of test from database
+						} else {
+							user.removeUser("userSS", function(err) {
+								done();
+							}); //remove traces of test from database
+						}
 					});
 				});
 			});
 		}); 
 	});
-
-	//addSubscription is the method under test.
-	describe("addSubscription", function() {
-		it("successfully adds specified user to own subscription list", function (done) {
-			user.createNewUser("sub", "B", function (err, data) {
+	
+	//getRequestsByStatus is the method under test.
+	describe("getRequestsByStatus", function () {
+		it("cannot get invalid status", function (done) {
+			user.getRequestsByStatus ("abcd", "asdaa", function (err, data) {
 				if (err) {
-					throw err;
-					done();
-				}
-
-				user.addSubscription("sub", "cool", function(err) {
-					if (err) {
-						throw err;
-						done();
-					}
-
-					user.findByUsername("sub", function(err, userdata) {
-						if (err) {
-							throw err;
-							done();
-						}
-						assert.deepEqual(userdata.following.length, 1);
-						assert.deepEqual(userdata.following[0],"cool");
-
-						user.removeUser("sub", function(err) {
-							if (err) {
-								throw err;
-								done();
-							}
-							done();
-						}); //remove traces of test from database
-					});
-				});
+				done();
+			}
 			});
 		});
-	});
 
-	//removeSubscription is the method under test.
-	describe("removeSubscription", function() {
-		it("successfully removes subscribed user from own subscription list", function (done) {
-			user.createNewUser("sub", "B", function (err, data) {
-				if (err) {
-					throw err;
-					done();
-				}
+		
+		it("gets all requests by a filter (i.e. open)", function (done) {
+			Request.view
 
-				user.addSubscription("sub", "cool", function(err) {
-					if (err) {
-						throw err;
-						done();
-					}
-
-					user.findByUsername("sub", function(err, userdata) {
-						if (err) {
-							throw err;
-							done();
-						}
-						assert.deepEqual(userdata.following.length, 1);
-						assert.deepEqual(userdata.following[0],"cool");
-
-						user.removeSubscription("sub", "cool", function(err) {
-							if (err) {
-								throw err;
-								done();
-							}
-
-							user.findByUsername("sub", function(err, userdata) {
-								if (err) {
-									throw err;
-									done();
-								}
-								assert.deepEqual(userdata.following.length, 0);
-								user.removeUser("sub", function(err) {
-									if (err) {
-										throw err;
-										done();
-									}
-									done();
-								}); //remove traces of test from database
-							});
-						});
-					});
-				});
-			});
-		});
+			done();
+		}); 
 	});
 });
 
@@ -423,7 +295,7 @@ describe("User", function() {
 	testing the Message model
 	all public methods are tested for accuracy and reliability
 */
-
+/*
 describe("Message", function() {
 	msg = Message;
 
@@ -694,3 +566,5 @@ describe("Message", function() {
 		});
 	});
 });
+
+*/

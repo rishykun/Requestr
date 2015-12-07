@@ -94,6 +94,7 @@ router.get('/myRequests', function(req, res) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
 
+
 			utils.sendSuccessResponse(res, { currentUser: req.currentUser.username, requests: data.myRequests });
 		}
 	});
@@ -105,6 +106,7 @@ router.get('/myRequests/:filter', function(req, res) {
 		if (err) {
 			utils.sendErrResponse(res, 500, 'An unknown error occurred.');
 		} else {
+			console.log("my requests backend: ", data); //debug
 			utils.sendSuccessResponse(res, { requests: data });
 		}
 	});

@@ -13,6 +13,7 @@ var utils = (function () {
     The caller of this function should return after calling
   */
   _utils.sendSuccessResponse = function(res, content) {
+    console.log("sendSuccessResponse content:", content); //debug
     res.status(200).json({
       success: true,
       content: content
