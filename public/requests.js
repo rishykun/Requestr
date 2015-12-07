@@ -27,8 +27,12 @@ $(document).ready(function() {
 			})
 			.done(function(result) {
 				try {
-					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-					$("body").html(resultBody);
+					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];
+
+					var parsedResult = $.parseHTML(resultBody);
+					console.log(parsedResult); //debug
+
+					$("#requests-container").html(resultBody);
 					$("#pageStatus").html("My " + filter + " Created Requests");
 					$("#homeButton").css("display", "inline-block");
 				}
@@ -47,6 +51,9 @@ $(document).ready(function() {
 		});
 	}
 
+	/*
+		Gets all requests that the user has accepted.
+	*/
 	getMyAcceptedRequests = function(filter) {
 		$.get("/requests/myAcceptedRequests/", {
 		})
@@ -64,8 +71,14 @@ $(document).ready(function() {
 			})
 			.done(function(result) {
 				try {
-					var resultBody  = result.split("<body")[1].split(">").slice(1).join(">").split("</body>")[0];
-					$("body").html(resultBody);
+					var resultBody  = result.split("<!-- requests-container-start --")[1].split(">").slice(1).join(">").split("<!-- requests-container-end -->")[0];
+
+					var parsedResult = $.parseHTML(resultBody);
+					console.log(parsedResult); //debug
+
+					$("#requests-container").html(resultBody);
+
+
 					$("#pageStatus").html("My " + filter + " Accepted Requests");
 					$("#homeButton").css("display", "inline-block");
 				}
@@ -84,7 +97,7 @@ $(document).ready(function() {
 		});
 	}
 
-
+	// Form to create a request
 	$("#request-form").submit(function(event) {
 		event.preventDefault();
 
@@ -123,8 +136,6 @@ $(document).ready(function() {
 		var expDate = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
 		var now = new Date();
 
-		console.log("expDate set to: ", expDate); //debug
-
 		if (expDate <= now) {
 			$.notify({
 				message: "Expiration date must be in the future!"
@@ -141,12 +152,11 @@ $(document).ready(function() {
 		return false;
 	});
 
-
+	// Handles all actions pertaining to requests (create, accept, delete, etc.)
+	// Params:
+	//		- request_id - id of the request being handled
+	//		- eventType - what action to do with the request
 	handleRequest = function(request_id, eventType) {
-
-		//prepare data to be sent over to backend
-
-		//make post request to request route
 
 		/*
 			instantiates create request function in the request form's submit button
@@ -181,7 +191,9 @@ $(document).ready(function() {
 			}
 			var expires = new Date(expDateArray[2], expDateArray[0] - 1, expDateArray[1], hour, minutes);
 
-			var tagsString = $("#request-tags").val();
+			var tagsString = $("#request-create-tags").val();
+			console.log(tagsString);
+			console.log(tagsString);
 			var reward = $("#request-rewards").val();
 			var tagsArray = tagsString.split(",");
 			// Trim the beginning and end spaces off all tags in the array
@@ -299,6 +311,13 @@ $(document).ready(function() {
 		}
 	}
 
+	// Handles all actions pertaining to candidates of a request
+	/*
+		Params:
+			request_id - id of the request the user is a candidate of
+			username - username of the candidate
+			eventType - action to perform with candidate
+	*/
 	handleCandidate = function(request_id, username, eventType) {
 
 		//prepare data to be sent over to backend

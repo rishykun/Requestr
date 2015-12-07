@@ -141,12 +141,6 @@ router.get('/myAcceptedRequests', function(req, res) {
 		} else {
 
 			utils.sendSuccessResponse(res, { currentUser: req.currentUser.username, requests: data.requestsTaken });
-
-			/*
-			res.render('requests_active', {
-				userProfile: req.currentUser,
-				requests: data.myRequests
-			});*/
 		}
 	});
 });
@@ -180,6 +174,7 @@ var pendingPayments = {};
 		Redirect url for venmo. 
 		Params:
 			access_token - venmo sent back oauth token with make payment scope
+		Redirects to success or failure page after payment has been processed
 */
 router.get('/pay', function(req, res) {
 	console.log("In authentication route.");
@@ -268,6 +263,7 @@ router.post('/:request/pay/:userid', function (req,res){
 */
 // json with title description - date created - expiration date
 router.post('/create', function(req,res){
+	console.log(req.body.tags);
 	Request.createRequest(User, req.currentUser.username, {
 		'title': req.body.title, 
 		'dateCreated': new Date(), 

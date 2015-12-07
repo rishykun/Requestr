@@ -20,7 +20,7 @@
 		</div>
 		<% if (request.status === "Completed" && userProfile.username === request.creator.username) { %>
 			<div style="display:inline-block; float:right">
-				<%= request.paid ? "Paid" : "Unpaid" %>
+				<%= request.unpaidUsers ? "Unpaid" : "Paid" %>
 			</div>
 		<% } else if (request.status === "Open" && userProfile.username === request.creator.username) { %>
             <div style="display:inline-block; float:right">

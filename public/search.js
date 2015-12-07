@@ -1,6 +1,10 @@
 var getSearchRequests;
 
 $(document).ready(function() {
+
+	/*
+		Gets requests from search. Filters search by keyword, tags, and relevance.
+	*/
 	getSearchRequests = function(e) {
 		if(e) {
 			if(e.keyCode == 13) {
