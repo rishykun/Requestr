@@ -43,7 +43,7 @@ ReviewSchema.statics.addReview = function (writerUsername, victimUsername, text,
         if (err) {
           cb(err);
         } else {
-          that.validReview(requestId, writerObj.username, function (err, isValid) {
+          that.validReview(requestId, writerObj.username, victimObj.username, function (err, isValid) {
             if (err) {
               cb(err);
             } else {
@@ -98,34 +98,40 @@ ReviewSchema.statics.getReviewsByVictimId = function (victimUsername, cb) {
   });
 };
 
-
-//Validates if a reviewer can review a request which can be done
-ReviewSchema.statics.validReview = function (requestId, writerUsername, cb) {
+// Checks whether the specified writer can submit a review for the specified victim for the specified request.
+// Each writer gets one review per other involved individual per request.
+ReviewSchema.statics.validReview = function (requestId, writerUsername, victimUsername, cb) {
   var that = this;
 
   User.getUser(writerUsername, function (err, writerObj) {
     if (err) {
       cb(err);
     } else {
-      Request.getRequestById(requestId, function (err, requestObj) {
+      User.getUser(victimUsername, function (err, victimObj) {
         if (err) {
           cb(err);
         } else {
-          if (requestObj.creator == writerObj._id || requestObj.helpers.indexOf(writerObj._id) > -1) {
-            that.find({"writer": writerObj._id, "request": requestObj._id}, function (err, result) {
-              if (err) {
-                cb(err);
+          Request.getRequestById(requestId, function (err, requestObj) {
+            if (err) {
+              cb(err);
+            } else {
+              if (requestObj.creator == writerObj._id || requestObj.helpers.indexOf(writerObj._id) > -1) {
+                that.find({"writer": writerObj._id, "victim": victimObj._id, "request": requestObj._id}, function (err, result) {
+                  if (err) {
+                    cb(err);
+                  } else {
+                    if (result.length > 0) {
+                      cb(null, false); // Invalid, review already exists
+                    } else {
+                      cb(null, true); // Valid
+                    }
+                  }
+                });
               } else {
-                if (result.length > 0) {
-                  cb(null, false); // Invalid, review already exists
-                } else {
-                  cb(null, true); // Valid
-                }
+                cb(null, false); // Invalid, writer not part of request
               }
-            });
-          } else {
-            cb(null, false); // Invalid, writer not part of request
-          }
+            }
+          });
         }
       });
     }

@@ -190,7 +190,7 @@ router.post('/:userID/reviews', function (req, res) {
 		if (req.body.victimUsername != req.params.userID) {
 			utils.sendErrResponse(res, 400, 'Malformed review creation request.');
 		} else {
-			Review.validReview(req.body.requestId, req.currentUser.username, function (err, reviewValid) {
+			Review.validReview(req.body.requestId, req.currentUser.username, req.body.victimUsername, function (err, reviewValid) {
 				if (err) {
 					utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
 				} else {
