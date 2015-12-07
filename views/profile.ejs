@@ -45,7 +45,7 @@
                     <ul class="list-group">
                         <% user.myRequests.forEach(function (request) { %>
                             <li class="list-group-item">
-                                <h4 style="padding: 1%"><a href="/requests/<%= request._id %>"><%= request.title %></a> - <%= request.status %></h4>
+                                <h4 style="padding: 1%"><a><%= request.title %></a> - <%= request.status %></h4>
                             </li>
                         <% }); %>
                     </ul>
@@ -66,7 +66,7 @@
                 <% if (user.requestsTaken.length > 0) { %>
                     <ul class="list-group">
                         <% user.requestsTaken.forEach(function (request) { %>
-                            <li class="list-group-item"><a href="/requests/<%= request._id %>" style="padding: 1%"><%= request.title %></a></li>
+                            <li class="list-group-item"><a style="padding: 1%"><%= request.title %></a></li>
                         <% }); %>
                     </ul>
                 <% } else { %>
@@ -87,7 +87,7 @@
                     <ul class="list-group">
                         <% reviews.forEach(function (review) { %>
                             <li class="list-group-item">
-                                <div><h4><a href="/requests/<%= review.request._id %>"><%= review.request.title %></a></h4>
+                                <div><h4><a><%= review.request.title %></a></h4>
                                 by <a href="/users/<%= review.writer.username %>"><%= review.writer.username %></a> - <%= review.rating %>/5</div>
                                 <div><%= review.text %></div>
                             </li>
