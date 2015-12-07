@@ -25,7 +25,6 @@
 
 
 <div id="user-container" style="width:75%; margin-left: 15%">
-    <button class="btn btn-primary" onclick="parent.goBack()" style="margin-bottom: 10px">Go Back</button>
     <div style="margin-bottom: 5px;">
         <div id="user-username" style="display:inline-block; font-weight:500px; font-size: 36px">
             <%= user.username %>
@@ -41,7 +40,7 @@
                 <a data-toggle="collapse" data-parent="#accordion" href="#user-myRequests"><%= user.username %>'s Requests</a>
                 </h4>
             </div>
-            <div id="user-myRequests" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
+            <div id="user-myRequests" class="panel-collapse collapse">
                 <% if (user.myRequests.length > 0) { %>
                     <ul class="list-group">
                         <% user.myRequests.forEach(function (request) { %>
@@ -63,7 +62,7 @@
                 <a data-toggle="collapse" data-parent="#accordion" href="#user-takenRequests"><%= user.username %>'s Taken Requests</a>
                 </h4>
             </div>
-            <div id="user-takenRequests" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
+            <div id="user-takenRequests" class="panel-collapse collapse">
                 <% if (user.requestsTaken.length > 0) { %>
                     <ul class="list-group">
                         <% user.requestsTaken.forEach(function (request) { %>
@@ -83,7 +82,7 @@
                 <a data-toggle="collapse" data-parent="#accordion" href="#user-reviews" >Reviews of <%= user.username %></a>
                 </h4>
             </div>
-            <div id="user-reviews" class="panel-collapse collapse" style="max-height: 40%; overflow: auto">
+            <div id="user-reviews" class="panel-collapse collapse">
                 <% if (reviews.length > 0) { %>
                     <ul class="list-group">
                         <% reviews.forEach(function (review) { %>

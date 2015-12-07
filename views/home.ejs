@@ -1,18 +1,17 @@
 <div style="text-align:center">
-	<button class="btn btn-default" id="homeButton" onclick="goHome()" style="display:none">Go home</button>
-	<div id="pageStatus" style="font-weight: bold; font-size: 24px; color: #555">Home</div>
+	<button class="btn btn-default" id="homeButton" onclick="goHome()" style="display:none">Clear Search Results</button>
+	<div id="pageStatus">Home</div>
 </div>
 
 <!--  Search Only Implemented For Tags. Tags can be typed into the search bar and delimited by commas. -->
-<input class="form-control" id="request-search" onKeyPress = "getSearchRequests(event)" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by keywords" placeholder="Search for a request" style="width:50%; margin-left: 25%; margin-top: 20px">
-
+<input class="form-control" id="request-search" onKeyPress = "getSearchRequests(event)" type="text" name="keyword" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Search by keywords" placeholder="Search for a request">
 <!-- requests-container-start -->
 <div id="requests-container" style="margin-top:20px; margin-bottom:20px">
 
 	<% if (requests.length > 0) { %>
 
 		<% requests.forEach(function(request) { %>
-			<div id="request-box" style="background-color:whitesmoke; width:50%; margin-left:25%; margin-top: 10px; border-left: 7px solid <%= colors[request.status] %>; padding: 10px">
+			<div id="request-box" style="border-left: 7px solid <%= colors[request.status] %>">
 				<% var requestsPage = false %>
 				<% include request_header.ejs %>
 				<% include request_body.ejs %>
